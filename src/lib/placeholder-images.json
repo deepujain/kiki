@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "Avatar for Olivia Martin",
+      "imageUrl": "https://picsum.photos/seed/1/100/100",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "2",
+      "description": "Avatar for Jackson Lee",
+      "imageUrl": "https://picsum.photos/seed/2/100/100",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "3",
+      "description": "Avatar for Isabella Nguyen",
+      "imageUrl": "https://picsum.photos/seed/3/100/100",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "4",
+      "description": "Avatar for William Kim",
+      "imageUrl": "https://picsum.photos/seed/4/100/100",
+      "imageHint": "man glasses"
+    },
+    {
+      "id": "5",
+      "description": "Avatar for Sophia Williams",
+      "imageUrl": "https://picsum.photos/seed/5/100/100",
+      "imageHint": "woman professional"
+    },
+    {
+      "id": "6",
+      "description": "Avatar for Noah Garcia",
+      "imageUrl": "https://picsum.photos/seed/6/100/100",
+      "imageHint": "man smiling"
+    }
+  ]
+}
