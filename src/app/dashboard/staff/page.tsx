@@ -323,15 +323,12 @@ function StaffPageContent() {
   const handleSaveEmployeeDetails = async () => {
     if (editableEmployee) {
       try {
-        await fetch(`/api/employees/${editableEmployee.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(editableEmployee)
-        });
+        await updateEmployee(editableEmployee); // Use updateEmployee from useData hook
         toast({
           title: "Employee Details Updated",
           description: `${editableEmployee.name}'s information has been saved.`,
         });
+        // The refreshData is called inside updateEmployee in use-database.tsx
       } catch (error) {
         toast({
           variant: "destructive",
@@ -365,12 +362,7 @@ function StaffPageContent() {
     };
 
     try {
-      await fetch('/api/employees', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEmployee)
-      });
-
+      await addEmployee(newEmployee); // Use addEmployee from useData hook
       setIsAddStaffModalOpen(false);
       setNewStaff({ employed: true, experience: 0 });
       toast({
