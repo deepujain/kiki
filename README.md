@@ -6,18 +6,41 @@ Welcome to Kiki 🍭, a modern and intuitive attendance management system design
 
 ## Features
 
+- **Database-Backed Persistence**: All core data (Employees, Holidays, Attendance records) are now stored in a persistent SQLite database, ensuring data integrity and retention across application restarts.
 - **Authentication & Security**: Secure login system with username/password authentication, protected routes, and session management. Features a delightful celebration animation on successful login.
+- **Dashboard**: Real-time overview of attendance metrics including total employees, present count, late arrivals, and absences, all sourced directly from the SQLite database. The interactive leaderboard showcases employee performance at a glance.
+- **Attendance Management**: Comprehensive attendance tracking with automatic late detection (after 11:00 AM), check-in/out system, and working hours calculation. Includes robust holiday management and efficient bulk attendance marking capabilities, with smoother updates and reduced flickering.
+- **Staff Management**: Complete employee profile management (create, read, update) with personal details, experience tracking, and birthday celebrations. Features a filterable staff directory and detailed individual attendance records, all reflecting immediate database updates.
+- **Analytics & Reporting**: Powerful analytics with MTD and YTD views, showing attendance patterns, working days calculations, and late streaks, all derived from the persistent database. Export functionality supports various time ranges (Current Month, Month to Date, Quarter To Date, Year To Date).
+- **Calendar View**: Interactive calendar interface displaying attendance history, holidays, and daily statistics. Supports both monthly and yearly views with detailed daily breakdowns, ensuring consistent local date display.
 
-- **Dashboard**: Real-time overview of attendance metrics including total employees, present count, late arrivals, and absences. Interactive leaderboard showcases employee performance at a glance.
+---
 
-- **Attendance Management**: Comprehensive attendance tracking with automatic late detection (after 11:00 AM), check-in/out system, and working hours calculation. Includes holiday management and bulk attendance marking capabilities.
+## Screenshots
 
-- **Staff Management**: Complete employee profile management with personal details, experience tracking, and birthday celebrations. Features a filterable staff directory and detailed individual attendance records.
+Below are screenshots of the main pages of the Kiki application, showcasing its key features.
 
-- **Analytics & Reporting**: Powerful analytics with MTD and YTD views, showing attendance patterns, working days calculations, and late streaks. Export functionality supports various time ranges (Current Month, Month to Date, Quarter to Date, Year to Date).
+### Dashboard
 
-- **Calendar View**: Interactive calendar interface displaying attendance history, holidays, and daily statistics. Supports both monthly and yearly views with detailed daily breakdowns.
+![Dashboard Screenshot](/public/images/dashboard.png)
+*A quick overview of today's attendance and overall employee statistics.*
 
+### Attendance Calendar
+
+![Attendance Calendar Screenshot](/public/images/attendance_calendar.png)
+
+![Update Attendance Screenshot](/public/images/mark_attendance.png)
+
+*An interactive calendar to manage and view daily attendance records and holidays.*
+
+### Staff Management
+
+![Staff Management Screenshot](/public/images/allemployees.png)
+
+![Staff Management Screenshot](/public/images/staff_management.png)
+*Manage employee profiles, view individual attendance histories, and update details.*
+
+---
 
 ## Tech Stack
 
@@ -29,7 +52,7 @@ This project is built with a modern, production-ready technology stack:
 - **UI Components**: [ShadcN UI](https://ui.shadcn.com/) for modern interface elements
 - **Icons**: [Lucide Icons](https://lucide.dev/) for consistent visual language
 - **State Management**: Custom hooks and Context API
-- **Data Storage**: In-memory store with localStorage persistence
+- **Data Storage**: SQLite Database
 - **Development Tools**: 
   - ESLint for code quality
   - Prettier for code formatting
