@@ -1,6 +1,7 @@
+"use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Zap, Target, Mail, Linkedin } from "lucide-react";
+import { Mail, Linkedin, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
@@ -14,54 +15,63 @@ const XIcon = () => (
 export default function AboutPage() {
   const features = [
     {
-      icon: <Briefcase className="h-8 w-8 text-primary" />,
+      icon: "📊",
       title: "Smart Analytics",
       description: "Insights for better decision making",
     },
     {
-      icon: <Zap className="h-8 w-8 text-primary" />,
+      icon: "⚡",
       title: "Streamlined Operations",
       description: "Manage daily operations efficiently",
     },
     {
-      icon: <Target className="h-8 w-8 text-primary" />,
+      icon: "🎯",
       title: "Growth Focused",
       description: "Tools designed to scale your business",
     },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-muted/40 p-8 text-center">
-          <div className="mx-auto mb-4">
-            <img src="/images/1xAI.png" alt="1xAI Logo" className="h-16 w-16" />
-          </div>
-          <CardTitle className="text-3xl font-headline tracking-tight">
-            1xAI
-          </CardTitle>
-          <p className="text-muted-foreground">AI-Powered Applications</p>
-        </CardHeader>
-        <CardContent className="p-8 space-y-8">
-          <p className="text-center text-lg text-muted-foreground">
-            1xAI is the creator of Kiki 🦀, an attendance management application that brings intelligent analytics and actionable insights powered by AI technologies.
-          </p>
+    <div className="space-y-6">
 
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            {features.map((feature) => (
-              <div key={feature.title} className="flex flex-col items-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
-                  {feature.icon}
+      <div className="grid gap-6">
+        {/* Company Info Card */}
+        <Card>
+          <CardHeader>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-center py-6">
+              {/* Replace with actual 1xAI logo */}
+              <div className="relative">
+                <img 
+                  src="/images/1xAI.png" 
+                  alt="1xAI Logo" 
+                  className="w-24 h-24 object-contain"
+                  onError={(e) => {
+                    // Fallback to text logo if image doesn't exist
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    (e.target as HTMLImageElement).nextElementSibling!.classList.remove('hidden');
+                  }}
+                />
+                <div className="bg-primary rounded-full p-8 text-primary-foreground hidden">
+                  <div className="text-4xl font-bold">1x</div>
                 </div>
-                <h3 className="text-lg font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {feature.description}
-                </p>
               </div>
-            ))}
-          </div>
+            </div>
+            
+            <div className="text-center space-y-2">
+              <h3 className="text-2xl font-bold">1xAI</h3>
+              <Badge variant="secondary" className="px-3 py-1">
+                <Sparkles className="w-4 h-4 mr-1" />
+                AI-Powered Applications
+              </Badge>
+            </div>
 
-          <div className="text-center space-y-4">
+            <div className="text-center text-muted-foreground">
+              <p>1xAI is the creator of Kiki 🦀 application, focused on intelligent analytics and actionable insights through AI-powered technologies.</p>
+            </div>
+
+            <div className="text-center space-y-4">
             <h3 className="font-semibold">Contact Us</h3>
             <div className="flex justify-center items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" />
@@ -93,6 +103,35 @@ export default function AboutPage() {
                 >
                     Follow on X
                 </Link>
+            </div>
+          </div>
+          </CardContent>
+        </Card>
+
+      </div>
+
+      {/* Application Info Card */}
+      <Card>
+        <CardHeader>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="text-center p-4 rounded-lg bg-blue-50 dark:bg-blue-950">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">📊</div>
+              <h4 className="font-semibold mt-2">Smart Analytics</h4>
+              <p className="text-sm text-muted-foreground">Insights for better decision making</p>
+            </div>
+            
+            <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-950">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">⚡</div>
+              <h4 className="font-semibold mt-2">Streamlined Operations</h4>
+              <p className="text-sm text-muted-foreground">Manage daily operations efficiently</p>
+            </div>
+            
+            <div className="text-center p-4 rounded-lg bg-purple-50 dark:bg-purple-950">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">🎯</div>
+              <h4 className="font-semibold mt-2">Growth Focused</h4>
+              <p className="text-sm text-muted-foreground">Tools designed to scale your business</p>
             </div>
           </div>
         </CardContent>
