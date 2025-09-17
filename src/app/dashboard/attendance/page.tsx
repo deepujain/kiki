@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
@@ -8,11 +7,9 @@ import {
   AttendanceStatus,
   Employee,
 } from "@/lib/types";
-import { employees as mockEmployees } from "@/lib/data";
-import { holidays, addHoliday, removeHoliday } from "@/lib/holidays";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isToday, isFuture, isBefore, differenceInMinutes, parse, startOfQuarter, endOfQuarter, startOfYear, getMonth, getYear, differenceInHours } from "date-fns";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isToday, isFuture, isBefore, differenceInMinutes, parse, startOfQuarter, endOfQuarter, startOfYear, getMonth, getYear } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { allTimeAttendanceStore } from "@/lib/store";
+import { useData } from "@/hooks/use-database";
 
 import {
   Card,
@@ -46,7 +43,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/status-badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const earliestDate = new Date("2025-03-01T00:00:00");
 const latestDate = new Date("2025-09-30T00:00:00");
@@ -68,19 +64,19 @@ const calculateHours = (checkIn: string, checkOut: string): string => {
 };
 
 export default function AttendancePage() {
-  const [employees, setEmployees] = useState<Employee[]>(mockEmployees.filter(e => e.employed && e.role !== 'Founder & CEO'));
-  const today = new Date("2025-09-15");
-  const [currentMonth, setCurrentMonth] = useState(today);
+  const { employees = [], attendanceRecords = new Map(), holidays = [], addHoliday, removeHoliday, updateAttendance, updateMultipleAttendance, isLoading } = useData();
+  const [currentMonth, setCurrentMonth] = useState(new Date("2025-09-15"));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [dailyRecords, setDailyRecords] = useState<Map<string, AttendanceRecord>>(new Map());
   const { toast } = useToast();
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState("");
   const [isEditingHoliday, setIsEditingHoliday] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // New state for saving status
 
-  const triggerStorageEvent = () => {
-    window.dispatchEvent(new Event('storage'));
-  }
+  const activeEmployees = useMemo(() => {
+    return employees.filter(e => e.employed && e.role !== 'Founder & CEO');
+  }, [employees]);
 
   const handleStatusChange = (employeeId: string, isAbsent: boolean) => {
     setDailyRecords(prev => {
@@ -131,80 +127,86 @@ export default function AttendancePage() {
     });
   };
 
-  const saveDayAttendance = () => {
+  const saveDayAttendance = async () => {
     if (!selectedDate) return;
+    setIsSaving(true); // Start saving
 
     const dateStr = format(selectedDate, "yyyy-MM-dd");
 
-    if (isHoliday) {
-      if (!holidayName.trim()) {
+    try {
+      if (isHoliday) {
+        if (!holidayName.trim()) {
+          toast({
+            variant: "destructive",
+            title: "Missing Holiday Name",
+            description: "Please enter a name for the holiday.",
+          });
+          setIsSaving(false); // Reset saving state
+          return;
+        }
+        await addHoliday({ date: dateStr, name: holidayName });
         toast({
-          variant: "destructive",
-          title: "Missing Holiday Name",
-          description: "Please enter a name for the holiday.",
+          title: "Holiday Saved",
+          description: `${holidayName} has been added for ${format(selectedDate, "MMMM d, yyyy")}.`,
         });
-        return;
-      }
-      addHoliday({ date: dateStr, name: holidayName });
-      toast({
-        title: "Holiday Saved",
-        description: `${holidayName} has been added for ${format(selectedDate, "MMMM d, yyyy")}.`,
-      });
-    } else {
-      // This means we are un-marking a holiday or saving regular attendance
-      if (isEditingHoliday) {
-        removeHoliday(dateStr);
-        toast({
-          title: "Holiday Removed",
-          description: `The holiday for ${format(selectedDate, "MMMM d, yyyy")} has been removed.`,
-        });
-      }
-      
-      for (const record of dailyRecords.values()) {
+      } else {
+        if (isEditingHoliday) {
+          await removeHoliday(dateStr);
+          toast({
+            title: "Holiday Removed",
+            description: `The holiday for ${format(selectedDate, "MMMM d, yyyy")} has been removed.`,
+          });
+        }
+        
+        // Validate check-out times before saving
+        for (const record of dailyRecords.values()) {
           if (record.status !== 'Absent' && record.status !== 'Not Marked') {
-              if (record.checkInTime !== '--:--' && (!record.checkOutTime || record.checkOutTime === '--:--')) {
-                  toast({
-                      variant: "destructive",
-                      title: "Missing Check-out Time",
-                      description: `Please enter a check-out time for ${record.employeeName}.`,
-                  });
-                  return;
-              }
+            if (record.checkInTime !== '--:--' && (!record.checkOutTime || record.checkOutTime === '--:--')) {
+              toast({
+                variant: "destructive",
+                title: "Missing Check-out Time",
+                description: `Please enter a check-out time for ${record.employeeName}.`,
+              });
+              setIsSaving(false); // Reset saving state
+              return;
+            }
           }
+        }
+
+        // Filter out 'Not Marked' records and collect all records to be updated
+        const recordsToUpdate = Array.from(dailyRecords.values()).filter(record => record.status !== 'Not Marked');
+        
+        if (recordsToUpdate.length > 0) {
+            await updateMultipleAttendance(recordsToUpdate);
+        }
+        
+        if (!isEditingHoliday) {
+            toast({
+                title: "Attendance Saved",
+                description: `Attendance for ${format(selectedDate, "MMMM d, yyyy")} has been updated.`,
+            });
+        }
       }
-
-
-      dailyRecords.forEach((record, employeeId) => {
-          if (record.status === 'Not Marked') return; 
-
-          const employeeRecords = allTimeAttendanceStore.get(employeeId) || [];
-          const recordIndex = employeeRecords.findIndex(r => r.date === dateStr);
-          if (recordIndex > -1) {
-              employeeRecords[recordIndex] = record;
-          } else {
-              employeeRecords.push(record);
-          }
-          allTimeAttendanceStore.set(employeeId, employeeRecords);
+    } catch (error) {
+      console.error("Error in saveDayAttendance:", error);
+      toast({
+        variant: "destructive",
+        title: "Error Saving Changes",
+        description: "Failed to save changes. Please try again.",
       });
-      
-      if (!isEditingHoliday) { // Don't show this toast if we just removed a holiday
-        toast({
-          title: "Attendance Saved",
-          description: `Attendance for ${format(selectedDate, "MMMM d, yyyy")} has been updated.`,
-        });
-      }
+    } finally {
+      // Reset states AFTER saving and refreshing data
+      setSelectedDate(null);
+      setIsHoliday(false);
+      setHolidayName("");
+      setIsEditingHoliday(false);
+      setIsSaving(false); // Always reset saving state
     }
-
-    triggerStorageEvent();
-    setSelectedDate(null);
-    setIsHoliday(false);
-    setHolidayName("");
-    setIsEditingHoliday(false);
   };
   
   const openDayModal = (day: Date) => {
     // Allow editing for current day, one extra day, and past days within the allowed range
-    const tomorrow = new Date(today);
+    const tomorrow = new Date("2025-09-15");
     tomorrow.setDate(tomorrow.getDate() + 1);
     if (getDay(day) === 0 || (isFuture(day) && !isToday(day) && format(day, 'yyyy-MM-dd') !== format(tomorrow, 'yyyy-MM-dd')) || isBefore(day, startOfMonth(earliestDate))) return;
     
@@ -212,9 +214,9 @@ export default function AttendancePage() {
     const existingHoliday = holidays.find(h => h.date === dateStr);
     
     const initialRecords = new Map<string, AttendanceRecord>();
-    employees.forEach(emp => {
-      const allEmpRecords = allTimeAttendanceStore.get(emp.id) || [];
-      const dayRecord = allEmpRecords.find(r => r.date === dateStr);
+    activeEmployees.forEach(emp => {
+      const empRecords = attendanceRecords.get(emp.id) || [];
+      const dayRecord = empRecords.find(r => r.date === dateStr);
       
       if (dayRecord) {
         initialRecords.set(emp.id, {...dayRecord});
@@ -257,7 +259,7 @@ export default function AttendancePage() {
 
   const getBirthdaysForDay = (day: Date): Employee[] => {
     const dayMonth = format(day, 'MM-dd');
-    return mockEmployees.filter(emp => emp.birthday && format(new Date(emp.birthday), 'MM-dd') === dayMonth);
+    return employees.filter(emp => emp.birthday && format(new Date(emp.birthday), 'MM-dd') === dayMonth);
   }
 
   const getDaySummary = useCallback((day: Date) => {
@@ -265,7 +267,7 @@ export default function AttendancePage() {
     const holiday = holidays.find(h => h.date === dateStr);
 
     if (holiday) {
-        return { present: employees.length, absent: 0, late: 0, holiday: holiday.name };
+        return { present: activeEmployees.length, absent: 0, late: 0, holiday: holiday.name };
     }
     
     if (getDay(day) === 0) return null; // Sundays are off
@@ -275,9 +277,9 @@ export default function AttendancePage() {
     let late = 0;
 
     let recordsFound = false;
-    employees.forEach(emp => {
-      const allEmpRecords = allTimeAttendanceStore.get(emp.id) || [];
-      const record = allEmpRecords.find(r => r.date === dateStr);
+    activeEmployees.forEach(emp => {
+      const empRecords = attendanceRecords.get(emp.id) || [];
+      const record = empRecords.find(r => r.date === dateStr);
       
       if(record) {
         recordsFound = true;
@@ -306,7 +308,7 @@ export default function AttendancePage() {
     // if no records found for the day, and it's not a future/disabled day, show nothing
     return null; 
     
-  }, [employees]);
+  }, [activeEmployees, attendanceRecords, holidays]);
   
   const exportToCsv = (period: ExportPeriod) => {
     const now = new Date("2025-09-30"); // Use a fixed date for consistent export periods
@@ -332,19 +334,17 @@ export default function AttendancePage() {
     const headers = ["Employee ID", "Employee Name", "Date", "Status", "Check-in Time", "Check-out Time"];
     const rows: string[] = [];
 
-    allTimeAttendanceStore.forEach((records, employeeId) => {
-      const employee = employees.find(e => e.id === employeeId);
-      if (!employee) return;
-      
-      const filteredRecords = records.filter(rec => {
+    activeEmployees.forEach(emp => {
+      const empRecords = attendanceRecords.get(emp.id) || [];
+      const filteredRecords = empRecords.filter(rec => {
         const recDate = new Date(rec.date);
         return recDate >= startDate && recDate <= endDate;
       });
 
       filteredRecords.forEach(rec => {
         rows.push([
-          employee.id,
-          employee.name,
+          emp.id,
+          emp.name,
           rec.date,
           rec.status,
           rec.checkInTime,
@@ -377,6 +377,14 @@ export default function AttendancePage() {
   const isNextMonthDisabled = getYear(currentMonth) === getYear(latestDate) && getMonth(currentMonth) >= getMonth(latestDate);
   const isPrevMonthDisabled = getYear(currentMonth) === getYear(earliestDate) && getMonth(currentMonth) <= getMonth(earliestDate);
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="h-8 w-48 bg-muted animate-pulse rounded"></div>
+        <div className="h-[600px] bg-muted animate-pulse rounded"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -420,7 +428,7 @@ export default function AttendancePage() {
                if(day.getTime() === new Date(0,0,index).getTime()) return <div key={index}></div>;
                const summary = getDaySummary(day);
                const birthdays = getBirthdaysForDay(day);
-               const tomorrow = new Date(today);
+               const tomorrow = new Date("2025-09-15");
                tomorrow.setDate(tomorrow.getDate() + 1);
                const isDayFuture = isFuture(day) && !isToday(day) && format(day, 'yyyy-MM-dd') !== format(tomorrow, 'yyyy-MM-dd');
                const isDisabledPast = isBefore(day, startOfMonth(earliestDate));
@@ -513,7 +521,7 @@ export default function AttendancePage() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={mockEmployees.find(e => e.id === record.employeeId)?.avatarUrl} alt={record.employeeName} data-ai-hint="person portrait" />
+                            <AvatarImage src={employees.find(e => e.id === record.employeeId)?.avatarUrl} alt={record.employeeName} data-ai-hint="person portrait" />
                             <AvatarFallback>{record.employeeName.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div className="font-medium">{record.employeeName}</div>
@@ -564,7 +572,7 @@ export default function AttendancePage() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setSelectedDate(null)}>Cancel</Button>
-              <Button onClick={saveDayAttendance}>Save Changes</Button>
+              <Button onClick={saveDayAttendance} disabled={isSaving}>Save Changes</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -16,11 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { allTimeAttendanceStore } from "@/lib/store";
-import { employees as mockEmployees } from "@/lib/data";
 import { startOfMonth, startOfQuarter, startOfYear, endOfDay } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Crown } from "lucide-react";
+import { useData } from "@/hooks/use-database";
+import { Loader2 } from "lucide-react";
 
 type LeaderboardPeriod = "MonthToDate" | "QuarterToDate" | "YearToDate";
 
@@ -33,9 +33,12 @@ interface LeaderboardEntry {
 
 export function Leaderboard() {
   const [period, setPeriod] = useState<LeaderboardPeriod>("MonthToDate");
+  const { employees, attendanceRecords, isLoading } = useData();
 
   const leaderboardData = useMemo(() => {
-    const now = new Date("2025-09-30");
+    if (isLoading) return [];
+
+    const now = new Date(); // Use current date
     let startDate: Date;
     const endDate = endOfDay(now);
 
@@ -52,11 +55,11 @@ export function Leaderboard() {
     }
 
     const scores: { [key: string]: number } = {};
-    const activeEmployees = mockEmployees.filter(emp => emp.employed && emp.role !== 'Owner');
+    const activeEmployees = employees.filter(emp => emp.employed && emp.role !== 'Founder & CEO');
 
     activeEmployees.forEach(emp => scores[emp.id] = 0);
     
-    allTimeAttendanceStore.forEach((records, employeeId) => {
+    attendanceRecords.forEach((records, employeeId) => {
         if (!scores.hasOwnProperty(employeeId)) return; // Only count active employees
 
         records.forEach(rec => {
@@ -81,7 +84,7 @@ export function Leaderboard() {
     
     return sortedEmployees;
 
-  }, [period]);
+  }, [period, employees, attendanceRecords, isLoading]);
 
   return (
     <Card>
@@ -101,7 +104,11 @@ export function Leaderboard() {
         </Select>
       </CardHeader>
       <CardContent>
-        {leaderboardData.length > 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : leaderboardData.length > 0 ? (
           <div className="flex justify-around items-end gap-4">
              {/* Second Place */}
             {leaderboardData.length > 1 && leaderboardData[1].score > 0 && (

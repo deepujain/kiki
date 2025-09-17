@@ -7,9 +7,7 @@ import {
   AttendanceRecord,
   Employee,
 } from "@/lib/types";
-import { employees as mockEmployees, updateEmployeeDetails } from "@/lib/data";
-import { allTimeAttendanceStore } from "@/lib/store";
-import { holidays, addHoliday } from "@/lib/holidays";
+import { useData } from "@/hooks/use-database";
 import {
   format,
   startOfMonth,
@@ -101,9 +99,8 @@ function StaffPageContent() {
   const searchParams = useSearchParams()
   const employeeIdFromQuery = searchParams.get('employeeId')
 
-  const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
+  const { employees = [], attendanceRecords = new Map(), holidays = [], updateEmployee, addEmployee, isLoading: dataLoading } = useData();
   const [employeeFilter, setEmployeeFilter] = useState<EmployeeFilter>("current");
-  const [attendance, setAttendance] = useState<Map<string, AttendanceRecord>>(new Map());
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [editableEmployee, setEditableEmployee] = useState<Employee | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -124,48 +121,25 @@ function StaffPageContent() {
 
   useEffect(() => {
     if (employeeIdFromQuery) {
-      const employee = mockEmployees.find(e => e.id === employeeIdFromQuery);
+      const employee = employees.find(e => e.id === employeeIdFromQuery);
       if (employee) {
         handleEmployeeClick(employee);
       }
     }
-  }, [employeeIdFromQuery]);
+  }, [employeeIdFromQuery, employees]);
 
-  const syncState = useCallback(() => {
-    setEmployees([...mockEmployees]);
-    const todayRecords = new Map<string, AttendanceRecord>();
-    allTimeAttendanceStore.forEach((records, empId) => {
-        const todayRecord = records.find(r => r.date === todayStr);
-        if (todayRecord) {
-            todayRecords.set(empId, todayRecord);
-        }
-    });
-    setAttendance(todayRecords);
-
+  useEffect(() => {
     if (selectedEmployee) {
-      const freshEmployeeData = mockEmployees.find(e => e.id === selectedEmployee.id);
+      const freshEmployeeData = employees.find(e => e.id === selectedEmployee.id);
       if(freshEmployeeData) {
         setSelectedEmployee(freshEmployeeData);
-        // Do not reset editable employee here to preserve edits
-        // setEditableEmployee({...freshEmployeeData}); 
         fetchAttendanceSummary(selectedEmployee.id);
       } else {
         setSelectedEmployee(null);
         setEditableEmployee(null);
       }
     }
-  }, [selectedEmployee]);
-  
-  useEffect(() => {
-    syncState();
-    const interval = setInterval(syncState, 2000);
-    window.addEventListener('storage', syncState);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('storage', syncState);
-    };
-  }, [syncState]);
+  }, [employees, selectedEmployee]);
 
   useEffect(() => {
     if (selectedEmployee) {
@@ -187,7 +161,7 @@ function StaffPageContent() {
 
   const fetchAttendanceSummary = (employeeId: string) => {
     const now = today;
-    const allRecords = allTimeAttendanceStore.get(employeeId) || [];
+    const allRecords = attendanceRecords.get(employeeId) || [];
 
     // MTD Summary
     const mtdStart = startOfMonth(now);
@@ -218,7 +192,6 @@ function StaffPageContent() {
       }
     }
 
-
     const mtdCalc: AttendanceSummary = { Present: 0, Late: 0, Absent: 0, TotalWorkingDays: mtdWorkingDays, DaysToPay: totalMtdHours / 8, LateStreak: lateStreak };
     mtdRecords.forEach(r => {
       if (r.status === 'Present' || r.status === 'Late') {
@@ -235,7 +208,6 @@ function StaffPageContent() {
         const hDate = new Date(h.date);
         return hDate >= mtdStart && hDate <= now;
     }).length;
-
 
     // YTD Summary
     const ytdStart = startOfYear(now);
@@ -302,7 +274,7 @@ function StaffPageContent() {
     const headers = ["Date", "Status", "Check-in Time", "Check-out Time", "Working Hours"];
     const rows: string[] = [];
 
-    const employeeRecords = allTimeAttendanceStore.get(selectedEmployee.id) || [];
+    const employeeRecords = attendanceRecords.get(selectedEmployee.id) || [];
     const filteredRecords = employeeRecords.filter(rec => {
       const recDate = new Date(rec.date);
       return recDate >= startDate && recDate <= endDate;
@@ -348,18 +320,29 @@ function StaffPageContent() {
     });
   };
   
-  const handleSaveEmployeeDetails = () => {
+  const handleSaveEmployeeDetails = async () => {
     if (editableEmployee) {
-      updateEmployeeDetails(editableEmployee);
-      triggerStorageEvent();
-      toast({
-        title: "Employee Details Updated",
-        description: `${editableEmployee.name}'s information has been saved.`,
-      });
+      try {
+        await fetch(`/api/employees/${editableEmployee.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editableEmployee)
+        });
+        toast({
+          title: "Employee Details Updated",
+          description: `${editableEmployee.name}'s information has been saved.`,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error Saving Changes",
+          description: "Failed to update employee details. Please try again.",
+        });
+      }
     }
   };
 
-  const handleAddStaff = () => {
+  const handleAddStaff = async () => {
     if (!newStaff.name || !newStaff.role || !newStaff.gender || !newStaff.birthday) {
       toast({
         variant: "destructive",
@@ -370,7 +353,7 @@ function StaffPageContent() {
     }
 
     const newEmployee: Employee = {
-      id: (mockEmployees.length + 1).toString(),
+      id: (employees.length + 1).toString(),
       name: newStaff.name,
       role: newStaff.role,
       gender: newStaff.gender as "Male" | "Female",
@@ -381,14 +364,26 @@ function StaffPageContent() {
       avatarUrl: `https://picsum.photos/seed/${newStaff.name.toLowerCase().replace(/\s+/g, '')}/100/100`,
     };
 
-    mockEmployees.push(newEmployee);
-    triggerStorageEvent();
-    setIsAddStaffModalOpen(false);
-    setNewStaff({ employed: true, experience: 0 });
-    toast({
-      title: "Staff Added",
-      description: `${newEmployee.name} has been added to the staff list.`,
-    });
+    try {
+      await fetch('/api/employees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEmployee)
+      });
+
+      setIsAddStaffModalOpen(false);
+      setNewStaff({ employed: true, experience: 0 });
+      toast({
+        title: "Staff Added",
+        description: `${newEmployee.name} has been added to the staff list.`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error Adding Staff",
+        description: "Failed to add new staff member. Please try again.",
+      });
+    }
   };
 
   const handleStatusChange = (employeeId: string, isAbsent: boolean) => {
@@ -472,14 +467,14 @@ function StaffPageContent() {
 
       dailyRecords.forEach((record, employeeId) => {
         if (record.status === 'Not Marked') return;
-        const employeeRecords = allTimeAttendanceStore.get(employeeId) || [];
+        const employeeRecords = attendanceRecords.get(employeeId) || [];
         const recordIndex = employeeRecords.findIndex(r => r.date === todayStr);
         if (recordIndex > -1) {
           employeeRecords[recordIndex] = record;
         } else {
           employeeRecords.push(record);
         }
-        allTimeAttendanceStore.set(employeeId, employeeRecords);
+        attendanceRecords.set(employeeId, employeeRecords);
       });
       
       toast({
@@ -511,7 +506,7 @@ function StaffPageContent() {
     
     if (getDay(day) === 0) return null;
 
-    const allEmpRecords = allTimeAttendanceStore.get(employeeId) || [];
+    const allEmpRecords = attendanceRecords.get(employeeId) || [];
     const record = allEmpRecords.find(r => r.date === dateStr);
     
     if(record) {
@@ -626,11 +621,15 @@ function StaffPageContent() {
                <div className="grid grid-cols-3 items-center gap-4">
                 <Label className="text-right">Today's Status</Label>
                 <div className="col-span-2">
-                   {holidays.some(h => h.date === todayStr) ? <StatusBadge status="Present" /> : (attendance.has(selectedEmployee.id) && attendance.get(selectedEmployee.id)?.date === todayStr ? (
-                    <StatusBadge status={attendance.get(selectedEmployee.id)!.status} />
-                  ) : (
-                    <StatusBadge status={"Not Marked"} />
-                  ))}
+                   {holidays.some(h => h.date === todayStr) ? <StatusBadge status="Present" /> : (() => {
+                     const empRecords = attendanceRecords.get(selectedEmployee.id) || [];
+                     const todayRecord = empRecords.find(r => r.date === todayStr);
+                     return todayRecord ? (
+                       <StatusBadge status={todayRecord.status} />
+                     ) : (
+                       <StatusBadge status={"Not Marked"} />
+                     );
+                   })()}
                 </div>
                </div>
             </CardContent>
@@ -766,6 +765,15 @@ function StaffPageContent() {
     );
   }
 
+  if (dataLoading) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="h-8 w-32 bg-muted animate-pulse rounded"></div>
+        <div className="h-[600px] bg-muted animate-pulse rounded"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -805,7 +813,8 @@ function StaffPageContent() {
                 </TableHeader>
                 <TableBody>
                   {filteredEmployees.map((employee) => {
-                    const record = attendance.get(employee.id);
+                    const empRecords = attendanceRecords.get(employee.id) || [];
+                    const record = empRecords.find(r => r.date === todayStr);
                     const isTodayRecord = record && record.date === todayStr;
                     const isHolidayToday = holidays.some(h => h.date === todayStr);
 
@@ -881,7 +890,7 @@ function StaffPageContent() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={mockEmployees.find(e => e.id === record.employeeId)?.avatarUrl} alt={record.employeeName} data-ai-hint="person portrait" />
+                            <AvatarImage src={employees.find(e => e.id === record.employeeId)?.avatarUrl} alt={record.employeeName} data-ai-hint="person portrait" />
                             <AvatarFallback>{record.employeeName.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div className="font-medium">{record.employeeName}</div>
