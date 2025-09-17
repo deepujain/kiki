@@ -37,11 +37,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // On initial load, set loading to false.
-  // In a real app with tokens, you'd verify the token here.
+  // On initial load, check for stored session
   useEffect(() => {
-    // This simulates checking for a stored session
-    // For this demo, we just start as logged out.
+    try {
+      const storedUser = localStorage.getItem('kiki-auth-user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.error('Error reading stored auth:', error);
+      localStorage.removeItem('kiki-auth-user');
+    }
     setLoading(false);
   }, []);
 
@@ -52,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     if (username === DEMO_USER_USERNAME && password === DEMO_USER_PASS) {
       setUser(MOCK_USER);
+      localStorage.setItem('kiki-auth-user', JSON.stringify(MOCK_USER));
       setLoading(false);
       return true;
     }
@@ -62,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     setUser(null);
+    localStorage.removeItem('kiki-auth-user');
     router.push("/login");
   };
 
