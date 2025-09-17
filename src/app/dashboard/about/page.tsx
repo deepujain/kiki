@@ -44,8 +44,7 @@ export default function AboutPage() {
         </CardHeader>
         <CardContent className="p-8 space-y-8">
           <p className="text-center text-lg text-muted-foreground">
-            1xAI is the creator of Kiki 🦀 application, focused on intelligent
-            analytics and actionable insights through AI-powered technologies.
+            1xAI is the creator of Kiki 🦀, an attendance management application that brings intelligent analytics and actionable insights powered by AI technologies.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 text-center">
