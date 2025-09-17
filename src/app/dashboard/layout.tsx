@@ -79,8 +79,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-4 lg:px-6">
         <div className="w-full flex-1 flex items-center">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <img src="/images/crab.png" alt="Crabbie Logo" className="h-8 w-8" />
-            <span className="font-headline">Crabbie 🦀</span>
+            <img src="/images/vikings.png" alt="Kiki Logo" className="h-8 w-8" />
+            <span className="font-headline">Kiki 🦀</span>
           </Link>
         </div>
         <UserNav />

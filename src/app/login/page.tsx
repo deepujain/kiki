@@ -68,9 +68,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
-            <img src="/images/crab.png" alt="Crabbie Logo" className="h-12 w-12" />
+            <img src="/images/vikings.png" alt="Kiki Logo" className="h-12 w-12" />
           </div>
-          <CardTitle>Crabbie 🦀</CardTitle>
+          <CardTitle>Kiki 🦀</CardTitle>
           <CardDescription>Please enter your credentials.</CardDescription>
         </CardHeader>
         <CardContent>

@@ -1,8 +1,8 @@
-# **App Name**: Crabbie 🦀
+# **App Name**: Kiki 🦀
 
 ## Introduction
 
-Welcome to Crabbie 🦀, a modern and intuitive attendance management system designed to streamline workforce operations. This application provides a comprehensive suite of tools for tracking employee attendance, managing staff records, monitoring performance metrics, and generating detailed analytics reports with features like automatic late detection and holiday management.
+Welcome to Kiki 🦀, a modern and intuitive attendance management system designed to streamline workforce operations. This application provides a comprehensive suite of tools for tracking employee attendance, managing staff records, monitoring performance metrics, and generating detailed analytics reports with features like automatic late detection and holiday management.
 
 ## Features
 
@@ -18,7 +18,7 @@ Welcome to Crabbie 🦀, a modern and intuitive attendance management system des
 
 ## Screenshots
 
-Below are screenshots of the main pages of the Crabbie application, showcasing its key features.
+Below are screenshots of the main pages of the Kiki application, showcasing its key features.
 
 ### Dashboard
 

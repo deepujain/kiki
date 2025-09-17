@@ -1,39 +1,31 @@
 import { promises as fs } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import Database from 'better-sqlite3';
-// Removed imports to old in-memory stores
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// This file is solely for creating the database schema.
+// Data migration happens in scripts/migrate.ts
 
 export async function migrateDatabase() {
-    const dbPath = join(process.cwd(), 'crabbie.db');
+    const dbPath = join(process.cwd(), 'attendance.db');
     
-    // Create new database
     const db = new Database(dbPath);
     
     try {
-        // Read and execute schema
         const schema = await fs.readFile(
             join(process.cwd(), 'src', 'lib', 'database', 'schema.sql'),
             'utf8'
         );
         
-        // Enable foreign keys
         db.pragma('foreign_keys = ON');
-        
-        // Execute schema
         db.exec(schema);
         
-        // No data migration in this file, only schema creation
-        
-        console.log('Database migration completed successfully');
+        console.log('Database schema created successfully (attendance.db).');
     } catch (error) {
-        console.error('Migration failed:', error);
-        // Clean up on failure
+        console.error('Schema creation failed:', error);
         db.close();
-        fs.unlinkSync(dbPath);
+        await fs.unlink(dbPath).catch(() => {}); // Clean up on failure
         throw error;
+    } finally {
+        db.close();
     }
 }

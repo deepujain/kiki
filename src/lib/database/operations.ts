@@ -3,7 +3,7 @@ import { join } from 'path';
 import type { Employee, AttendanceRecord } from '@/lib/types';
 
 // Initialize database connection
-const db = new Database(join(process.cwd(), 'crabbie.db'));
+const db = new Database(join(process.cwd(), 'attendance.db'));
 db.pragma('foreign_keys = ON');
 
 // Employee Operations

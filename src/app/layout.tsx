@@ -3,7 +3,7 @@ import './globals.css';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'Crabbie 🦀',
+  title: 'Kiki 🦀',
   description: 'Effortless Attendance Management',
 };
 

@@ -1,0 +1,99 @@
+
+export interface Employee {
+  id: string;
+  name: string;
+  role: "Founder & CEO" | "Logistics" | "TSE" | "MIS" | "HR";
+  phone: string;
+  gender: "Male" | "Female";
+  experience: number; // in years
+  avatarUrl: string;
+  birthday: string; // YYYY-MM-DD
+  employed: boolean;
+}
+
+export const employees: Employee[] = [
+  {
+    id: "1",
+    name: "Sathish",
+    role: "Logistics",
+    phone: "+91 98765 43210",
+    gender: "Male",
+    experience: 7,
+    avatarUrl: "/avatars/01.png",
+    birthday: "1988-05-15",
+    employed: true,
+  },
+  {
+    id: "2",
+    name: "Raghavendra",
+    role: "TSE",
+    phone: "+91 98765 43211",
+    gender: "Male",
+    experience: 3,
+    avatarUrl: "/avatars/02.png",
+    birthday: "1992-11-22",
+    employed: true,
+  },
+  {
+    id: "3",
+    name: "Safee",
+    role: "TSE",
+    phone: "+91 98765 43212",
+    gender: "Male",
+    experience: 5,
+    avatarUrl: "/avatars/03.png",
+    birthday: "1990-03-10",
+    employed: true,
+  },
+  {
+    id: "4",
+    name: "Dhiren",
+    role: "MIS",
+    phone: "+91 98765 43213",
+    gender: "Male",
+    experience: 8,
+    avatarUrl: "/avatars/04.png",
+    birthday: "1985-08-01",
+    employed: true,
+  },
+  {
+    id: "5",
+    name: "Arjun",
+    role: "Logistics",
+    phone: "+91 98765 43214",
+    gender: "Male",
+    experience: 4,
+    avatarUrl: "/avatars/05.png",
+    birthday: "1991-09-05",
+    employed: true,
+  },
+  {
+    id: "6",
+    name: "Aman",
+    role: "Logistics",
+    phone: "+91 98765 43215",
+    gender: "Male",
+    experience: 6,
+    avatarUrl: "/avatars/06.png",
+    birthday: "1987-01-20",
+    employed: true,
+  },
+  {
+    id: "8",
+    name: "Deepu Jain",
+    role: "Founder & CEO",
+    phone: "+91 99999 99999",
+    gender: "Male",
+    experience: 15,
+    avatarUrl: "/avatars/1xai.png",
+    birthday: "1980-04-12",
+    employed: true,
+  },
+];
+
+export function updateEmployeeDetails(updatedEmployee: Employee): void {
+  const index = employees.findIndex((emp) => emp.id === updatedEmployee.id);
+  if (index !== -1) {
+    employees[index] = updatedEmployee;
+  }
+}
