@@ -9,11 +9,6 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 
 ## ✨ Key Features
 
-### 🗄️ **Database-Backed Persistence**
-- SQLite database with comprehensive schema for employees, holidays, and attendance records
-- Automatic migration system with initial data seeding
-- Data integrity with foreign key constraints and proper validation
-
 ### 🔐 **Authentication & Security**
 - Secure login system with persistent session management
 - Session state preserved across browser reloads/refreshes
@@ -54,6 +49,11 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Smooth animations and transitions
 - Real-time data updates without page refreshes
 - Intuitive navigation with breadcrumbs
+
+### 🗄️ **Database-Backed Persistence**
+- SQLite database with comprehensive schema for employees, holidays, and attendance records
+- Automatic migration system with initial data seeding
+- Data integrity with foreign key constraints and proper validation
 
 ---
 
