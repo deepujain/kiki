@@ -1,5 +1,5 @@
 {
-  "name": "kiki",
+  "name": "crabbie",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,9 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "migrate": "NODE_OPTIONS='--loader ts-node/esm' ts-node --project tsconfig.json scripts/migrate.ts",
-    "verify": "NODE_OPTIONS='--loader ts-node/esm' ts-node --project tsconfig.json scripts/verify-migration.ts",
-    "verify-all": "node scripts/verify-all.mjs"
+    "migrate": "NODE_OPTIONS='--loader ts-node/esm' ts-node --project tsconfig.json scripts/migrate.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

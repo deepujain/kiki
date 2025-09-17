@@ -8,7 +8,7 @@ import { allTimeAttendanceStore } from '../src/lib/store';
 import type { AttendanceRecord } from '../src/lib/types';
 
 async function migrateDatabase() {
-    const dbPath = join(process.cwd(), 'kiki.db');
+    const dbPath = join(process.cwd(), 'crabbie.db');
     
     // Remove existing database file if it exists
     try {

@@ -3,7 +3,7 @@ import path from 'path';
 import { Employee, AttendanceRecord } from '@/lib/types';
 
 // Initialize database
-const db = new Database(path.join(process.cwd(), 'kiki.db'), { verbose: console.log });
+const db = new Database(path.join(process.cwd(), 'crabbie.db'), { verbose: console.log });
 
 // Enable foreign key support
 db.pragma('foreign_keys = ON');
