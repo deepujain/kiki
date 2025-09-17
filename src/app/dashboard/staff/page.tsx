@@ -349,8 +349,12 @@ function StaffPageContent() {
       return;
     }
 
+    // Generate unique ID by finding the highest existing ID and adding 1
+    const maxId = Math.max(...employees.map(emp => parseInt(emp.id) || 0));
+    const newId = (maxId + 1).toString();
+
     const newEmployee: Employee = {
-      id: (employees.length + 1).toString(),
+      id: newId,
       name: newStaff.name,
       role: newStaff.role,
       gender: newStaff.gender as "Male" | "Female",
