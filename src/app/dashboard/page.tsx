@@ -30,7 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { UserCheck, UserX, Clock, Users } from "lucide-react";
+import { UserCheck, UserX, Clock, Users, ArrowUpDown } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -65,6 +65,8 @@ export default function DashboardPage() {
   const [holidayName, setHolidayName] = useState("");
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDashboardLoaded, setIsDashboardLoaded] = useState(false);
+  const [sortColumn, setSortColumn] = useState<keyof Employee | 'status' | 'checkInTime' | 'checkOutTime'>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Filter employees for display in dashboard
   const activeEmployees = useMemo(() => {
@@ -133,6 +135,44 @@ export default function DashboardPage() {
 
     return { ...counts, Absent: counts.Absent + notMarked };
   }, [activeEmployees, todayAttendance, holidays, currentDateStr]);
+
+  const handleSort = (column: keyof Employee | 'status' | 'checkInTime' | 'checkOutTime') => {
+    setSortDirection(prevDirection => (
+      sortColumn === column ? (prevDirection === 'asc' ? 'desc' : 'asc') : 'asc'
+    ));
+    setSortColumn(column);
+  };
+
+  const sortedAttendance = useMemo(() => {
+    // Combine employee data with their today's attendance record for sorting
+    const data = attendanceTrackedEmployees.map(employee => {
+      const record = todayAttendance.get(employee.id);
+      const isTodayRecord = record && record.date === currentDateStr;
+      const isHolidayToday = holidays.some(h => h.date === currentDateStr);
+
+      let status: AttendanceStatus = "Not Marked";
+      if (isHolidayToday) {
+        status = "Present";
+      } else if (isTodayRecord) {
+        status = record.status;
+      }
+      return { ...employee, status, checkInTime: record?.checkInTime || '--:--', checkOutTime: record?.checkOutTime || '--:--' };
+    });
+
+    return data.sort((a, b) => {
+      const aValue = a[sortColumn];
+      const bValue = b[sortColumn];
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      } 
+      // For numeric sorting (e.g., if we had a numeric column to sort)
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      return 0;
+    });
+  }, [attendanceTrackedEmployees, todayAttendance, holidays, currentDateStr, sortColumn, sortDirection]);
 
   const handleEmployeeClick = (employee: Employee) => {
     router.push(`/dashboard/staff?employeeId=${employee.id}`);
@@ -348,15 +388,40 @@ export default function DashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Check-in</TableHead>
-                    <TableHead>Check-out</TableHead>
-                    <TableHead>Role</TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('name')}>
+                      <div className="flex items-center">
+                        Employee
+                        {sortColumn === 'name' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('status')}>
+                      <div className="flex items-center">
+                        Status
+                        {sortColumn === 'status' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('checkInTime')}>
+                      <div className="flex items-center">
+                        Check-in
+                        {sortColumn === 'checkInTime' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('checkOutTime')}>
+                      <div className="flex items-center">
+                        Check-out
+                        {sortColumn === 'checkOutTime' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('role')}>
+                      <div className="flex items-center">
+                        Role
+                        {sortColumn === 'role' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {attendanceTrackedEmployees.map((employee) => {
+                  {sortedAttendance.map((employee) => {
                     const record = todayAttendance.get(employee.id);
                     const isTodayRecord = record && record.date === currentDateStr; // Use currentDateStr
                     const isHolidayToday = holidays.some(h => h.date === currentDateStr); // Use currentDateStr

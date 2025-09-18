@@ -54,7 +54,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeft, ChevronLeft, ChevronRight, Cake, Download } from "lucide-react";
+import { Loader2, ArrowLeft, ChevronLeft, ChevronRight, Cake, Download, ArrowUpDown } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -118,6 +118,8 @@ function StaffPageContent() {
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState("");
   const [calendarMonth, setCalendarMonth] = useState(startOfMonth(today));
+  const [sortColumn, setSortColumn] = useState<keyof Employee>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     if (employeeIdFromQuery) {
@@ -527,6 +529,46 @@ function StaffPageContent() {
     }
   }, [employees, employeeFilter]);
 
+  const handleSort = (column: keyof Employee) => {
+    setSortDirection(prevDirection => (
+      sortColumn === column ? (prevDirection === 'asc' ? 'desc' : 'asc') : 'asc'
+    ));
+    setSortColumn(column);
+  };
+
+  const sortedEmployees = useMemo(() => {
+    return [...filteredEmployees].map(employee => {
+      const empRecords = attendanceRecords.get(employee.id) || [];
+      const record = empRecords.find(r => r.date === todayStr);
+      const isTodayRecord = record && record.date === todayStr;
+      const isHolidayToday = holidays.some(h => h.date === todayStr);
+
+      let status: AttendanceStatus | "Not Employed" | "Remote" = "Not Marked";
+      if (!employee.employed) {
+        status = "Not Employed";
+      } else if (employee.role === 'Owner') {
+        status = 'Remote';
+      } else if (isHolidayToday) {
+        status = "Present";
+      } else if (isTodayRecord) {
+        status = record.status;
+      }
+      return { ...employee, status };
+    }).sort((a, b) => {
+      const aValue = a[sortColumn];
+      const bValue = b[sortColumn];
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      // Fallback for other types or if values are not comparable
+      return 0;
+    });
+  }, [filteredEmployees, sortColumn, sortDirection, attendanceRecords, holidays, todayStr]);
+
 
   if (selectedEmployee && editableEmployee) {
     const isNextMonthDisabled = getYear(calendarMonth) === getYear(today) && getMonth(calendarMonth) >= getMonth(today);
@@ -802,13 +844,28 @@ function StaffPageContent() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Today's Status</TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('name')}>
+                      <div className="flex items-center">
+                        Employee
+                        {sortColumn === 'name' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('role')}>
+                      <div className="flex items-center">
+                        Role
+                        {sortColumn === 'role' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('status')}>
+                      <div className="flex items-center">
+                        Today's Status
+                        {sortColumn === 'status' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEmployees.map((employee) => {
+                  {sortedEmployees.map((employee) => {
                     const empRecords = attendanceRecords.get(employee.id) || [];
                     const record = empRecords.find(r => r.date === todayStr);
                     const isTodayRecord = record && record.date === todayStr;
@@ -840,7 +897,7 @@ function StaffPageContent() {
                         </TableCell>
                         <TableCell>{employee.role}</TableCell>
                         <TableCell>
-                          {status === 'Not Employed' ? <Badge variant="outline">Not Employed</Badge> : (status === 'Remote' ? <Badge variant="secondary">Remote</Badge> : <StatusBadge status={status} />)}
+                          {employee.status === 'Not Employed' ? <Badge variant="outline">Not Employed</Badge> : (employee.status === 'Remote' ? <Badge variant="secondary">Remote</Badge> : <StatusBadge status={employee.status} />)}
                         </TableCell>
                         </TableRow>
                     );
