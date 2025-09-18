@@ -28,7 +28,7 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Bulk attendance marking with status management
 - Holiday management with automatic attendance adjustment
 - Current date handling (no more hardcoded dates!)
-- **Role-based attendance tracking** for TSE, Logistics, and MIS staff
+- **Flexible attendance tracking** for any staff member with "Track Attendance" enabled
 
 ### 👥 **Complete Staff Management**
 - Full employee lifecycle management (add, edit, view, deactivate, delete)
