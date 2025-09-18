@@ -73,9 +73,9 @@ export default function DashboardPage() {
     return employees.filter(e => e.employed && e.role !== 'Founder & CEO');
   }, [employees]);
 
-  // Filter employees whose attendance is tracked (TSE and Logistics)
+  // Filter employees whose attendance is tracked (TSE, Logistics, and MIS)
   const attendanceTrackedEmployees = useMemo(() => {
-    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS'));
+    return employees.filter(e => e.employed && e.trackAttendance && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS'));
   }, [employees]);
 
   useEffect(() => {
