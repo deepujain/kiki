@@ -71,6 +71,11 @@ export default function DashboardPage() {
     return employees.filter(e => e.employed && e.role !== 'Founder & CEO');
   }, [employees]);
 
+  // Filter employees whose attendance is tracked (TSE and Logistics)
+  const attendanceTrackedEmployees = useMemo(() => {
+    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics'));
+  }, [employees]);
+
   useEffect(() => {
     if (!dataLoading) {
       setIsDashboardLoaded(true);
@@ -109,7 +114,7 @@ export default function DashboardPage() {
     const counts = { Present: 0, Late: 0, Absent: 0 };
     let notMarked = 0;
     
-    activeEmployees.forEach(emp => {
+    attendanceTrackedEmployees.forEach(emp => {
         const record = todayAttendance.get(emp.id);
         if (record && record.date === currentDateStr) {
           if (record.status === 'Present' || record.status === 'Late') {
@@ -123,7 +128,7 @@ export default function DashboardPage() {
     });
     
     if (holidays.some(h => h.date === currentDateStr)) {
-        return { Present: activeEmployees.length, Late: 0, Absent: 0 };
+        return { Present: attendanceTrackedEmployees.length, Late: 0, Absent: 0 };
     }
 
     return { ...counts, Absent: counts.Absent + notMarked };
@@ -147,7 +152,7 @@ export default function DashboardPage() {
     }
 
     const records = new Map<string, AttendanceRecord>();
-    activeEmployees.forEach(emp => {
+    attendanceTrackedEmployees.forEach(emp => {
       const allEmpRecords = attendanceRecords.get(emp.id) || [];
       const dayRecord = allEmpRecords.find(r => r.date === currentDateStr);
       
@@ -351,7 +356,7 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {activeEmployees.map((employee) => {
+                  {attendanceTrackedEmployees.map((employee) => {
                     const record = todayAttendance.get(employee.id);
                     const isTodayRecord = record && record.date === currentDateStr; // Use currentDateStr
                     const isHolidayToday = holidays.some(h => h.date === currentDateStr); // Use currentDateStr

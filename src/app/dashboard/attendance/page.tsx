@@ -75,7 +75,7 @@ export default function AttendancePage() {
   const [isSaving, setIsSaving] = useState(false); // New state for saving status
 
   const activeEmployees = useMemo(() => {
-    return employees.filter(e => e.employed && e.role !== 'Founder & CEO');
+    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics'));
   }, [employees]);
 
   const handleStatusChange = (employeeId: string, isAbsent: boolean) => {
@@ -259,7 +259,7 @@ export default function AttendancePage() {
 
   const getBirthdaysForDay = (day: Date): Employee[] => {
     const dayMonth = format(day, 'MM-dd');
-    return employees.filter(emp => emp.birthday && format(new Date(emp.birthday), 'MM-dd') === dayMonth);
+    return activeEmployees.filter(emp => emp.birthday && format(new Date(emp.birthday), 'MM-dd') === dayMonth);
   }
 
   const getDaySummary = useCallback((day: Date) => {
