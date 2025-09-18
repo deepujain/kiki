@@ -86,6 +86,7 @@ interface PaySummary {
   totalPresentDays: number;
   totalLateHours: number;
   deductedLateDays: number;
+  totalAbsentDays: number;
   netPayableDays: number;
   grossPay: number;
 }
@@ -273,6 +274,7 @@ function StaffPageContent() {
         totalPresentDays: mtdCalc.Present,
         totalLateHours: lateHours,
         deductedLateDays: deductedDays,
+        totalAbsentDays: mtdCalc.Absent,
         netPayableDays: netPresentDays,
         grossPay: grossPay,
       });
@@ -791,6 +793,10 @@ function StaffPageContent() {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Deducted Late Days:</span>
                       <span className="font-bold text-red-500">{paySummary.deductedLateDays.toFixed(1)} days</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Total Absent Days:</span>
+                      <span className="font-bold text-red-500">{paySummary.totalAbsentDays.toFixed(1)} days</span>
                     </div>
                     <div className="flex justify-between border-t pt-2 mt-2">
                       <span className="font-semibold">Net Payable Days:</span>
