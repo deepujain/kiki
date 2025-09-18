@@ -763,13 +763,6 @@ function StaffPageContent() {
                                 <div><p className="font-bold">{ytdSummary.TotalWorkingDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
                             </div>
                         </div>
-                        <div className="border-t pt-4">
-                            <h4 className="font-semibold mb-2">Payroll & Streaks</h4>
-                             <div className="grid grid-cols-2 gap-2 text-center">
-                                <div><p className="font-bold">{mtdSummary.DaysToPay.toFixed(2)}</p><p className="text-xs text-muted-foreground">Days to Pay</p></div>
-                                <div><p className="font-bold">{mtdSummary.LateStreak}</p><p className="text-xs text-muted-foreground">Late Streak</p></div>
-                             </div>
-                        </div>
                         </div>
                     )}
                 </CardContent>
