@@ -118,7 +118,7 @@ function StaffPageContent() {
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState("");
   const [calendarMonth, setCalendarMonth] = useState(startOfMonth(today));
-  const [sortColumn, setSortColumn] = useState<keyof Employee>('name');
+  const [sortColumn, setSortColumn] = useState<keyof Employee>('status');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {

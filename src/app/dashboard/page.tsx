@@ -65,7 +65,7 @@ export default function DashboardPage() {
   const [holidayName, setHolidayName] = useState("");
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDashboardLoaded, setIsDashboardLoaded] = useState(false);
-  const [sortColumn, setSortColumn] = useState<keyof Employee | 'status' | 'checkInTime' | 'checkOutTime'>('name');
+  const [sortColumn, setSortColumn] = useState<keyof Employee | 'status' | 'checkInTime' | 'checkOutTime'>('status');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Filter employees for display in dashboard
