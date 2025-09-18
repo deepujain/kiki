@@ -170,10 +170,10 @@ npm run migrate
 This creates:
 - Employee records (7 employees with sample data)
 - Holiday calendar (Indian holidays for 2025)
-- Attendance records with historical data
+- Attendance records with historical data (up to the current day for tracked employees)
 - Today's attendance entries for all active employees
 
-**Note**: Database files (`*.db`) are excluded from git for security and size reasons.
+**Note**: Running `npm run migrate` will **reset** your `attendance.db` database, deleting all existing attendance data and re-populating it with initial mock data. Only run this if you intend to start with a fresh dataset. Database files (`*.db`) are excluded from git for security and size reasons.
 
 ### 🔑 Default Login Credentials
 - **Admin User**:
@@ -273,6 +273,7 @@ Clear browser localStorage and login again.
 - ✅ Removed redundant "Payroll & Streaks" from Attendance Summary
 - ✅ Implemented period selection (Month-To-Date / Year-To-Date) for Attendance and Pay Summaries
 - ✅ Added Regular User login credentials
+- ✅ Implemented "Track Attendance" toggle for employees
 
 ## 🤝 Contributing
 
