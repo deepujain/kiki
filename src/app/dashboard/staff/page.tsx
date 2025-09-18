@@ -62,6 +62,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/auth-context";
 
 
 const today = new Date();
@@ -79,6 +80,14 @@ interface AttendanceSummary {
   TotalWorkingDays: number;
   DaysToPay: number;
   LateStreak: number;
+}
+
+interface PaySummary {
+  totalPresentDays: number;
+  totalLateHours: number;
+  deductedLateDays: number;
+  netPayableDays: number;
+  grossPay: number;
 }
 
 const calculateHours = (checkIn: string, checkOut: string): string => {
@@ -120,6 +129,9 @@ function StaffPageContent() {
   const [calendarMonth, setCalendarMonth] = useState(startOfMonth(today));
   const [sortColumn, setSortColumn] = useState<keyof Employee>('status');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const { user } = useAuth(); // Get user from auth context
+  const isAdmin = user?.role === "Admin"; // Determine if user is admin
+  const [paySummary, setPaySummary] = useState<PaySummary | null>(null); // New state for pay summary
 
   useEffect(() => {
     if (employeeIdFromQuery) {
@@ -139,6 +151,7 @@ function StaffPageContent() {
       } else {
         setSelectedEmployee(null);
         setEditableEmployee(null);
+        setPaySummary(null); // Clear pay summary on employee change
       }
     }
   }, [employees, selectedEmployee]);
@@ -237,6 +250,36 @@ function StaffPageContent() {
 
     setMtdSummary(mtdCalc);
     setYtdSummary(ytdCalc);
+
+    // Calculate Pay Summary
+    if (editableEmployee?.hourlyPayRate && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS')) {
+      let totalLateMinutes = 0;
+      mtdRecords.forEach(rec => {
+        if (rec.status === 'Late' && rec.checkInTime && rec.checkInTime !== '--:--') {
+          const checkInDate = parse(rec.checkInTime, 'HH:mm', new Date(rec.date));
+          const elevenAm = parse('11:00', 'HH:mm', new Date(rec.date));
+          if (checkInDate > elevenAm) {
+            totalLateMinutes += differenceInMinutes(checkInDate, elevenAm);
+          }
+        }
+      });
+
+      const lateHours = totalLateMinutes / 60;
+      const deductedDays = Math.floor(lateHours / 8);
+      const netPresentDays = mtdCalc.Present - deductedDays;
+      const grossPay = netPresentDays * 8 * editableEmployee.hourlyPayRate;
+
+      setPaySummary({
+        totalPresentDays: mtdCalc.Present,
+        totalLateHours: lateHours,
+        deductedLateDays: deductedDays,
+        netPayableDays: netPresentDays,
+        grossPay: grossPay,
+      });
+    } else {
+      setPaySummary(null);
+    }
+
   };
 
   const handleEmployeeClick = (employee: Employee) => {
@@ -244,6 +287,7 @@ function StaffPageContent() {
     setEditableEmployee({...employee});
     setMtdSummary(null);
     setYtdSummary(null);
+    setPaySummary(null); // Clear pay summary when going back to list
     if(employee.role !== 'Owner') {
       fetchAttendanceSummary(employee.id);
     }
@@ -254,6 +298,7 @@ function StaffPageContent() {
     setEditableEmployee(null);
     // Optional: clear the query param from URL
     window.history.pushState({}, '', '/dashboard/staff');
+    setPaySummary(null); // Clear pay summary when going back to list
   }
 
   const exportEmployeeAttendance = (period: ExportPeriod) => {
@@ -365,6 +410,7 @@ function StaffPageContent() {
       birthday: newStaff.birthday,
       employed: newStaff.employed || true,
       avatarUrl: `https://picsum.photos/seed/${newStaff.name.toLowerCase().replace(/\s+/g, '')}/100/100`,
+      hourlyPayRate: newStaff.hourlyPayRate || undefined,
     };
 
     try {
@@ -670,6 +716,18 @@ function StaffPageContent() {
                    })()}
                 </div>
                </div>
+               {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
+                 <div className="grid grid-cols-3 items-center gap-4">
+                   <Label className="text-right">Hourly Pay Rate (INR)</Label>
+                   <Input 
+                     type="number"
+                     value={editableEmployee.hourlyPayRate || ''}
+                     onChange={(e) => setEditableEmployee({...editableEmployee, hourlyPayRate: parseFloat(e.target.value) || undefined})}
+                     className="col-span-2"
+                     placeholder="e.g., 250"
+                   />
+                 </div>
+               )}
             </CardContent>
              <CardFooter className="justify-end">
                 <Button onClick={handleSaveEmployeeDetails}>Save Changes</Button>
@@ -714,6 +772,38 @@ function StaffPageContent() {
                     )}
                 </CardContent>
             </Card>
+
+            {isAdmin && paySummary && (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Pay Summary (Month-to-Date)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Total Present Days:</span>
+                      <span className="font-bold">{paySummary.totalPresentDays.toFixed(1)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Total Late Hours:</span>
+                      <span className="font-bold">{paySummary.totalLateHours.toFixed(1)} hrs</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Deducted Late Days:</span>
+                      <span className="font-bold text-red-500">{paySummary.deductedLateDays.toFixed(1)} days</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2 mt-2">
+                      <span className="font-semibold">Net Payable Days:</span>
+                      <span className="font-bold">{paySummary.netPayableDays.toFixed(1)}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>Gross Pay:</span>
+                      <span>₹{paySummary.grossPay.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
            
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
@@ -1072,6 +1162,19 @@ function StaffPageContent() {
                 />
               </div>
             </div>
+            {isAdmin && (newStaff.role === 'TSE' || newStaff.role === 'Logistics' || newStaff.role === 'MIS') && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="hourlyPayRate" className="text-right">Hourly Pay Rate (INR)</Label>
+                <Input
+                  id="hourlyPayRate"
+                  type="number"
+                  value={newStaff.hourlyPayRate || ''}
+                  onChange={(e) => setNewStaff({...newStaff, hourlyPayRate: parseFloat(e.target.value) || undefined})}
+                  className="col-span-3"
+                  placeholder="e.g., 250"
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddStaffModalOpen(false)}>Cancel</Button>

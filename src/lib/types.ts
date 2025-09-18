@@ -11,6 +11,7 @@ export interface Employee {
   avatarUrl: string;
   birthday: string; // YYYY-MM-DD
   employed: boolean;
+  hourlyPayRate?: number;
 }
 
 export interface AttendanceRecord {

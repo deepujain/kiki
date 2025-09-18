@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS employees (
     experience INTEGER NOT NULL,
     avatarUrl TEXT NOT NULL,
     birthday TEXT NOT NULL,
-    employed BOOLEAN NOT NULL DEFAULT true
+    employed BOOLEAN NOT NULL DEFAULT true,
+    hourlyPayRate REAL
 );
 
 -- Holidays table

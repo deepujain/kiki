@@ -9,6 +9,7 @@ export interface Employee {
   avatarUrl: string;
   birthday: string; // YYYY-MM-DD
   employed: boolean;
+  hourlyPayRate?: number; // Added optional hourly pay rate
 }
 
 export const employees: Employee[] = [
@@ -22,6 +23,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/01.png",
     birthday: "1988-05-15",
     employed: true,
+    hourlyPayRate: 250, // Sample rate
   },
   {
     id: "2",
@@ -33,6 +35,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/02.png",
     birthday: "1992-11-22",
     employed: true,
+    hourlyPayRate: 200, // Sample rate
   },
   {
     id: "3",
@@ -44,6 +47,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/03.png",
     birthday: "1990-03-10",
     employed: true,
+    hourlyPayRate: 220, // Sample rate
   },
   {
     id: "4",
@@ -55,6 +59,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/04.png",
     birthday: "1985-08-01",
     employed: true,
+    hourlyPayRate: 280, // Sample rate
   },
   {
     id: "5",
@@ -66,6 +71,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/05.png",
     birthday: "1991-09-05",
     employed: true,
+    hourlyPayRate: 230, // Sample rate
   },
   {
     id: "6",
@@ -77,10 +83,11 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/06.png",
     birthday: "1987-01-20",
     employed: true,
+    hourlyPayRate: 260, // Sample rate
   },
   {
     id: "8",
-    name: "Deepu Jain",
+    name: "Neetha Jain",
     role: "Founder & CEO",
     phone: "+91 99999 99999",
     gender: "Male",
@@ -88,6 +95,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/1xai.png",
     birthday: "1980-04-12",
     employed: true,
+    // No hourlyPayRate for Founder & CEO
   },
 ];
 

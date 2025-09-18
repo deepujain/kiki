@@ -11,6 +11,7 @@ type MockUser = {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  role: "Admin" | "Regular";
 };
 
 interface AuthContextType {
@@ -30,6 +31,7 @@ const MOCK_USER: MockUser = {
     email: "admin@example.com",
     displayName: "Admin User",
     photoURL: "https://picsum.photos/seed/admin/100/100",
+    role: "Admin",
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
