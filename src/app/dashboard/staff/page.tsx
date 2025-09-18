@@ -133,6 +133,8 @@ function StaffPageContent() {
   const { user } = useAuth(); // Get user from auth context
   const isAdmin = user?.role === "Admin"; // Determine if user is admin
   const [paySummary, setPaySummary] = useState<PaySummary | null>(null); // New state for pay summary
+  const [attendancePeriod, setAttendancePeriod] = useState<'MonthToDate' | 'YearToDate'>('MonthToDate');
+  const [payPeriod, setPayPeriod] = useState<'MonthToDate' | 'YearToDate'>('MonthToDate');
 
   useEffect(() => {
     if (employeeIdFromQuery) {
@@ -148,7 +150,7 @@ function StaffPageContent() {
       const freshEmployeeData = employees.find(e => e.id === selectedEmployee.id);
       if(freshEmployeeData) {
         setSelectedEmployee(freshEmployeeData);
-        fetchAttendanceSummary(selectedEmployee.id);
+        fetchAttendanceSummary(selectedEmployee.id, attendancePeriod);
       } else {
         setSelectedEmployee(null);
         setEditableEmployee(null);
@@ -175,32 +177,38 @@ function StaffPageContent() {
       }).length;
   }
 
-  const fetchAttendanceSummary = (employeeId: string) => {
+  const fetchAttendanceSummary = (employeeId: string, period: 'MonthToDate' | 'YearToDate') => {
     const now = today;
     const allRecords = attendanceRecords.get(employeeId) || [];
 
-    // MTD Summary
-    const mtdStart = startOfMonth(now);
-    const mtdWorkingDays = getWorkingDays(mtdStart, now);
-    const mtdRecords = allRecords.filter(r => {
+    let startDate: Date;
+    let endDate: Date = now;
+
+    if (period === 'MonthToDate') {
+      startDate = startOfMonth(now);
+    } else {
+      startDate = startOfYear(now);
+    }
+
+    const filteredRecords = allRecords.filter(r => {
         const recordDate = new Date(r.date);
-        return recordDate >= mtdStart && recordDate <= now;
+        return recordDate >= startDate && recordDate <= endDate;
     });
     
-    let totalMtdHours = 0;
-    mtdRecords.forEach(r => {
+    let totalHours = 0;
+    filteredRecords.forEach(r => {
         if(r.checkInTime !== '--:--' && r.checkOutTime && r.checkOutTime !== '--:--') {
             const checkInDate = parse(r.checkInTime, 'HH:mm', new Date(r.date));
             const checkOutDate = parse(r.checkOutTime, 'HH:mm', new Date(r.date));
             if (!isNaN(checkInDate.getTime()) && !isNaN(checkOutDate.getTime()) && checkOutDate > checkInDate) {
-                totalMtdHours += differenceInMinutes(checkOutDate, checkInDate) / 60;
+                totalHours += differenceInMinutes(checkOutDate, checkInDate) / 60;
             }
         }
     });
 
     let lateStreak = 0;
-    const sortedMtdRecords = mtdRecords.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    for(const record of sortedMtdRecords) {
+    const sortedRecords = filteredRecords.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    for(const record of sortedRecords) {
       if (record.status === 'Late' || record.status === 'Absent') {
         lateStreak++;
       } else if (record.status === 'Present') {
@@ -208,54 +216,30 @@ function StaffPageContent() {
       }
     }
 
-    const mtdCalc: AttendanceSummary = { Present: 0, Late: 0, Absent: 0, TotalWorkingDays: mtdWorkingDays, DaysToPay: totalMtdHours / 8, LateStreak: lateStreak };
-    mtdRecords.forEach(r => {
+    const summary: AttendanceSummary = { Present: 0, Late: 0, Absent: 0, TotalWorkingDays: getWorkingDays(startDate, endDate), DaysToPay: totalHours / 8, LateStreak: lateStreak };
+    filteredRecords.forEach(r => {
       if (r.status === 'Present' || r.status === 'Late') {
-        mtdCalc.Present++;
+        summary.Present++;
       }
       if (r.status === 'Late') {
-        mtdCalc.Late++;
+        summary.Late++;
       }
       if (r.status === 'Absent') {
-        mtdCalc.Absent++;
+        summary.Absent++;
       }
     });
-    mtdCalc.Present += holidays.filter(h => {
+    summary.Present += holidays.filter(h => {
         const hDate = new Date(h.date);
-        return hDate >= mtdStart && hDate <= now;
+        return hDate >= startDate && hDate <= endDate;
     }).length;
 
-    // YTD Summary
-    const ytdStart = startOfYear(now);
-    const ytdWorkingDays = getWorkingDays(ytdStart, now);
-    const ytdRecords = allRecords.filter(r => {
-        const recordDate = new Date(r.date);
-        return recordDate >= ytdStart && recordDate <= now;
-    });
-    const ytdCalc: AttendanceSummary = { Present: 0, Late: 0, Absent: 0, TotalWorkingDays: ytdWorkingDays, DaysToPay: 0, LateStreak: 0 };
-    ytdRecords.forEach(r => {
-      if (r.status === 'Present' || r.status === 'Late') {
-        ytdCalc.Present++;
-      }
-      if (r.status === 'Late') {
-        ytdCalc.Late++;
-      }
-      if (r.status === 'Absent') {
-        ytdCalc.Absent++;
-      }
-    });
-    ytdCalc.Present += holidays.filter(h => {
-        const hDate = new Date(h.date);
-        return hDate >= ytdStart && hDate <= now;
-    }).length;
-
-    setMtdSummary(mtdCalc);
-    setYtdSummary(ytdCalc);
+    setMtdSummary(summary);
+    setYtdSummary(summary); // For now, setting both to the same summary based on `period`
 
     // Calculate Pay Summary
     if (editableEmployee?.hourlyPayRate && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS')) {
       let totalLateMinutes = 0;
-      mtdRecords.forEach(rec => {
+      filteredRecords.forEach(rec => {
         if (rec.status === 'Late' && rec.checkInTime && rec.checkInTime !== '--:--') {
           const checkInDate = parse(rec.checkInTime, 'HH:mm', new Date(rec.date));
           const elevenAm = parse('11:00', 'HH:mm', new Date(rec.date));
@@ -267,14 +251,14 @@ function StaffPageContent() {
 
       const lateHours = totalLateMinutes / 60;
       const deductedDays = Math.floor(lateHours / 8);
-      const netPresentDays = mtdCalc.Present - deductedDays;
+      const netPresentDays = summary.Present - deductedDays;
       const grossPay = netPresentDays * 8 * editableEmployee.hourlyPayRate;
 
       setPaySummary({
-        totalPresentDays: mtdCalc.Present,
+        totalPresentDays: summary.Present,
         totalLateHours: lateHours,
         deductedLateDays: deductedDays,
-        totalAbsentDays: mtdCalc.Absent,
+        totalAbsentDays: summary.Absent,
         netPayableDays: netPresentDays,
         grossPay: grossPay,
       });
@@ -291,10 +275,22 @@ function StaffPageContent() {
     setYtdSummary(null);
     setPaySummary(null); // Clear pay summary when going back to list
     if(employee.role !== 'Owner') {
-      fetchAttendanceSummary(employee.id);
+      fetchAttendanceSummary(employee.id, attendancePeriod);
     }
   }
   
+  useEffect(() => {
+    if (selectedEmployee) {
+      fetchAttendanceSummary(selectedEmployee.id, attendancePeriod);
+    }
+  }, [attendancePeriod, selectedEmployee]);
+
+  useEffect(() => {
+    if (selectedEmployee && isAdmin) {
+      fetchAttendanceSummary(selectedEmployee.id, payPeriod);
+    }
+  }, [payPeriod, selectedEmployee, isAdmin]);
+
   const handleBackToList = () => {
     setSelectedEmployee(null);
     setEditableEmployee(null);
@@ -739,28 +735,28 @@ function StaffPageContent() {
         { selectedEmployee.role !== 'Owner' && (
           <>
             <Card>
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 flex flex-row items-center justify-between">
                     <CardTitle className="text-base">Attendance Summary</CardTitle>
+                    <Select value={attendancePeriod} onValueChange={(value: 'MonthToDate' | 'YearToDate') => setAttendancePeriod(value)}>
+                      <SelectTrigger className="w-[150px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MonthToDate">Month-To-Date</SelectItem>
+                        <SelectItem value="YearToDate">Year-To-Date</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </CardHeader>
                 <CardContent>
                     {!mtdSummary || !ytdSummary ? <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : (
                         <div className="space-y-4">
                         <div>
-                            <h4 className="font-semibold mb-2">Month-to-Date</h4>
+                            <h4 className="font-semibold mb-2">{attendancePeriod === 'MonthToDate' ? 'Month-to-Date' : 'Year-to-Date'}</h4>
                             <div className="grid grid-cols-4 gap-2 text-center">
                                 <div><p className="font-bold">{mtdSummary.Present}</p><p className="text-xs text-muted-foreground">Present</p></div>
                                 <div><p className="font-bold">{mtdSummary.Late}</p><p className="text-xs text-muted-foreground">Late</p></div>
                                 <div><p className="font-bold">{mtdSummary.Absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
                                 <div><p className="font-bold">{mtdSummary.TotalWorkingDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
-                            </div>
-                        </div>
-                         <div>
-                            <h4 className="font-semibold mb-2">Year-to-Date</h4>
-                            <div className="grid grid-cols-4 gap-2 text-center">
-                                <div><p className="font-bold">{ytdSummary.Present}</p><p className="text-xs text-muted-foreground">Present</p></div>
-                                <div><p className="font-bold">{ytdSummary.Late}</p><p className="text-xs text-muted-foreground">Late</p></div>
-                                <div><p className="font-bold">{ytdSummary.Absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
-                                <div><p className="font-bold">{ytdSummary.TotalWorkingDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
                             </div>
                         </div>
                         </div>
@@ -770,8 +766,17 @@ function StaffPageContent() {
 
             {isAdmin && paySummary && (
               <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Pay Summary (Month-to-Date)</CardTitle>
+                <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                  <CardTitle className="text-base">Pay Summary ({payPeriod === 'MonthToDate' ? 'Month-to-Date' : 'Year-to-Date'})</CardTitle>
+                  <Select value={payPeriod} onValueChange={(value: 'MonthToDate' | 'YearToDate') => setPayPeriod(value)}>
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MonthToDate">Month-To-Date</SelectItem>
+                      <SelectItem value="YearToDate">Year-To-Date</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-2">
@@ -1196,3 +1201,4 @@ export default function StaffPage() {
     </React.Suspense>
   );
 }
+
