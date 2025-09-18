@@ -75,7 +75,7 @@ export default function DashboardPage() {
 
   // Filter employees whose attendance is tracked (TSE and Logistics)
   const attendanceTrackedEmployees = useMemo(() => {
-    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics'));
+    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS'));
   }, [employees]);
 
   useEffect(() => {

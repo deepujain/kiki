@@ -75,7 +75,7 @@ export default function AttendancePage() {
   const [isSaving, setIsSaving] = useState(false); // New state for saving status
 
   const activeEmployees = useMemo(() => {
-    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics'));
+    return employees.filter(e => e.employed && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS'));
   }, [employees]);
 
   const handleStatusChange = (employeeId: string, isAbsent: boolean) => {
