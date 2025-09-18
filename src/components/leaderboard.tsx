@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Crown } from "lucide-react";
 import { useData } from "@/hooks/use-database";
 import { Loader2 } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 type LeaderboardPeriod = "MonthToDate" | "QuarterToDate" | "YearToDate";
 
@@ -34,6 +35,7 @@ interface LeaderboardEntry {
 export function Leaderboard() {
   const [period, setPeriod] = useState<LeaderboardPeriod>("MonthToDate");
   const { employees, attendanceRecords, isLoading } = useData();
+  const router = useRouter();
 
   const leaderboardData = useMemo(() => {
     if (isLoading) return [];
@@ -86,6 +88,10 @@ export function Leaderboard() {
 
   }, [period, employees, attendanceRecords, isLoading]);
 
+  const handleEmployeeClick = (employeeId: string) => {
+    router.push(`/dashboard/staff?employeeId=${employeeId}`);
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -112,7 +118,7 @@ export function Leaderboard() {
           <div className="flex justify-around items-end gap-4">
              {/* Second Place */}
             {leaderboardData.length > 1 && leaderboardData[1].score > 0 && (
-              <div className="text-center flex flex-col items-center gap-2 p-4 rounded-lg w-1/3">
+              <div className="text-center flex flex-col items-center gap-2 p-4 rounded-lg w-1/3 cursor-pointer hover:bg-muted/50" onClick={() => handleEmployeeClick(leaderboardData[1].employeeId)}>
                 <Avatar className="w-20 h-20 border-4 border-gray-400">
                   <AvatarImage src={leaderboardData[1].avatarUrl} />
                   <AvatarFallback>{leaderboardData[1].name.charAt(0)}</AvatarFallback>
@@ -124,7 +130,7 @@ export function Leaderboard() {
             )}
              {/* First Place */}
             {leaderboardData[0].score > 0 && (
-              <div className="text-center flex flex-col items-center gap-2 p-4 rounded-lg w-1/3 relative">
+              <div className="text-center flex flex-col items-center gap-2 p-4 rounded-lg w-1/3 relative cursor-pointer hover:bg-muted/50" onClick={() => handleEmployeeClick(leaderboardData[0].employeeId)}>
                   <Crown className="absolute -top-2 text-yellow-500 w-8 h-8" />
                   <Avatar className="w-24 h-24 border-4 border-yellow-500">
                       <AvatarImage src={leaderboardData[0].avatarUrl} />
@@ -137,7 +143,7 @@ export function Leaderboard() {
             )}
              {/* Third Place */}
             {leaderboardData.length > 2 && leaderboardData[2].score > 0 && (
-              <div className="text-center flex flex-col items-center gap-2 p-4 rounded-lg w-1/3">
+              <div className="text-center flex flex-col items-center gap-2 p-4 rounded-lg w-1/3 cursor-pointer hover:bg-muted/50" onClick={() => handleEmployeeClick(leaderboardData[2].employeeId)}>
                 <Avatar className="w-20 h-20 border-4 border-yellow-700">
                   <AvatarImage src={leaderboardData[2].avatarUrl} />
                   <AvatarFallback>{leaderboardData[2].name.charAt(0)}</AvatarFallback>
