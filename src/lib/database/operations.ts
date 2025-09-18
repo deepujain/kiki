@@ -3,7 +3,7 @@ import { join } from 'path';
 import type { Employee, AttendanceRecord } from '@/lib/types';
 
 // Initialize database connection
-const db = new Database(join(process.cwd(), 'attendance.db'));
+export const db = new Database(join(process.cwd(), 'attendance.db'));
 db.pragma('foreign_keys = ON');
 
 // Employee Operations
@@ -20,8 +20,8 @@ export const EmployeeOperations = {
         const stmt = db.prepare(`
             INSERT INTO employees (
                 id, name, role, phone, gender, experience,
-                avatarUrl, birthday, employed, hourlyPayRate, trackAttendance
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                avatarUrl, birthday, employed, hourlyPayRate, trackAttendance, ptoDays
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         return stmt.run(
@@ -35,7 +35,8 @@ export const EmployeeOperations = {
             employee.birthday,
             employee.employed ? 1 : 0,
             employee.hourlyPayRate || null,
-            employee.trackAttendance ? 1 : 0
+            employee.trackAttendance ? 1 : 0,
+            employee.ptoDays ?? 0
         );
     },
 
@@ -51,7 +52,8 @@ export const EmployeeOperations = {
                 birthday = ?,
                 employed = ?,
                 hourlyPayRate = ?,
-                trackAttendance = ?
+                trackAttendance = ?,
+                ptoDays = ?
             WHERE id = ?
         `);
 
@@ -66,6 +68,7 @@ export const EmployeeOperations = {
             employee.employed ? 1 : 0,
             employee.hourlyPayRate || null,
             employee.trackAttendance ? 1 : 0,
+            employee.ptoDays ?? 0,
             employee.id
         );
     },
@@ -74,6 +77,26 @@ export const EmployeeOperations = {
         return db.prepare('DELETE FROM employees WHERE id = ?').run(id);
     }
 };
+
+// Helper function to calculate hours worked and apply an 8-hour cap
+function calculateCappedHours(checkInTime: string, checkOutTime?: string): number | undefined {
+    if (!checkInTime || !checkOutTime) {
+        return undefined;
+    }
+
+    try {
+        const checkIn = new Date(`2000-01-01T${checkInTime}:00`);
+        const checkOut = new Date(`2000-01-01T${checkOutTime}:00`);
+        
+        let hours = (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60);
+
+        // Cap hours at 8
+        return Math.min(hours, 8);
+    } catch (error) {
+        console.error("Error calculating hours worked:", error);
+        return undefined;
+    }
+}
 
 // Attendance Operations
 export const AttendanceOperations = {
@@ -94,11 +117,12 @@ export const AttendanceOperations = {
     },
 
     create: (record: AttendanceRecord) => {
+        const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
         const stmt = db.prepare(`
             INSERT INTO attendance_records (
                 id, employeeId, employeeName, date,
-                status, checkInTime, checkOutTime
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                status, checkInTime, checkOutTime, hoursWorked
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         return stmt.run(
@@ -108,17 +132,20 @@ export const AttendanceOperations = {
             record.date,
             record.status,
             record.checkInTime,
-            record.checkOutTime
+            record.checkOutTime,
+            hoursWorked
         );
     },
 
     update: (record: AttendanceRecord) => {
+        const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
         // First try to update existing record
         const updateStmt = db.prepare(`
             UPDATE attendance_records SET
                 status = ?,
                 checkInTime = ?,
-                checkOutTime = ?
+                checkOutTime = ?,
+                hoursWorked = ?
             WHERE employeeId = ? AND date = ?
         `);
 
@@ -126,6 +153,7 @@ export const AttendanceOperations = {
             record.status,
             record.checkInTime,
             record.checkOutTime,
+            hoursWorked,
             record.employeeId,
             record.date
         );
@@ -134,8 +162,8 @@ export const AttendanceOperations = {
         if (updateResult.changes === 0) {
             const insertStmt = db.prepare(`
                 INSERT INTO attendance_records 
-                (id, employeeId, employeeName, date, status, checkInTime, checkOutTime)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (id, employeeId, employeeName, date, status, checkInTime, checkOutTime, hoursWorked)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `);
             
             return insertStmt.run(
@@ -145,7 +173,8 @@ export const AttendanceOperations = {
                 record.date,
                 record.status,
                 record.checkInTime,
-                record.checkOutTime
+                record.checkOutTime,
+                hoursWorked
             );
         }
 
@@ -157,12 +186,13 @@ export const AttendanceOperations = {
         const insert = db.prepare(`
             INSERT INTO attendance_records (
                 id, employeeId, employeeName, date,
-                status, checkInTime, checkOutTime
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                status, checkInTime, checkOutTime, hoursWorked
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         const insertMany = db.transaction((records: AttendanceRecord[]) => {
             for (const record of records) {
+                const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
                 insert.run(
                     `${record.employeeId}-${record.date}`,
                     record.employeeId,
@@ -170,7 +200,8 @@ export const AttendanceOperations = {
                     record.date,
                     record.status,
                     record.checkInTime,
-                    record.checkOutTime
+                    record.checkOutTime,
+                    hoursWorked
                 );
             }
         });
@@ -187,7 +218,8 @@ export const AttendanceOperations = {
                 COUNT(*) as totalDays,
                 SUM(CASE WHEN status = 'Present' THEN 1 ELSE 0 END) as presentDays,
                 SUM(CASE WHEN status = 'Late' THEN 1 ELSE 0 END) as lateDays,
-                SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) as absentDays
+                SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) as absentDays,
+                SUM(hoursWorked) as totalHoursWorked
             FROM attendance_records
             WHERE date BETWEEN ? AND ?
             GROUP BY employeeId, employeeName
@@ -213,3 +245,4 @@ export const HolidayOperations = {
         return db.prepare('DELETE FROM holidays WHERE date = ?').run(date);
     }
 };
+

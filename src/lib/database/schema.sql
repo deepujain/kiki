@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS employees (
     birthday TEXT NOT NULL,
     employed BOOLEAN NOT NULL DEFAULT true,
     hourlyPayRate REAL,
-    trackAttendance BOOLEAN NOT NULL DEFAULT true
+    trackAttendance BOOLEAN NOT NULL DEFAULT true,
+    ptoDays INTEGER NOT NULL DEFAULT 0
 );
 
 -- Holidays table
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS attendance_records (
     status TEXT NOT NULL CHECK(status IN ('Present', 'Late', 'Absent', 'Not Marked')),
     checkInTime TEXT,
     checkOutTime TEXT,
+    hoursWorked REAL,
     FOREIGN KEY (employeeId) REFERENCES employees(id),
     UNIQUE(employeeId, date)
 );

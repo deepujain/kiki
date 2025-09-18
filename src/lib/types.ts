@@ -13,6 +13,7 @@ export interface Employee {
   employed: boolean;
   hourlyPayRate?: number;
   trackAttendance: boolean; // New field to control attendance tracking
+  ptoDays: number; // New field for Paid Time Off days remaining
 }
 
 export interface AttendanceRecord {
@@ -23,6 +24,7 @@ export interface AttendanceRecord {
   status: AttendanceStatus;
   checkInTime: string; // HH:mm
   checkOutTime?: string; // HH:mm
+  hoursWorked?: number; // Calculated and capped hours for the workday
 }
 
 export const AllStatuses: AttendanceStatus[] = ["Present", "Late", "Absent", "Not Marked"];

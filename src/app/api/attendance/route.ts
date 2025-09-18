@@ -39,7 +39,17 @@ export async function POST(request: Request) {
             );
         }
 
-        const result = AttendanceOperations.create(record);
+        const existingRecord = AttendanceOperations.getByEmployeeId(record.employeeId).find(r => r.date === record.date);
+        let result;
+
+        if (existingRecord) {
+            // Update existing record
+            result = AttendanceOperations.update(record);
+        } else {
+            // Create new record
+            result = AttendanceOperations.create(record);
+        }
+        
         return NextResponse.json(result);
     } catch (error) {
         console.error('Failed to create attendance record:', error);

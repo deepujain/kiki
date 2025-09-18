@@ -58,9 +58,10 @@ const calculateHours = (checkIn: string, checkOut: string): string => {
   }
   
   const diffMins = differenceInMinutes(checkOutDate, checkInDate);
-  if (diffMins > 8 * 60 + 30) return '9';
-  
-  return Math.round(diffMins/60).toString();
+  let hours = diffMins / 60;
+
+  // Cap hours at 8 and round to the nearest whole number
+  return Math.min(Math.round(hours), 8).toString();
 };
 
 export default function AttendancePage() {

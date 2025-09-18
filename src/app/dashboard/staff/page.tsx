@@ -77,6 +77,9 @@ interface AttendanceSummary {
   Present: number;
   Late: number;
   Absent: number;
+  InitialPtoDays: number; // New field for employee's initial PTO days
+  PtoDaysLeft: number; // New field for PTO days remaining after covering absences
+  PtoUsedDays: number; // New field for PTO days used to cover absences
   TotalWorkingDays: number;
   DaysToPay: number;
   LateStreak: number;
@@ -84,9 +87,9 @@ interface AttendanceSummary {
 
 interface PaySummary {
   totalPresentDays: number;
-  totalLateHours: number;
-  deductedLateDays: number;
   totalAbsentDays: number;
+  ptoDaysLeft: number; // New field for PTO days remaining
+  ptoUsedDays: number; // New field for PTO days used
   netPayableDays: number;
   grossPay: number;
 }
@@ -100,9 +103,10 @@ const calculateHours = (checkIn: string, checkOut: string): string => {
   }
   
   const diffMins = differenceInMinutes(checkOutDate, checkInDate);
-  if (diffMins > 8 * 60 + 30) return '9';
-  
-  return Math.round(diffMins/60).toString();
+  let hours = diffMins / 60;
+
+  // Cap hours at 8 and round to the nearest whole number
+  return Math.min(Math.round(hours), 8).toString();
 };
 
 function StaffPageContent() {
@@ -150,7 +154,7 @@ function StaffPageContent() {
       const freshEmployeeData = employees.find(e => e.id === selectedEmployee.id);
       if(freshEmployeeData) {
         setSelectedEmployee(freshEmployeeData);
-        fetchAttendanceSummary(selectedEmployee.id, attendancePeriod);
+        fetchAttendanceSummary(selectedEmployee, attendancePeriod);
       } else {
         setSelectedEmployee(null);
         setEditableEmployee(null);
@@ -177,9 +181,9 @@ function StaffPageContent() {
       }).length;
   }
 
-  const fetchAttendanceSummary = (employeeId: string, period: 'MonthToDate' | 'YearToDate') => {
+  const fetchAttendanceSummary = (employee: Employee, period: 'MonthToDate' | 'YearToDate') => {
     const now = today;
-    const allRecords = attendanceRecords.get(employeeId) || [];
+    const allRecords = attendanceRecords.get(employee.id) || [];
 
     let startDate: Date;
     let endDate: Date = now;
@@ -216,9 +220,9 @@ function StaffPageContent() {
       }
     }
 
-    const summary: AttendanceSummary = { Present: 0, Late: 0, Absent: 0, TotalWorkingDays: getWorkingDays(startDate, endDate), DaysToPay: totalHours / 8, LateStreak: lateStreak };
+    const summary: AttendanceSummary = { Present: 0, Late: 0, Absent: 0, InitialPtoDays: employee.ptoDays || 0, PtoDaysLeft: 0, PtoUsedDays: 0, TotalWorkingDays: getWorkingDays(startDate, endDate), DaysToPay: totalHours / 8, LateStreak: lateStreak };
     filteredRecords.forEach(r => {
-      if (r.status === 'Present' || r.status === 'Late') {
+      if (r.status === 'Present') {
         summary.Present++;
       }
       if (r.status === 'Late') {
@@ -233,33 +237,49 @@ function StaffPageContent() {
         return hDate >= startDate && hDate <= endDate;
     }).length;
 
+    // PTO Calculations
+    let currentPtoDaysLeft = summary.InitialPtoDays;
+    let ptoUsedForAbsence = 0;
+
+    if (summary.Absent > currentPtoDaysLeft) {
+      ptoUsedForAbsence = currentPtoDaysLeft;
+      currentPtoDaysLeft = 0;
+    } else {
+      ptoUsedForAbsence = summary.Absent;
+      currentPtoDaysLeft -= summary.Absent;
+    }
+
+    summary.PtoDaysLeft = currentPtoDaysLeft;
+    summary.PtoUsedDays = ptoUsedForAbsence;
+
     setMtdSummary(summary);
     setYtdSummary(summary); // For now, setting both to the same summary based on `period`
 
     // Calculate Pay Summary
-    if (editableEmployee?.hourlyPayRate && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS')) {
-      let totalLateMinutes = 0;
-      filteredRecords.forEach(rec => {
-        if (rec.status === 'Late' && rec.checkInTime && rec.checkInTime !== '--:--') {
-          const checkInDate = parse(rec.checkInTime, 'HH:mm', new Date(rec.date));
-          const elevenAm = parse('11:00', 'HH:mm', new Date(rec.date));
-          if (checkInDate > elevenAm) {
-            totalLateMinutes += differenceInMinutes(checkInDate, elevenAm);
-          }
-        }
-      });
+    if (employee?.hourlyPayRate && (employee.role === 'TSE' || employee.role === 'Logistics' || employee.role === 'MIS')) {
+      let ptoDaysLeft = employee.ptoDays;
+      let ptoUsedDays = 0;
+      let absentDaysAfterPTO = 0;
 
-      const lateHours = totalLateMinutes / 60;
-      const deductedDays = Math.floor(lateHours / 8);
-      const netPresentDays = summary.Present - deductedDays;
-      const grossPay = netPresentDays * 8 * editableEmployee.hourlyPayRate;
+      if (summary.Absent > ptoDaysLeft) {
+        ptoUsedDays = ptoDaysLeft;
+        absentDaysAfterPTO = summary.Absent - ptoDaysLeft;
+        ptoDaysLeft = 0;
+      } else {
+        ptoUsedDays = summary.Absent;
+        ptoDaysLeft -= summary.Absent;
+        absentDaysAfterPTO = 0;
+      }
+
+      const netPayableDays = summary.Present + ptoUsedDays;
+      const grossPay = (netPayableDays * 8 * employee.hourlyPayRate) - (absentDaysAfterPTO * 8 * employee.hourlyPayRate);
 
       setPaySummary({
         totalPresentDays: summary.Present,
-        totalLateHours: lateHours,
-        deductedLateDays: deductedDays,
         totalAbsentDays: summary.Absent,
-        netPayableDays: netPresentDays,
+        ptoDaysLeft: ptoDaysLeft,
+        ptoUsedDays: ptoUsedDays,
+        netPayableDays: netPayableDays,
         grossPay: grossPay,
       });
     } else {
@@ -275,19 +295,19 @@ function StaffPageContent() {
     setYtdSummary(null);
     setPaySummary(null); // Clear pay summary when going back to list
     if(employee.role !== 'Owner') {
-      fetchAttendanceSummary(employee.id, attendancePeriod);
+      fetchAttendanceSummary(employee, attendancePeriod);
     }
   }
   
   useEffect(() => {
     if (selectedEmployee) {
-      fetchAttendanceSummary(selectedEmployee.id, attendancePeriod);
+      fetchAttendanceSummary(selectedEmployee, attendancePeriod);
     }
   }, [attendancePeriod, selectedEmployee]);
 
   useEffect(() => {
     if (selectedEmployee && isAdmin) {
-      fetchAttendanceSummary(selectedEmployee.id, payPeriod);
+      fetchAttendanceSummary(selectedEmployee, payPeriod);
     }
   }, [payPeriod, selectedEmployee, isAdmin]);
 
@@ -709,6 +729,17 @@ function StaffPageContent() {
                   className="col-span-2"
                 />
                </div>
+               {isAdmin && (
+                 <div className="grid grid-cols-3 items-center gap-4">
+                    <Label className="text-right">PTO Days</Label>
+                     <Input 
+                      type="number"
+                      value={editableEmployee.ptoDays} 
+                      onChange={(e) => setEditableEmployee({...editableEmployee, ptoDays: parseInt(e.target.value) || 0})}
+                      className="col-span-2"
+                    />
+                 </div>
+               )}
                <div className="grid grid-cols-3 items-center gap-4">
                 <Label className="text-right">Today's Status</Label>
                 <div className="col-span-2">
@@ -760,14 +791,20 @@ function StaffPageContent() {
                     {!mtdSummary || !ytdSummary ? <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : (
                         <div className="space-y-4">
                         <div>
-                            <h4 className="font-semibold mb-2">{attendancePeriod === 'MonthToDate' ? 'Month-to-Date' : 'Year-to-Date'}</h4>
-                            <div className="grid grid-cols-4 gap-2 text-center">
-                                <div><p className="font-bold">{mtdSummary.Present}</p><p className="text-xs text-muted-foreground">Present</p></div>
-                                <div><p className="font-bold">{mtdSummary.Late}</p><p className="text-xs text-muted-foreground">Late</p></div>
-                                <div><p className="font-bold">{mtdSummary.Absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
+                            <div className="grid grid-cols-6 gap-2 text-center">
                                 <div><p className="font-bold">{mtdSummary.TotalWorkingDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
+                                <div><p className="font-bold">{mtdSummary.Present}</p><p className="text-xs text-muted-foreground">Present</p></div>
+                                <div><p className="font-bold">{mtdSummary.Absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
+                                <div><p className="font-bold">{mtdSummary.InitialPtoDays}</p><p className="text-xs text-muted-foreground">Initial PTO Days</p></div>
+                                <div><p className="font-bold">{mtdSummary.PtoDaysLeft}</p><p className="text-xs text-muted-foreground">PTO Left</p></div>
+                                <div><p className="font-bold">{mtdSummary.Late}</p><p className="text-xs text-muted-foreground">Late Days</p></div>
                             </div>
                         </div>
+                        {mtdSummary.PtoDaysLeft === 0 && mtdSummary.Absent > 0 && (
+                          <p className="text-sm text-orange-500 font-semibold mt-2">
+                            Additional days of absence will result in a deduction from pay.
+                          </p>
+                        )}
                         </div>
                     )}
                 </CardContent>
@@ -776,7 +813,7 @@ function StaffPageContent() {
             {isAdmin && paySummary && (
               <Card>
                 <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                  <CardTitle className="text-base">Pay Summary ({payPeriod === 'MonthToDate' ? 'Month-to-Date' : 'Year-to-Date'})</CardTitle>
+                  <CardTitle className="text-base">Pay Summary </CardTitle>
                   <Select value={payPeriod} onValueChange={(value: 'MonthToDate' | 'YearToDate') => setPayPeriod(value)}>
                     <SelectTrigger className="w-[150px]">
                       <SelectValue />
@@ -794,16 +831,12 @@ function StaffPageContent() {
                       <span className="font-bold">{paySummary.totalPresentDays.toFixed(1)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Total Late Hours:</span>
-                      <span className="font-bold">{paySummary.totalLateHours.toFixed(1)} hrs</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Deducted Late Days:</span>
-                      <span className="font-bold text-red-500">{paySummary.deductedLateDays.toFixed(1)} days</span>
-                    </div>
-                    <div className="flex justify-between">
                       <span className="text-muted-foreground">Total Absent Days:</span>
                       <span className="font-bold text-red-500">{paySummary.totalAbsentDays.toFixed(1)} days</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">PTO Days Left:</span>
+                      <span className="font-bold">{paySummary.ptoDaysLeft.toFixed(1)} days</span>
                     </div>
                     <div className="flex justify-between border-t pt-2 mt-2">
                       <span className="font-semibold">Net Payable Days:</span>
