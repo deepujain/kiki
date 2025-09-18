@@ -14,11 +14,12 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Session state preserved across browser reloads/refreshes
 - Protected routes with automatic redirection
 - Delightful login celebration animation
+- **Role-based access control** for Admin and Regular users
 
 ### 📊 **Real-Time Dashboard**
-- Live attendance metrics: total employees, present count, late arrivals, and absences
-- Interactive leaderboard showcasing employee performance
-- Today's attendance status with real-time updates
+- Live attendance metrics: total employees (all staff), present count, late arrivals, and absences
+- Interactive leaderboard showcasing employee performance, with clickable late comers to their detail pages
+- Today's attendance status with real-time updates and sortable columns by default Status
 - Quick access to all major functions
 
 ### ⏰ **Smart Attendance Management**
@@ -27,17 +28,22 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Bulk attendance marking with status management
 - Holiday management with automatic attendance adjustment
 - Current date handling (no more hardcoded dates!)
+- **Role-based attendance tracking** for TSE, Logistics, and MIS staff
 
 ### 👥 **Complete Staff Management**
-- Full employee lifecycle management (add, edit, view, deactivate)
+- Full employee lifecycle management (add, edit, view, deactivate, delete)
 - Personal details with birthday tracking and celebrations
 - Experience and role management
-- Filterable staff directory (current, former, all employees)
+- Filterable staff directory (current, former, all employees) with sortable columns by default Today's Status
 - Individual attendance history with calendar view
 - CSV export functionality for attendance records
+- **Hourly Pay Rate management** for eligible roles (TSE, Logistics, MIS)
+- **Detailed Pay Summary (Month-To-Date / Year-To-Date)** including total present, late, absent days, net payable days, and gross pay
+- **Role-based visibility** of hourly pay rate and pay summary (Admin only)
 
 ### 📈 **Analytics & Reporting**
 - Month-to-Date (MTD) and Year-to-Date (YTD) analytics
+- **Period selection (Month-To-Date / Year-To-Date)** for both Attendance and Pay Summaries
 - Attendance patterns and working days calculations
 - Late streak tracking and performance metrics
 - Export functionality for multiple time ranges
@@ -170,8 +176,14 @@ This creates:
 **Note**: Database files (`*.db`) are excluded from git for security and size reasons.
 
 ### 🔑 Default Login Credentials
-- **Username**: `admin`
-- **Password**: `rockstar`
+- **Admin User**:
+  - Username: `admin`
+  - Password: `rockstar`
+  - Role: `Admin`
+- **Regular User**:
+  - Username: `kiki`
+  - Password: `3107`
+  - Role: `Regular`
 
 ### 📋 Available Scripts
 
@@ -249,6 +261,18 @@ Clear browser localStorage and login again.
 - ✅ Enhanced staff management with employee removal
 - ✅ Added comprehensive data validation
 - ✅ Implemented proper .gitignore for database files
+- ✅ Redesigned About page for modern theme and layout
+- ✅ Implemented role-based attendance filtering for TSE, Logistics, and MIS staff
+- ✅ Corrected Total Employees count on Dashboard to include all staff
+- ✅ Added sortable columns to "Today's Attendance" and "All Employees" tables
+- ✅ Configured default sorting for attendance and employee tables
+- ✅ Made "Top 3 Late Comers" clickable, linking to staff detail pages
+- ✅ Integrated Hourly Pay Rate for eligible staff members (Logistics, TSE, MIS)
+- ✅ Added a comprehensive Pay Summary section with late hour deductions
+- ✅ Implemented role-based visibility for Hourly Pay Rate and Pay Summary (Admin only)
+- ✅ Removed redundant "Payroll & Streaks" from Attendance Summary
+- ✅ Implemented period selection (Month-To-Date / Year-To-Date) for Attendance and Pay Summaries
+- ✅ Added Regular User login credentials
 
 ## 🤝 Contributing
 
