@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS employees (
     avatarUrl TEXT NOT NULL,
     birthday TEXT NOT NULL,
     employed BOOLEAN NOT NULL DEFAULT true,
-    hourlyPayRate REAL
+    hourlyPayRate REAL,
+    trackAttendance BOOLEAN NOT NULL DEFAULT true
 );
 
 -- Holidays table

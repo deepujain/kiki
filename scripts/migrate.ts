@@ -41,8 +41,8 @@ async function migrateDatabase() {
         const migration = db.transaction(() => {
             // Migrate employees
             const insertEmployee = db.prepare(`
-                INSERT INTO employees (id, name, role, phone, gender, experience, avatarUrl, birthday, employed, hourlyPayRate)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO employees (id, name, role, phone, gender, experience, avatarUrl, birthday, employed, hourlyPayRate, trackAttendance)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `);
             
             for (const employee of employees) {
@@ -56,7 +56,8 @@ async function migrateDatabase() {
                     employee.avatarUrl,
                     employee.birthday,
                     employee.employed ? 1 : 0,
-                    employee.hourlyPayRate || null
+                    employee.hourlyPayRate || null,
+                    employee.trackAttendance ? 1 : 0
                 );
             }
             

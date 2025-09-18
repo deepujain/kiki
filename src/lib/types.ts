@@ -12,6 +12,7 @@ export interface Employee {
   birthday: string; // YYYY-MM-DD
   employed: boolean;
   hourlyPayRate?: number;
+  trackAttendance: boolean; // New field to control attendance tracking
 }
 
 export interface AttendanceRecord {

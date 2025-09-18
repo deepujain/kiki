@@ -5,7 +5,7 @@
 
 Welcome to **Kiki** 🦀, a modern and intuitive attendance management system designed to streamline workforce operations. This application provides a comprehensive suite of tools for tracking employee attendance, managing staff records, monitoring performance metrics, and generating detailed analytics reports with features like automatic late detection and holiday management.
 
-**Kiki** offers a clean, responsive interface with real-time data synchronization and persistent storage, making it perfect for small to medium-sized organizations looking to digitize their attendance tracking processes.
+**Kiki** 🦀 offers a clean, responsive interface with real-time data synchronization and persistent storage, making it perfect for small to medium-sized organizations looking to digitize their attendance tracking processes.
 
 ## ✨ Key Features
 
@@ -14,7 +14,7 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Session state preserved across browser reloads/refreshes
 - Protected routes with automatic redirection
 - Delightful login celebration animation
-- **Role-based access control** for Admin and Regular users
+- Role-based access control for Admin and Regular users
 
 ### 📊 **Real-Time Dashboard**
 - Live attendance metrics: total employees (all staff), present count, late arrivals, and absences
@@ -28,7 +28,7 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Bulk attendance marking with status management
 - Holiday management with automatic attendance adjustment
 - Current date handling (no more hardcoded dates!)
-- **Flexible attendance tracking** for any staff member with "Track Attendance" enabled
+- Flexible attendance tracking for any staff member with "Track Attendance" enabled
 
 ### 👥 **Complete Staff Management**
 - Full employee lifecycle management (add, edit, view, deactivate, delete)
@@ -37,13 +37,13 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Filterable staff directory (current, former, all employees) with sortable columns by default Today's Status
 - Individual attendance history with calendar view
 - CSV export functionality for attendance records
-- **Hourly Pay Rate management** for eligible roles (TSE, Logistics, MIS)
-- **Detailed Pay Summary (Month-To-Date / Year-To-Date)** including total present, late, absent days, net payable days, and gross pay
-- **Role-based visibility** of hourly pay rate and pay summary (Admin only)
+- Hourly Pay Rate management for eligible roles (TSE, Logistics, MIS)
+- Detailed Pay Summary (Month-To-Date / Year-To-Date)** including total present, late, absent days, net payable days, and gross pay
+- Role-based visibility of hourly pay rate and pay summary (Admin only)
 
 ### 📈 **Analytics & Reporting**
 - Month-to-Date (MTD) and Year-to-Date (YTD) analytics
-- **Period selection (Month-To-Date / Year-To-Date)** for both Attendance and Pay Summaries
+- Period selection (Month-To-Date / Year-To-Date) for both Attendance and Pay Summaries
 - Attendance patterns and working days calculations
 - Late streak tracking and performance metrics
 - Export functionality for multiple time ranges

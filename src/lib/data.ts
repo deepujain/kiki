@@ -10,6 +10,7 @@ export interface Employee {
   birthday: string; // YYYY-MM-DD
   employed: boolean;
   hourlyPayRate?: number; // Added optional hourly pay rate
+  trackAttendance: boolean;
 }
 
 export const employees: Employee[] = [
@@ -24,6 +25,7 @@ export const employees: Employee[] = [
     birthday: "1988-05-15",
     employed: true,
     hourlyPayRate: 250, // Sample rate
+    trackAttendance: true,
   },
   {
     id: "2",
@@ -36,6 +38,7 @@ export const employees: Employee[] = [
     birthday: "1992-11-22",
     employed: true,
     hourlyPayRate: 200, // Sample rate
+    trackAttendance: true,
   },
   {
     id: "3",
@@ -48,6 +51,7 @@ export const employees: Employee[] = [
     birthday: "1990-03-10",
     employed: true,
     hourlyPayRate: 220, // Sample rate
+    trackAttendance: true,
   },
   {
     id: "4",
@@ -60,6 +64,7 @@ export const employees: Employee[] = [
     birthday: "1985-08-01",
     employed: true,
     hourlyPayRate: 280, // Sample rate
+    trackAttendance: true,
   },
   {
     id: "5",
@@ -72,6 +77,7 @@ export const employees: Employee[] = [
     birthday: "1991-09-05",
     employed: true,
     hourlyPayRate: 230, // Sample rate
+    trackAttendance: true,
   },
   {
     id: "6",
@@ -84,17 +90,19 @@ export const employees: Employee[] = [
     birthday: "1987-01-20",
     employed: true,
     hourlyPayRate: 260, // Sample rate
+    trackAttendance: true,
   },
   {
     id: "8",
     name: "Neetha Jain",
     role: "Founder & CEO",
     phone: "+91 99999 99999",
-    gender: "Male",
+    gender: "Female",
     experience: 15,
     avatarUrl: "/avatars/1xai.png",
-    birthday: "1980-04-12",
+    birthday: "2000-07-31",
     employed: true,
+    trackAttendance: false, // Founder & CEO does not track attendance
     // No hourlyPayRate for Founder & CEO
   },
 ];

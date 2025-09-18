@@ -20,8 +20,8 @@ export const EmployeeOperations = {
         const stmt = db.prepare(`
             INSERT INTO employees (
                 id, name, role, phone, gender, experience,
-                avatarUrl, birthday, employed, hourlyPayRate
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                avatarUrl, birthday, employed, hourlyPayRate, trackAttendance
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         return stmt.run(
@@ -34,7 +34,8 @@ export const EmployeeOperations = {
             employee.avatarUrl,
             employee.birthday,
             employee.employed ? 1 : 0,
-            employee.hourlyPayRate || null
+            employee.hourlyPayRate || null,
+            employee.trackAttendance ? 1 : 0
         );
     },
 
@@ -49,7 +50,8 @@ export const EmployeeOperations = {
                 avatarUrl = ?,
                 birthday = ?,
                 employed = ?,
-                hourlyPayRate = ?
+                hourlyPayRate = ?,
+                trackAttendance = ?
             WHERE id = ?
         `);
 
@@ -63,6 +65,7 @@ export const EmployeeOperations = {
             employee.birthday,
             employee.employed ? 1 : 0,
             employee.hourlyPayRate || null,
+            employee.trackAttendance ? 1 : 0,
             employee.id
         );
     },

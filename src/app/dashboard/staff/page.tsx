@@ -409,6 +409,7 @@ function StaffPageContent() {
       employed: newStaff.employed || true,
       avatarUrl: `https://picsum.photos/seed/${newStaff.name.toLowerCase().replace(/\s+/g, '')}/100/100`,
       hourlyPayRate: newStaff.hourlyPayRate || undefined,
+      trackAttendance: newStaff.trackAttendance ?? true,
     };
 
     try {
@@ -699,6 +700,14 @@ function StaffPageContent() {
                     onCheckedChange={(checked) => setEditableEmployee({...editableEmployee, employed: checked})}
                     className="col-span-2"
                   />
+               </div>
+               <div className="grid grid-cols-3 items-center gap-4">
+                <Label className="text-right">Track Attendance</Label>
+                <Switch
+                  checked={editableEmployee.trackAttendance}
+                  onCheckedChange={(checked) => setEditableEmployee({...editableEmployee, trackAttendance: checked})}
+                  className="col-span-2"
+                />
                </div>
                <div className="grid grid-cols-3 items-center gap-4">
                 <Label className="text-right">Today's Status</Label>
@@ -1163,6 +1172,16 @@ function StaffPageContent() {
                   id="employed"
                   checked={newStaff.employed}
                   onCheckedChange={(checked) => setNewStaff({...newStaff, employed: checked})}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="trackAttendance" className="text-right">Track Attendance</Label>
+              <div className="col-span-3">
+                <Switch
+                  id="trackAttendance"
+                  checked={newStaff.trackAttendance ?? true}
+                  onCheckedChange={(checked) => setNewStaff({...newStaff, trackAttendance: checked})}
                 />
               </div>
             </div>
