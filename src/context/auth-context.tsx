@@ -26,12 +26,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // In-memory user store
 const DEMO_USER_USERNAME = "admin";
 const DEMO_USER_PASS = "rockstar";
+
+const REGULAR_USER_USERNAME = "kiki";
+const REGULAR_USER_PASS = "3107";
+
 const MOCK_USER: MockUser = {
     uid: "mock-user-123",
     email: "admin@example.com",
-    displayName: "Admin User",
+    displayName: "Neetha Jain",
     photoURL: "https://picsum.photos/seed/admin/100/100",
     role: "Admin",
+}
+
+const MOCK_REGULAR_USER: MockUser = {
+    uid: "mock-user-regular",
+    email: "kiki@kiki.com",
+    displayName: "Regular User",
+    photoURL: "https://picsum.photos/seed/user/100/100",
+    role: "Regular",
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -63,6 +75,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('kiki-auth-user', JSON.stringify(MOCK_USER));
       setLoading(false);
       return true;
+    } else if (username === REGULAR_USER_USERNAME && password === REGULAR_USER_PASS) {
+        setUser(MOCK_REGULAR_USER);
+        localStorage.setItem('kiki-auth-user', JSON.stringify(MOCK_REGULAR_USER));
+        setLoading(false);
+        return true;
     }
     
     setLoading(false);
