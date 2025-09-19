@@ -4,22 +4,24 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "..",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
+    "baseUrl": "..",
     "paths": {
-      "@/*": ["../src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": [
-    "./*.ts"
+    "./*.ts",
+    "../src/lib/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "../node_modules"
   ]
 }

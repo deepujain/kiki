@@ -2,7 +2,7 @@
   "name": "kiki",
   "version": "0.1.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack -p 9002",
     "build": "next build",
@@ -10,9 +10,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "build:migrate": "tsc --project scripts/tsconfig.build.json",
-    "migrate:schema": "cross-env NODE_NO_WARNINGS=1 ts-node scripts/migrate-schema.ts",
-    "migrate:employees": "cross-env NODE_NO_WARNINGS=1 ts-node scripts/migrate-employees.ts",
-    "migrate:attendance": "cross-env NODE_NO_WARNINGS=1 ts-node scripts/migrate-attendance.ts",
+    "migrate:schema": "cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" ts-node scripts/migrate-schema.ts",
+    "migrate:employees": "cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" ts-node scripts/migrate-employees.ts",
+    "migrate:attendance": "cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" ts-node scripts/migrate-attendance.ts",
     "migrate:schema:win": "npm run build:migrate && cross-env NODE_NO_WARNINGS=1 node scripts/dist/migrate-schema.js",
     "migrate:employees:win": "npm run build:migrate && cross-env NODE_NO_WARNINGS=1 node scripts/dist/migrate-employees.js",
     "migrate:attendance:win": "npm run build:migrate && cross-env NODE_NO_WARNINGS=1 node scripts/dist/migrate-attendance.js"
