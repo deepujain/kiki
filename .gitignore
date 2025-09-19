@@ -28,3 +28,5 @@ dist/
 src/lib/database/database.js
 src/lib/database/operations.js
 temp_attendance_test.js
+*.db
+next-env.d.ts
