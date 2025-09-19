@@ -10,9 +10,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "migrate": "NODE_OPTIONS='--loader ts-node/esm' ts-node --project tsconfig.json scripts/migrate.ts",
-    "premigrate-win": "tsc -p scripts/tsconfig.migrate.json",
-    "migrate-win": "node scripts/dist/migrate.js",
-    "postmigrate-win": "rm -rf scripts/dist"
+    "premigrate-win": "tsc -p scripts/tsconfig.migrate.json && mv scripts/dist/migrate.js scripts/dist/migrate.cjs",
+    "migrate-win": "node scripts/dist/migrate.cjs",
+    "postmigrate-win": "rm -rf scripts/dist/migrate.cjs && rm -rf scripts/dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
