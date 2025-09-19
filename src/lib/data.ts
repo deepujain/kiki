@@ -24,7 +24,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/01.png",
     birthday: "1988-05-15",
     employed: true,
-    hourlyPayRate: 250, // Sample rate
+    hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
   },
   {
@@ -37,7 +37,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/02.png",
     birthday: "1992-11-22",
     employed: true,
-    hourlyPayRate: 200, // Sample rate
+    hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
   },
   {
@@ -49,8 +49,8 @@ export const employees: Employee[] = [
     experience: 5,
     avatarUrl: "/avatars/03.png",
     birthday: "1990-03-10",
-    employed: true,
-    hourlyPayRate: 220, // Sample rate
+    employed: false,
+    hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
   },
   {
@@ -63,7 +63,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/04.png",
     birthday: "1985-08-01",
     employed: true,
-    hourlyPayRate: 280, // Sample rate
+    hourlyPayRate: 73, // Sample rate
     trackAttendance: true,
   },
   {
@@ -76,7 +76,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/05.png",
     birthday: "1991-09-05",
     employed: true,
-    hourlyPayRate: 230, // Sample rate
+    hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
   },
   {
@@ -88,8 +88,8 @@ export const employees: Employee[] = [
     experience: 6,
     avatarUrl: "/avatars/06.png",
     birthday: "1987-01-20",
-    employed: true,
-    hourlyPayRate: 260, // Sample rate
+    employed: false,
+    hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
   },
   {
@@ -98,6 +98,20 @@ export const employees: Employee[] = [
     role: "Founder & CEO",
     phone: "+91 99999 99999",
     gender: "Female",
+    experience: 15,
+    avatarUrl: "/avatars/1xai.png",
+    birthday: "2000-07-31",
+    employed: true,
+    trackAttendance: false, // Founder & CEO does not track attendance
+    // No hourlyPayRate for Founder & CEO
+  },
+  ,
+  {
+    id: "9",
+    name: "Vijay Jain",
+    role: "GM",
+    phone: "+91 99999 99999",
+    gender: "Male",
     experience: 15,
     avatarUrl: "/avatars/1xai.png",
     birthday: "2000-07-31",
