@@ -1,9 +1,9 @@
-import { dirname, join } from 'path';
-import { promises as fs } from 'fs';
-import Database from 'better-sqlite3';
+const path = require('path');
+const fs = require('fs').promises;
+const Database = require('better-sqlite3');
 
 async function migrateDatabase() {
-    const dbPath = join(process.cwd(), 'attendance.db');
+    const dbPath = path.join(process.cwd(), 'attendance.db');
     
     // Remove existing database file if it exists
     try {
@@ -22,7 +22,7 @@ async function migrateDatabase() {
     try {
         // Read and execute schema
         const schema = await fs.readFile(
-            join(process.cwd(), 'src', 'lib', 'database', 'schema.sql'),
+            path.join(process.cwd(), 'src', 'lib', 'database', 'schema.sql'),
             'utf8'
         );
         

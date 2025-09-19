@@ -1,5 +1,4 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "target": "es2021",
     "module": "commonjs",
@@ -14,13 +13,6 @@
     "baseUrl": "..",
     "paths": {
       "@/*": ["src/*"]
-    },
-    "allowJs": true,
-    "declaration": false
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
     }
   },
   "include": [
@@ -29,7 +21,6 @@
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "../node_modules"
+    "dist"
   ]
 }
