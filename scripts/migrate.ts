@@ -2,9 +2,9 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
 import Database from 'better-sqlite3';
-import { employees } from '../src/lib/data.js';
-import { holidays } from '../src/lib/holidays.js';
-import { allTimeAttendanceStore } from '../src/lib/store.js';
+import { employees } from '../src/lib/data';
+import { holidays } from '../src/lib/holidays';
+import { allTimeAttendanceStore } from '../src/lib/store';
 import type { AttendanceRecord } from '../src/lib/types';
 
 async function migrateDatabase() {
