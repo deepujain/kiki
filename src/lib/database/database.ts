@@ -11,11 +11,11 @@ db.pragma('foreign_keys = ON');
 export class DatabaseService {
     // Employee operations
     static getEmployees(): Employee[] {
-        return db.prepare('SELECT * FROM employees').all();
+        return db.prepare('SELECT * FROM employees').all() as Employee[];
     }
 
     static getEmployee(id: string): Employee | undefined {
-        return db.prepare('SELECT * FROM employees WHERE id = ?').get(id);
+        return db.prepare('SELECT * FROM employees WHERE id = ?').get(id) as Employee | undefined;
     }
 
     static updateEmployee(employee: Employee): void {
@@ -58,7 +58,7 @@ export class DatabaseService {
 
     // Holiday operations
     static getHolidays(): { date: string; name: string }[] {
-        return db.prepare('SELECT * FROM holidays ORDER BY date').all();
+        return db.prepare('SELECT * FROM holidays ORDER BY date').all() as { date: string; name: string }[];
     }
 
     static addHoliday(holiday: { date: string; name: string }): void {
@@ -76,13 +76,13 @@ export class DatabaseService {
     // Attendance operations
     static getAttendanceRecords(employeeId?: string): AttendanceRecord[] {
         if (employeeId) {
-            return db.prepare('SELECT * FROM attendance_records WHERE employeeId = ? ORDER BY date').all(employeeId);
+            return db.prepare('SELECT * FROM attendance_records WHERE employeeId = ? ORDER BY date').all(employeeId) as AttendanceRecord[];
         }
-        return db.prepare('SELECT * FROM attendance_records ORDER BY date').all();
+        return db.prepare('SELECT * FROM attendance_records ORDER BY date').all() as AttendanceRecord[];
     }
 
     static getAttendanceByDate(date: string): AttendanceRecord[] {
-        return db.prepare('SELECT * FROM attendance_records WHERE date = ?').all(date);
+        return db.prepare('SELECT * FROM attendance_records WHERE date = ?').all(date) as AttendanceRecord[];
     }
 
     static addAttendanceRecord(record: AttendanceRecord): void {
