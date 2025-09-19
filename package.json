@@ -12,9 +12,15 @@
     "migrate:schema": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-schema.ts",
     "migrate:employees": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-employees.ts",
     "migrate:attendance": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-attendance.ts",
-    "premigrate-win": "tsc -p scripts/tsconfig.migrate.json",
-    "migrate-win": "node scripts/dist/migrate.js",
-    "postmigrate-win": "rm -rf scripts/dist"
+    "premigrate:schema-win": "tsc --project scripts/tsconfig.build.json scripts/migrate-schema.ts --outFile scripts/dist/migrate-schema.cjs",
+    "migrate:schema-win": "node scripts/dist/migrate-schema.cjs",
+    "postmigrate:schema-win": "rm -rf scripts/dist/migrate-schema.cjs && rm -rf scripts/dist",
+    "premigrate:employees-win": "tsc --project scripts/tsconfig.build.json scripts/migrate-employees.ts --outFile scripts/dist/migrate-employees.cjs",
+    "migrate:employees-win": "node scripts/dist/migrate-employees.cjs",
+    "postmigrate:employees-win": "rm -rf scripts/dist/migrate-employees.cjs && rm -rf scripts/dist",
+    "premigrate:attendance-win": "tsc --project scripts/tsconfig.build.json scripts/migrate-attendance.ts --outFile scripts/dist/migrate-attendance.cjs",
+    "migrate:attendance-win": "node scripts/dist/migrate-attendance.cjs",
+    "postmigrate:attendance-win": "rm -rf scripts/dist/migrate-attendance.cjs && rm -rf scripts/dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
