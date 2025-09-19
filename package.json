@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "migrate": "ts-node --project tsconfig.json scripts/migrate.ts",
+    "migrate:schema": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-schema.ts",
+    "migrate:employees": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-employees.ts",
     "premigrate-win": "tsc -p scripts/tsconfig.migrate.json",
     "migrate-win": "node scripts/dist/migrate.js",
     "postmigrate-win": "rm -rf scripts/dist"

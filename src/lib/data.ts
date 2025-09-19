@@ -106,7 +106,7 @@ export const employees: Employee[] = [
     // No hourlyPayRate for Founder & CEO
   },
   {
-    id: "8",
+    id: "9",
     name: "Vijay Jain",
     role: "GM",
     phone: "+91 99999 99999",
