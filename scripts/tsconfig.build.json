@@ -4,24 +4,22 @@
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "..",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "baseUrl": "..",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["../src/*"]
     }
   },
   "include": [
-    "./*.ts",
-    "../src/lib/**/*.ts"
+    "./*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "../node_modules"
+    "dist"
   ]
 }
