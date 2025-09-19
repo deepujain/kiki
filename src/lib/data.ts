@@ -110,10 +110,10 @@ export const employees: Employee[] = [
     name: "Vijay Jain",
     role: "GM",
     phone: "+91 99999 99999",
-    gender: "Female",
+    gender: "Male",
     experience: 15,
     avatarUrl: "/avatars/1xai.png",
-    birthday: "2000-07-31",
+    birthday: "2000-09-01",
     employed: true,
     trackAttendance: false, // Founder & CEO does not track attendance
     // No hourlyPayRate for Founder & CEO
