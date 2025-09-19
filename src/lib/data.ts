@@ -2,7 +2,7 @@
 export interface Employee {
   id: string;
   name: string;
-  role: "Founder & CEO" | "Logistics" | "TSE" | "MIS" | "HR";
+  role: "Founder & CEO" | "Logistics" | "TSE" | "MIS" | "HR" | "GM";
   phone: string;
   gender: "Male" | "Female";
   experience: number; // in years
@@ -105,20 +105,19 @@ export const employees: Employee[] = [
     trackAttendance: false, // Founder & CEO does not track attendance
     // No hourlyPayRate for Founder & CEO
   },
-  ,
   {
-    id: "9",
+    id: "8",
     name: "Vijay Jain",
     role: "GM",
     phone: "+91 99999 99999",
-    gender: "Male",
+    gender: "Female",
     experience: 15,
     avatarUrl: "/avatars/1xai.png",
     birthday: "2000-07-31",
     employed: true,
     trackAttendance: false, // Founder & CEO does not track attendance
     // No hourlyPayRate for Founder & CEO
-  },
+  },  
 ];
 
 export function updateEmployeeDetails(updatedEmployee: Employee): void {
