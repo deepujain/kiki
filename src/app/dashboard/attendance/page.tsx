@@ -467,8 +467,9 @@ export default function AttendancePage() {
                     )}
                   </div>
                    {summary?.holiday && (
-                      <div className="flex flex-col items-center justify-center text-center absolute inset-0">
-                         <Badge variant="secondary" className="bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-100">{summary.holiday}</Badge>
+                      <div className="flex flex-col items-center justify-center text-center absolute inset-0 p-2">
+                         <Badge variant="secondary" className="bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-100 whitespace-normal text-[10px] leading-tight">{summary.holiday}</Badge>
+                         <span className="text-xs text-blue-800 dark:text-blue-100 mt-1 font-medium">Holiday</span>
                       </div>
                    )}
                   {summary && !summary.holiday && (

@@ -25,7 +25,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/01.png",
     birthday: "1988-05-15",
     employed: true,
-    hourlyPayRate: 50, // Sample rate
+    hourlyPayRate: 50, 
     trackAttendance: true,
     ptoDays : 10,
   },
@@ -39,7 +39,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/02.png",
     birthday: "1992-11-22",
     employed: true,
-    hourlyPayRate: 50, // Sample rate
+    hourlyPayRate: 50, 
     trackAttendance: true,  
     ptoDays: 10,
   },
@@ -53,7 +53,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/03.png",
     birthday: "1990-03-10",
     employed: false,
-    hourlyPayRate: 50, // Sample rate
+    hourlyPayRate: 50, 
     trackAttendance: true,
     ptoDays: 10,
   },
@@ -67,7 +67,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/04.png",
     birthday: "1985-08-01",
     employed: true,
-    hourlyPayRate: 73, // Sample rate
+    hourlyPayRate: 73, 
     trackAttendance: true,
     ptoDays: 10,
   },
@@ -81,7 +81,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/05.png",
     birthday: "1991-09-05",
     employed: true,
-    hourlyPayRate: 50, // Sample rate
+    hourlyPayRate: 50, 
     trackAttendance: true,
     ptoDays: 10,
   },
@@ -95,7 +95,7 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/06.png",
     birthday: "1987-01-20",
     employed: false,
-    hourlyPayRate: 50, // Sample rate
+    hourlyPayRate: 50, 
     trackAttendance: true,
     ptoDays: 10,
   },

@@ -24,6 +24,7 @@ import {
   subMonths,
   getMonth,
   getYear,
+  isFuture,
 } from "date-fns";
 
 import {
@@ -50,7 +51,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -129,17 +129,13 @@ function StaffPageContent() {
   });
   const { toast } = useToast();
 
-  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
-  const [dailyRecords, setDailyRecords] = useState<Map<string, AttendanceRecord>>(new Map());
-  const [isHoliday, setIsHoliday] = useState(false);
-  const [holidayName, setHolidayName] = useState("");
   const [calendarMonth, setCalendarMonth] = useState(startOfMonth(today));
   const [sortColumn, setSortColumn] = useState<keyof Employee | 'status'>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { user } = useAuth(); // Get user from auth context
   const isAdmin = user?.role === "Admin"; // Determine if user is admin
   const [paySummary, setPaySummary] = useState<PaySummary | null>(null); // New state for pay summary
-  const [selectedMonth, setSelectedMonth] = useState<Date>(new Date(2025, 6, 1)); // Start from July 2025
+  const [selectedMonth, setSelectedMonth] = useState<Date>(startOfMonth(today));
 
   useEffect(() => {
     if (employeeIdFromQuery) {
@@ -164,11 +160,10 @@ function StaffPageContent() {
     }
   }, [employees, selectedEmployee]);
 
+  // Keep calendar month in sync with selected month
   useEffect(() => {
-    if (selectedEmployee) {
-      setCalendarMonth(selectedMonth);
-    }
-  }, [selectedEmployee, selectedMonth]);
+    setCalendarMonth(selectedMonth);
+  }, [selectedMonth]);
 
   const triggerStorageEvent = () => {
     window.dispatchEvent(new Event('storage'));
@@ -356,6 +351,7 @@ function StaffPageContent() {
     }
   }, [selectedMonth, selectedEmployee]);
 
+
   const handleBackToList = () => {
     setSelectedEmployee(null);
     setEditableEmployee(null);
@@ -495,108 +491,6 @@ function StaffPageContent() {
     }
   };
 
-  const handleStatusChange = (employeeId: string, isAbsent: boolean) => {
-    setDailyRecords(prev => {
-      const newRecords = new Map(prev);
-      const record = newRecords.get(employeeId);
-      if (record) {
-        if (isAbsent) {
-          record.status = 'Absent';
-          record.checkInTime = '--:--';
-          record.checkOutTime = '--:--';
-        } else {
-            if (record.checkInTime && record.checkInTime !== '--:--') {
-                const checkInDate = parse(record.checkInTime, 'HH:mm', today);
-                const elevenAm = parse('11:00', 'HH:mm', today);
-                record.status = isBefore(checkInDate, elevenAm) || checkInDate.getTime() === elevenAm.getTime() ? 'Present' : 'Late';
-            } else {
-                record.status = 'Not Marked';
-            }
-        }
-      }
-      return newRecords;
-    });
-  };
-
-  const handleTimeChange = (employeeId: string, type: 'checkIn' | 'checkOut', time: string) => {
-    setDailyRecords(prev => {
-        const newRecords = new Map(prev);
-        const record = newRecords.get(employeeId);
-        if (record) {
-            if (type === 'checkIn') {
-                record.checkInTime = time;
-                if (time) {
-                    const checkInDate = parse(time, 'HH:mm', today);
-                    const elevenAm = parse('11:00', 'HH:mm', today);
-                    record.status = isBefore(checkInDate, elevenAm) || checkInDate.getTime() === elevenAm.getTime() ? 'Present' : 'Late';
-                } else {
-                    record.status = record.checkOutTime && record.checkOutTime !== '--:--' ? 'Not Marked' : 'Not Marked';
-                    if (!record.checkOutTime || record.checkOutTime === '--:--') record.status = 'Not Marked';
-                }
-            } else {
-                record.checkOutTime = time;
-                if (!record.checkInTime || record.checkInTime === '--:--') {
-                    record.status = 'Not Marked';
-                }
-            }
-        }
-        return newRecords;
-    });
-};
-
-  const saveDayAttendance = () => {
-    const selectedDate = today;
-    if (isHoliday) {
-       if (!holidayName.trim()) {
-        toast({
-          variant: "destructive",
-          title: "Missing Holiday Name",
-          description: "Please enter a name for the holiday.",
-        });
-        return;
-      }
-      addHoliday({ date: format(selectedDate, "yyyy-MM-dd"), name: holidayName });
-       toast({
-        title: "Holiday Saved",
-        description: `${holidayName} has been added.`,
-      });
-    } else {
-      for (const record of dailyRecords.values()) {
-          if (record.status !== 'Absent' && record.status !== 'Not Marked') {
-              if (record.checkInTime !== '--:--' && (!record.checkOutTime || record.checkOutTime === '--:--')) {
-                  toast({
-                      variant: "destructive",
-                      title: "Missing Check-out Time",
-                      description: `Please enter a check-out time for ${record.employeeName}.`,
-                  });
-                  return;
-              }
-          }
-      }
-
-      dailyRecords.forEach((record, employeeId) => {
-        if (record.status === 'Not Marked') return;
-        const employeeRecords = attendanceRecords.get(employeeId) || [];
-        const recordIndex = employeeRecords.findIndex((r: AttendanceRecord) => r.date === todayStr);
-        if (recordIndex > -1) {
-          employeeRecords[recordIndex] = record;
-        } else {
-          employeeRecords.push(record);
-        }
-        attendanceRecords.set(employeeId, employeeRecords);
-      });
-      
-      toast({
-        title: "Attendance Saved",
-        description: `Attendance for today has been updated.`,
-      });
-    }
-    
-    triggerStorageEvent();
-    setIsAttendanceModalOpen(false);
-    setIsHoliday(false);
-    setHolidayName("");
-  };
 
   const calendarDays = useMemo(() => {
     const start = startOfMonth(calendarMonth);
@@ -862,11 +756,6 @@ function StaffPageContent() {
                                 <div><p className="font-bold">{mtdSummary.ptoLeft}</p><p className="text-xs text-muted-foreground">PTO Left</p></div>
                             </div>
                         </div>
-                        {mtdSummary.ptoLeft === 0 && (
-                          <p className="text-sm text-orange-500 font-semibold mt-2">
-                            Additional days of absence will result in a deduction from pay.
-                          </p>
-                        )}
                         </div>
                     )}
                 </CardContent>
@@ -935,11 +824,6 @@ function StaffPageContent() {
                       <span>Gross Pay:</span>
                       <span>₹{paySummary.grossPay.toFixed(2)}</span>
                     </div>
-                    {paySummary.ptoDaysLeft === 0 && (
-                      <p className="text-sm text-orange-500 font-semibold mt-2">
-                        Further absences will reduce pay.
-                      </p>
-                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -1138,199 +1022,6 @@ function StaffPageContent() {
         </Card>
       </div>
       
-       {isAttendanceModalOpen && (
-         <Dialog open={isAttendanceModalOpen} onOpenChange={setIsAttendanceModalOpen}>
-          <DialogContent className="max-w-5xl">
-            <DialogHeader>
-              <DialogTitle>Attendance for {format(today, "MMMM d, yyyy")}</DialogTitle>
-            </DialogHeader>
-             <div className="flex items-center space-x-2">
-                <Checkbox id="is-holiday-main" checked={isHoliday} onCheckedChange={(checked) => setIsHoliday(!!checked)} />
-                <Label htmlFor="is-holiday-main">Mark as Holiday</Label>
-            </div>
-            {isHoliday && (
-                <div className="grid gap-2">
-                    <Label htmlFor="holiday-name-main">Holiday Name</Label>
-                    <Input id="holiday-name-main" value={holidayName} onChange={(e) => setHolidayName(e.target.value)} placeholder="e.g. National Day"/>
-                </div>
-            )}
-            <div className={cn("max-h-[60vh] overflow-y-auto", isHoliday && "opacity-50 pointer-events-none")}>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Check-in</TableHead>
-                    <TableHead>Check-out</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Absent</TableHead>
-                    <TableHead>Number of Hours</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {Array.from(dailyRecords.values()).map(record => (
-                    <TableRow key={record.employeeId}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src={employees.find(e => e.id === record.employeeId)?.avatarUrl} alt={record.employeeName} data-ai-hint="person portrait" />
-                            <AvatarFallback>{record.employeeName.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div className="font-medium">{record.employeeName}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Input 
-                          type="time" 
-                          value={record.checkInTime}
-                          onChange={(e) => handleTimeChange(record.employeeId, 'checkIn', e.target.value)}
-                          disabled={record.status === 'Absent' || isHoliday}
-                          className="w-32"
-                        />
-                      </TableCell>
-                       <TableCell>
-                        <Input 
-                          type="time" 
-                          value={record.checkOutTime || ''}
-                          onChange={(e) => handleTimeChange(record.employeeId, 'checkOut', e.target.value)}
-                          disabled={record.status === 'Absent' || isHoliday}
-                          className="w-32"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <StatusBadge status={record.status} />
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox
-                           checked={record.status === 'Absent'}
-                           onCheckedChange={(checked) => handleStatusChange(record.employeeId, !!checked)}
-                           disabled={isHoliday}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {calculateHours(record.checkInTime, record.checkOutTime ?? '--:--')}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAttendanceModalOpen(false)}>Cancel</Button>
-              <Button onClick={saveDayAttendance}>Save Changes</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-
-      {/* Add Staff Dialog */}
-      <Dialog open={isAddStaffModalOpen} onOpenChange={setIsAddStaffModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Staff Member</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">Name</Label>
-              <Input
-                id="name"
-                value={newStaff.name || ''}
-                onChange={(e) => setNewStaff({...newStaff, name: e.target.value})}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="role" className="text-right">Role</Label>
-              <Input
-                id="role"
-                value={newStaff.role || ''}
-                onChange={(e) => setNewStaff({...newStaff, role: e.target.value})}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="gender" className="text-right">Gender</Label>
-              <Select
-                value={newStaff.gender}
-                onValueChange={(value) => setNewStaff({...newStaff, gender: value as "Male" | "Female"})}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="birthday" className="text-right">Date of Birth</Label>
-              <Input
-                id="birthday"
-                type="date"
-                value={newStaff.birthday || ''}
-                onChange={(e) => setNewStaff({...newStaff, birthday: e.target.value})}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="experience" className="text-right">Experience</Label>
-              <Input
-                id="experience"
-                type="number"
-                value={newStaff.experience || 0}
-                onChange={(e) => setNewStaff({...newStaff, experience: parseInt(e.target.value) || 0})}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">Phone</Label>
-              <Input
-                id="phone"
-                value={newStaff.phone || ''}
-                onChange={(e) => setNewStaff({...newStaff, phone: e.target.value})}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="employed" className="text-right">Employed</Label>
-              <div className="col-span-3">
-                <Switch
-                  id="employed"
-                  checked={newStaff.employed}
-                  onCheckedChange={(checked) => setNewStaff({...newStaff, employed: checked})}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="trackAttendance" className="text-right">Track Attendance</Label>
-              <div className="col-span-3">
-                <Switch
-                  id="trackAttendance"
-                  checked={newStaff.trackAttendance ?? true}
-                  onCheckedChange={(checked) => setNewStaff({...newStaff, trackAttendance: checked})}
-                />
-              </div>
-            </div>
-            {isAdmin && (newStaff.role === 'TSE' || newStaff.role === 'Logistics' || newStaff.role === 'MIS') && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="hourlyPayRate" className="text-right">Daily Pay Rate (INR)</Label>
-                <Input
-                  id="hourlyPayRate"
-                  type="number"
-                  value={newStaff.hourlyPayRate ? (newStaff.hourlyPayRate * 8) : ''}
-                  onChange={(e) => setNewStaff({...newStaff, hourlyPayRate: (parseFloat(e.target.value) / 8) || undefined})}
-                  className="col-span-3"
-                  placeholder="e.g., 2000"
-                />
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddStaffModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddStaff}>Add Staff</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Spacing after bottom menu */}
       <div className="h-16"></div>
@@ -1342,6 +1033,7 @@ function StaffPageContent() {
 export default function StaffPage() {
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
+      <div id="dialog-root" />
       <StaffPageContent />
     </React.Suspense>
   );

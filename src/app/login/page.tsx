@@ -72,7 +72,7 @@ export default function LoginPage() {
           <CardTitle>Kiki 🦀</CardTitle>
           <CardDescription>Please enter your credentials.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -106,6 +106,10 @@ export default function LoginPage() {
               </Button>
             </form>
           </Form>
+          <div className="pt-4 border-t text-center">
+            <img src="/images/1xAI.PNG" alt="1xAI Logo" className="h-8 mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground font-medium">AI-Powered Applications</p>
+          </div>
         </CardContent>
       </Card>
     </div>
