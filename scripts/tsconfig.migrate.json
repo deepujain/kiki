@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./dist",
+    "module": "esnext",
+    "target": "es2021"
+  },
+  "include": [
+    "./migrate.ts"
+  ]
+}
