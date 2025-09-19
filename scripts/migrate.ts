@@ -16,7 +16,7 @@ async function migrateDatabase() {
         console.log(`Removed existing database: ${dbPath}`);
     } catch (error: any) {
         if (error.code !== 'ENOENT') {
-            console.error('Error removing database file:', error);
+            console.error('Error removing database file:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
             process.exit(1);
         }
     }
@@ -118,8 +118,8 @@ async function migrateDatabase() {
         migration();
         
         console.log('Database migration completed successfully');
-    } catch (error) {
-        console.error('Migration failed:', error);
+    } catch (error: any) {
+        console.error('Migration failed:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
         // Clean up on failure
         db.close();
         await fs.unlink(dbPath).catch(() => {});
@@ -129,6 +129,6 @@ async function migrateDatabase() {
 
 // Run migration
 migrateDatabase().catch(error => {
-    console.error('Migration failed:', error);
+    console.error('Migration failed:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
     process.exit(1);
 });
