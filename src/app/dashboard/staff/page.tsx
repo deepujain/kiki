@@ -86,6 +86,7 @@ interface AttendanceSummary {
 
 interface PaySummary {
   totalPresentDays: number;
+  lateDays: number;
   totalAbsentDays: number;
   annualPTOAllotted: number;
   ptoUsedSoFar: number;
@@ -271,12 +272,18 @@ function StaffPageContent() {
       // Calculate total work days in the month (excluding Sundays and holidays)
       const totalWorkDays = getWorkingDays(startDate, effectiveEndDate);
 
-      // Calculate total present days from filtered records
-      const presentDays = filteredRecords.filter((r: AttendanceRecord) => r.status === 'Present').length +
-        holidays.filter(h => {
-          const hDate = new Date(h.date);
-          return hDate >= startDate && hDate <= effectiveEndDate;
-        }).length;
+      // Calculate present and late days separately
+      const onlyPresentDays = filteredRecords.filter((r: AttendanceRecord) => r.status === 'Present').length;
+      const lateDays = filteredRecords.filter((r: AttendanceRecord) => r.status === 'Late').length;
+      
+      // Add holidays to present days
+      const holidayDays = holidays.filter(h => {
+        const hDate = new Date(h.date);
+        return hDate >= startDate && hDate <= effectiveEndDate;
+      }).length;
+
+      // Total present days includes Present, Late, and Holidays for pay calculation
+      const presentDays = onlyPresentDays + lateDays + holidayDays;
 
       // Calculate total absent days for the selected month
       const absentDays = filteredRecords.filter((r: AttendanceRecord) => r.status === 'Absent').length;
@@ -316,7 +323,8 @@ function StaffPageContent() {
       const grossPay = netPayableDays * dailyRate;
 
       setPaySummary({
-        totalPresentDays: presentDays,
+        totalPresentDays: onlyPresentDays + holidayDays, // Only actual present days + holidays
+        lateDays, // Show late days separately
         totalAbsentDays: absentDays,
         annualPTOAllotted,
         ptoUsedSoFar,
@@ -847,11 +855,11 @@ function StaffPageContent() {
                             <div className="grid grid-cols-7 gap-2 text-center">
                                 <div><p className="font-bold">{mtdSummary.workDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
                                 <div><p className="font-bold text-green-600">{mtdSummary.present}</p><p className="text-xs text-muted-foreground">Present</p></div>
+                                <div><p className="font-bold text-orange-500">{mtdSummary.lateDays}</p><p className="text-xs text-muted-foreground">Late</p></div>
                                 <div><p className="font-bold text-red-500">{mtdSummary.absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
                                 <div><p className="font-bold">{mtdSummary.annualPTODays}</p><p className="text-xs text-muted-foreground">Annual PTO Days</p></div>
                                 <div><p className="font-bold text-yellow-600">{mtdSummary.ptoUsedSoFar}</p><p className="text-xs text-muted-foreground">PTO Used So Far</p></div>
                                 <div><p className="font-bold">{mtdSummary.ptoLeft}</p><p className="text-xs text-muted-foreground">PTO Left</p></div>
-                                <div><p className="font-bold text-orange-500">{mtdSummary.lateDays}</p><p className="text-xs text-muted-foreground">Late Days</p></div>
                             </div>
                         </div>
                         {mtdSummary.ptoLeft === 0 && (
@@ -899,6 +907,12 @@ function StaffPageContent() {
                       <span className="text-muted-foreground">Total Present Days:</span>
                       <span className="font-bold text-green-600">{paySummary.totalPresentDays} days</span>
                     </div>
+                    {paySummary.lateDays > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Late Days:</span>
+                        <span className="font-bold text-yellow-600">{paySummary.lateDays} days</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Total Absent Days:</span>
                       <span className="font-bold text-red-500">{paySummary.totalAbsentDays} days</span>
