@@ -11,6 +11,7 @@ export interface Employee {
   employed: boolean;
   hourlyPayRate?: number; // Added optional hourly pay rate
   trackAttendance: boolean;
+  ptoDays: number;
 }
 
 export const employees: Employee[] = [
@@ -26,6 +27,7 @@ export const employees: Employee[] = [
     employed: true,
     hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
+    ptoDays : 10,
   },
   {
     id: "2",
@@ -38,7 +40,8 @@ export const employees: Employee[] = [
     birthday: "1992-11-22",
     employed: true,
     hourlyPayRate: 50, // Sample rate
-    trackAttendance: true,
+    trackAttendance: true,  
+    ptoDays: 10,
   },
   {
     id: "3",
@@ -52,6 +55,7 @@ export const employees: Employee[] = [
     employed: false,
     hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
+    ptoDays: 10,
   },
   {
     id: "4",
@@ -65,6 +69,7 @@ export const employees: Employee[] = [
     employed: true,
     hourlyPayRate: 73, // Sample rate
     trackAttendance: true,
+    ptoDays: 10,
   },
   {
     id: "5",
@@ -78,6 +83,7 @@ export const employees: Employee[] = [
     employed: true,
     hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
+    ptoDays: 10,
   },
   {
     id: "6",
@@ -91,6 +97,7 @@ export const employees: Employee[] = [
     employed: false,
     hourlyPayRate: 50, // Sample rate
     trackAttendance: true,
+    ptoDays: 10,
   },
   {
     id: "8",
@@ -102,8 +109,8 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/1xai.png",
     birthday: "2000-07-31",
     employed: true,
-    trackAttendance: false, // Founder & CEO does not track attendance
-    // No hourlyPayRate for Founder & CEO
+    trackAttendance: false, 
+    ptoDays: 10,
   },
   {
     id: "9",
@@ -115,8 +122,8 @@ export const employees: Employee[] = [
     avatarUrl: "/avatars/1xai.png",
     birthday: "2000-09-01",
     employed: true,
-    trackAttendance: false, // Founder & CEO does not track attendance
-    // No hourlyPayRate for Founder & CEO
+    trackAttendance: false, 
+    ptoDays: 10,
   },  
 ];
 
