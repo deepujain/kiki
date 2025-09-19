@@ -11,10 +11,10 @@
     "typecheck": "tsc --noEmit",
     "migrate:schema": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-schema.ts",
     "migrate:employees": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-employees.ts",
-    "premigrate:schema-win": "tsc --project scripts/tsconfig.build.json scripts/migrate-schema.ts",
+    "premigrate:schema-win": "tsc --project scripts/tsconfig.build.json",
     "migrate:schema-win": "node scripts/dist/migrate-schema.js",
     "postmigrate:schema-win": "rm -rf scripts/dist",
-    "premigrate:employees-win": "tsc --project scripts/tsconfig.build.json scripts/migrate-employees.ts",
+    "premigrate:employees-win": "tsc --project scripts/tsconfig.build.json",
     "migrate:employees-win": "node scripts/dist/migrate-employees.js",
     "postmigrate:employees-win": "rm -rf scripts/dist"
   },
