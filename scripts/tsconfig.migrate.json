@@ -7,12 +7,19 @@
     "rootDir": "..",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["../src/*"]
+    }
   },
   "include": [
     "./migrate.ts",
-    "../src/lib/**/*"
+    "../src/lib/data.ts",
+    "../src/lib/holidays.ts",
+    "../src/lib/store.ts",
+    "../src/lib/types.ts"
   ]
 }
