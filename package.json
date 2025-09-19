@@ -10,13 +10,14 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "reinstall:sqlite": "npm remove better-sqlite3 && npm install better-sqlite3@9.4.1",
-    "build:migrate": "tsc --project scripts/tsconfig.build.json",
+    "build:migrate": "npx tsc --project scripts/tsconfig.build.json",
     "migrate:schema": "npm run reinstall:sqlite && cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" ts-node --esm scripts/migrate-schema.ts",
     "migrate:employees": "npm run reinstall:sqlite && cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" ts-node --esm scripts/migrate-employees.ts",
     "migrate:attendance": "npm run reinstall:sqlite && cross-env NODE_NO_WARNINGS=1 NODE_OPTIONS=\"--loader ts-node/esm\" ts-node --esm scripts/migrate-attendance.ts",
     "migrate:schema:win": "npm run build:migrate && node scripts/dist/migrate-schema.js",
     "migrate:employees:win": "npm run build:migrate && node scripts/dist/migrate-employees.js",
-    "migrate:attendance:win": "npm run build:migrate && node scripts/dist/migrate-attendance.js"
+    "migrate:attendance:win": "npm run build:migrate && node scripts/dist/migrate-attendance.js",
+    "postinstall": "rimraf node_modules/better-sqlite3/build/Release/*.node"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
