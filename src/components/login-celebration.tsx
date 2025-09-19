@@ -1,53 +1,70 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
-type CelebrationType = 'confetti' | 'fireworks' | 'balloons';
-
 export const LoginCelebration = () => {
-    const [celebration, setCelebration] = useState<CelebrationType | null>(null);
+    const [showConfetti, setShowConfetti] = useState(false);
     const { width, height } = useWindowSize();
 
     useEffect(() => {
-        const celebrations: CelebrationType[] = ['confetti', 'fireworks', 'balloons'];
-        const randomCelebration = celebrations[Math.floor(Math.random() * celebrations.length)];
-        setCelebration(randomCelebration);
+        // Check if we should show the celebration
+        const shouldShow = localStorage.getItem('showLoginCelebration');
+        if (shouldShow === 'true') {
+            setShowConfetti(true);
+            // Remove the flag immediately
+            localStorage.removeItem('showLoginCelebration');
+
+            // Auto-dismiss after 5 seconds
+            const timer = setTimeout(() => {
+                setShowConfetti(false);
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }
     }, []);
 
-    const confettiConfig = {
-        confetti: {
-            recycle: false,
-            numberOfPieces: 200,
-        },
-        fireworks: {
-            recycle: false,
-            numberOfPieces: 150,
-            gravity: 0.1,
-            initialVelocityX: { min: -10, max: 10 },
-            initialVelocityY: { min: -20, max: -10 },
-            colors: ['#ffc700', '#ff0000', '#2e3191', '#41cac0'],
-        },
-        balloons: {
-            recycle: false,
-            numberOfPieces: 30,
-            gravity: -0.05,
-            initialVelocityY: { min: -5, max: -2 },
-            shape: 'circle' as const,
+    // Handle keyboard events for 'dj' dismissal
+    useEffect(() => {
+        let typedKeys = '';
+        const keyHandler = (e: KeyboardEvent) => {
+            typedKeys += e.key.toLowerCase();
+            if (typedKeys.includes('dj')) {
+                setShowConfetti(false);
+            }
+            // Reset after 1 second of no typing
+            setTimeout(() => {
+                typedKeys = '';
+            }, 1000);
+        };
+
+        if (showConfetti) {
+            window.addEventListener('keydown', keyHandler);
+            return () => window.removeEventListener('keydown', keyHandler);
         }
-    };
-    
-    if (!celebration) return null;
+    }, [showConfetti]);
+
+    if (!showConfetti) return null;
 
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+        <div style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%', 
+            zIndex: 9999,
+            pointerEvents: 'none' // Allow clicking through the confetti
+        }}>
             <Confetti
                 width={width}
                 height={height}
-                {...confettiConfig[celebration]}
-                onConfettiComplete={(confetti) => confetti?.reset()}
+                recycle={true}
+                numberOfPieces={200}
+                gravity={0.2}
+                initialVelocityY={10}
+                colors={['#ffc700', '#ff0000', '#2e3191', '#41cac0', '#ff69b4']}
             />
         </div>
     );

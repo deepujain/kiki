@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserNav } from "@/components/user-nav";
 import { cn } from "@/lib/utils";
+import { LoginCelebration } from "@/components/login-celebration";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -75,6 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex flex-col">
+      <LoginCelebration />
       {/* Top Header - Always visible */}
       <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-4 lg:px-6">
         <div className="w-full flex-1 flex items-center">
