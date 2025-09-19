@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "migrate:schema": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-schema.ts",
     "migrate:employees": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-employees.ts",
+    "migrate:schema-win": "cross-env NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-schema.ts",
+    "migrate:employees-win": "cross-env NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-employees.ts",
     "premigrate-win": "tsc -p scripts/tsconfig.migrate.json",
     "migrate-win": "node scripts/dist/migrate.js",
     "postmigrate-win": "rm -rf scripts/dist"
@@ -64,6 +66,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^10.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "ts-node": "10.9.2",
