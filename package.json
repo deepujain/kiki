@@ -10,9 +10,12 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "build:migrate": "tsc --project scripts/tsconfig.build.json",
-    "migrate:schema": "npm run build:migrate && node scripts/dist/migrate-schema.js",
-    "migrate:employees": "npm run build:migrate && node scripts/dist/migrate-employees.js",
-    "migrate:attendance": "npm run build:migrate && node scripts/dist/migrate-attendance.js"
+    "migrate:schema": "cross-env NODE_NO_WARNINGS=1 ts-node scripts/migrate-schema.ts",
+    "migrate:employees": "cross-env NODE_NO_WARNINGS=1 ts-node scripts/migrate-employees.ts",
+    "migrate:attendance": "cross-env NODE_NO_WARNINGS=1 ts-node scripts/migrate-attendance.ts",
+    "migrate:schema:win": "npm run build:migrate && cross-env NODE_NO_WARNINGS=1 node scripts/dist/migrate-schema.js",
+    "migrate:employees:win": "npm run build:migrate && cross-env NODE_NO_WARNINGS=1 node scripts/dist/migrate-employees.js",
+    "migrate:attendance:win": "npm run build:migrate && cross-env NODE_NO_WARNINGS=1 node scripts/dist/migrate-attendance.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
