@@ -10,7 +10,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "migrate": "NODE_OPTIONS='--loader ts-node/esm' ts-node --project tsconfig.json scripts/migrate.ts",
-    "migrate-win": "cross-env node --loader ts-node/esm scripts/migrate.ts"
+    "migrate-win": "cross-env ts-node --project tsconfig.json scripts/migrate.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
