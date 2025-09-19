@@ -14,6 +14,6 @@
       "@/*": ["../src/*"]
     }
   },
-  "include": ["migrate-schema.ts", "migrate-employees.ts"],
+  "include": ["migrate-schema.ts", "migrate-employees.ts", "migrate-attendance.ts"],
   "exclude": ["node_modules"]
 }

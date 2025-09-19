@@ -11,12 +11,10 @@
     "typecheck": "tsc --noEmit",
     "migrate:schema": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-schema.ts",
     "migrate:employees": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-employees.ts",
-    "premigrate:schema-win": "tsc --project scripts/tsconfig.build.json && mv scripts/dist/migrate-schema.js scripts/dist/migrate-schema.cjs",
-    "migrate:schema-win": "node scripts/dist/migrate-schema.cjs",
-    "postmigrate:schema-win": "rm -rf scripts/dist/migrate-schema.cjs && rm -rf scripts/dist",
-    "premigrate:employees-win": "tsc --project scripts/tsconfig.build.json && mv scripts/dist/migrate-employees.js scripts/dist/migrate-employees.cjs",
-    "migrate:employees-win": "node scripts/dist/migrate-employees.cjs",
-    "postmigrate:employees-win": "rm -rf scripts/dist/migrate-employees.cjs && rm -rf scripts/dist"
+    "migrate:attendance": "NODE_OPTIONS='--loader ts-node/esm --experimental-specifier-resolution=node' ts-node --project tsconfig.json scripts/migrate-attendance.ts",
+    "premigrate-win": "tsc -p scripts/tsconfig.migrate.json",
+    "migrate-win": "node scripts/dist/migrate.js",
+    "postmigrate-win": "rm -rf scripts/dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
