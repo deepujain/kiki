@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "migrate": "NODE_OPTIONS='--loader ts-node/esm' ts-node --project tsconfig.json scripts/migrate.ts",
     "premigrate-win": "tsc -p scripts/tsconfig.migrate.json",
-    "migrate-win": "cross-env node scripts/dist/migrate.js",
+    "migrate-win": "node scripts/dist/migrate.js",
     "postmigrate-win": "rm -rf scripts/dist"
   },
   "dependencies": {

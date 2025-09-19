@@ -2,7 +2,7 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "./dist",
-    "module": "esnext",
+    "module": "commonjs",
     "target": "es2021",
     "rootDir": "..",
     "esModuleInterop": true,
