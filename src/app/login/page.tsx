@@ -50,9 +50,8 @@ export default function LoginPage() {
         title: "Login Successful",
         description: "Welcome back!",
       });
-      // Set flag for showing confetti
-      localStorage.setItem('showLoginCelebration', 'true');
-      router.push("/dashboard");
+      // Navigate to dashboard with celebration flag
+      router.push("/dashboard?celebrate=true");
     } else {
       toast({
         variant: "destructive",
