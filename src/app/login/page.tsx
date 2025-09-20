@@ -21,8 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Shield } from "lucide-react";
-import { LoginCelebration } from "@/components/login-celebration";
-
 const formSchema = z.object({
   username: z.string().min(1, { message: "Username is required." }),
   password: z.string().min(1, { message: "Password is required." }),
@@ -50,8 +48,8 @@ export default function LoginPage() {
         title: "Login Successful",
         description: "Welcome back!",
       });
-      // Navigate to dashboard with celebration flag
-      router.push("/dashboard?celebrate=true");
+      // Navigate to dashboard
+      router.push("/dashboard");
     } else {
       toast({
         variant: "destructive",

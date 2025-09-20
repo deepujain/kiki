@@ -37,7 +37,6 @@ import { Input } from "@/components/ui/input";
 import { Leaderboard } from "@/components/leaderboard";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LoginCelebration } from "@/components/login-celebration";
 
 const calculateHours = (checkIn: string, checkOut: string): string => {
   if (checkIn === '--:--' || !checkOut || checkOut === '--:--') return '--';
@@ -63,7 +62,6 @@ export default function DashboardPage() {
   const [dailyRecords, setDailyRecords] = useState<Map<string, AttendanceRecord>>(new Map());
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState("");
-  const [showCelebration, setShowCelebration] = useState(false);
   const [isDashboardLoaded, setIsDashboardLoaded] = useState(false);
   const [sortColumn, setSortColumn] = useState<keyof Employee | 'status' | 'checkInTime' | 'checkOutTime'>('status');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -84,29 +82,6 @@ export default function DashboardPage() {
     }
   }, [dataLoading]);
 
-  // Effect to trigger celebration after dashboard is loaded
-  useEffect(() => {
-    if (isDashboardLoaded) {
-      const shouldShowCelebration = localStorage.getItem('showLoginCelebration') === 'true';
-      if (shouldShowCelebration) {
-        const loadTimer = setTimeout(() => {
-          setShowCelebration(true);
-          localStorage.removeItem('showLoginCelebration');
-        }, 100);
-        return () => clearTimeout(loadTimer);
-      }
-    }
-  }, [isDashboardLoaded]);
-
-  // Effect to hide celebration after showing
-  useEffect(() => {
-    if (showCelebration) {
-      const timer = setTimeout(() => {
-        setShowCelebration(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showCelebration]);
   
   const triggerStorageEvent = () => {
     window.dispatchEvent(new Event('storage'));
@@ -322,7 +297,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {showCelebration && <LoginCelebration />}
       {dataLoading && (
         <div className="flex flex-col gap-6">
           <div className="h-8 w-48 bg-muted animate-pulse rounded"></div>
