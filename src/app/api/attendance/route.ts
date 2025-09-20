@@ -10,11 +10,16 @@ export async function GET(request: Request) {
         
         let records;
         if (employeeId) {
-            records = AttendanceOperations.getByEmployeeId(employeeId);
+            records = await AttendanceOperations.getByEmployeeId(employeeId);
         } else if (date) {
-            records = AttendanceOperations.getByDate(date);
+            records = await AttendanceOperations.getByDate(date);
         } else {
-            records = AttendanceOperations.getAll();
+            records = await AttendanceOperations.getAll();
+        }
+        
+        // Ensure records is an array
+        if (!Array.isArray(records)) {
+            records = [];
         }
         
         return NextResponse.json(records);
@@ -39,15 +44,18 @@ export async function POST(request: Request) {
             );
         }
 
-        const existingRecord = AttendanceOperations.getByEmployeeId(record.employeeId).find(r => r.date === record.date);
+        const records = await AttendanceOperations.getByEmployeeId(record.employeeId);
+        const existingRecord = records.find(r => r.date === record.date);
         let result;
 
         if (existingRecord) {
             // Update existing record
-            result = AttendanceOperations.update(record);
+            await AttendanceOperations.update(record);
+            result = record;
         } else {
             // Create new record
-            result = AttendanceOperations.create(record);
+            await AttendanceOperations.create(record);
+            result = record;
         }
         
         return NextResponse.json(result);

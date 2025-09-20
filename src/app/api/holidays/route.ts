@@ -3,7 +3,10 @@ import { HolidayOperations } from '@/lib/database/operations';
 
 export async function GET() {
     try {
-        const holidays = HolidayOperations.getAll();
+        const holidays = await HolidayOperations.getAll();
+        if (!Array.isArray(holidays)) {
+            return NextResponse.json([], { status: 200 });
+        }
         return NextResponse.json(holidays);
     } catch (error) {
         console.error('Failed to fetch holidays:', error);
@@ -26,7 +29,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const result = HolidayOperations.create(holiday);
+        await HolidayOperations.create(holiday);
+        const result = holiday;
         return NextResponse.json(result);
     } catch (error) {
         console.error('Failed to create holiday:', error);

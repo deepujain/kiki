@@ -4,7 +4,7 @@ import type { Employee } from '@/lib/types';
 
 export async function GET() {
     try {
-        const employees = EmployeeOperations.getAll();
+        const employees = await EmployeeOperations.getAll();
         return NextResponse.json(employees);
     } catch (error) {
         console.error('Failed to fetch employees:', error);
@@ -27,7 +27,8 @@ export async function POST(request: Request) {
             );
         }
 
-        const result = EmployeeOperations.create(employee);
+        await EmployeeOperations.create(employee);
+        const result = employee;
         return NextResponse.json(result);
     } catch (error) {
         console.error('Failed to create employee:', error);

@@ -65,7 +65,7 @@ const calculateHours = (checkIn: string, checkOut: string): string => {
 };
 
 export default function AttendancePage() {
-  const { employees = [], attendanceRecords = new Map(), holidays = [], addHoliday, removeHoliday, updateAttendance, updateMultipleAttendance, isLoading } = useData();
+  const { employees = [], attendanceRecords = new Map(), holidays = [], addHoliday, removeHoliday, updateAttendance, updateMultipleAttendance, isLoading, refreshData } = useData();
   const [currentMonth, setCurrentMonth] = useState(new Date("2025-09-15"));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [dailyRecords, setDailyRecords] = useState<Map<string, AttendanceRecord>>(new Map());
@@ -178,7 +178,11 @@ export default function AttendancePage() {
         const recordsToUpdate = Array.from(dailyRecords.values()).filter(record => record.status !== 'Not Marked');
         
         if (recordsToUpdate.length > 0) {
-            await updateMultipleAttendance(recordsToUpdate);
+            // Update each record individually to ensure they're all saved
+            for (const record of recordsToUpdate) {
+                await updateAttendance(record);
+            }
+            await refreshData(); // Refresh data after saving
         }
         
         if (!isEditingHoliday) {

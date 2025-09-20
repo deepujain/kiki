@@ -1,80 +1,47 @@
-import Database from 'better-sqlite3';
 import { join } from 'path';
-import type { Employee, AttendanceRecord } from '@/lib/types';
+import type { Employee, AttendanceRecord } from '../types.js';
+import { db, initializeDatabase } from './database';
 
-// Initialize database connection
-export const db = new Database(join(process.cwd(), 'attendance.db'));
-db.pragma('foreign_keys = ON');
+// Ensure database is initialized
+let isInitialized = false;
+async function ensureInitialized() {
+    if (!isInitialized) {
+        await initializeDatabase();
+        isInitialized = true;
+    }
+}
 
 // Employee Operations
 export const EmployeeOperations = {
-    getAll: () => {
-        return db.prepare('SELECT * FROM employees ORDER BY name').all();
+    getAll: async (): Promise<Employee[]> => {
+        await ensureInitialized();
+        return db.data!.employees.sort((a, b) => a.name.localeCompare(b.name));
     },
 
-    getById: (id: string) => {
-        return db.prepare('SELECT * FROM employees WHERE id = ?').get(id);
+    getById: async (id: string): Promise<Employee | undefined> => {
+        await ensureInitialized();
+        return db.data!.employees.find(employee => employee.id === id);
     },
 
-    create: (employee: Employee) => {
-        const stmt = db.prepare(`
-            INSERT INTO employees (
-                id, name, role, phone, gender, experience,
-                avatarUrl, birthday, employed, hourlyPayRate, trackAttendance, ptoDays
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-
-        return stmt.run(
-            employee.id,
-            employee.name,
-            employee.role,
-            employee.phone,
-            employee.gender,
-            employee.experience,
-            employee.avatarUrl,
-            employee.birthday,
-            employee.employed ? 1 : 0,
-            employee.hourlyPayRate || null,
-            employee.trackAttendance ? 1 : 0,
-            employee.ptoDays ?? 0
-        );
+    create: async (employee: Employee): Promise<void> => {
+        await ensureInitialized();
+        db.data!.employees.push(employee);
+        await db.write();
     },
 
-    update: (employee: Employee) => {
-        const stmt = db.prepare(`
-            UPDATE employees SET
-                name = ?,
-                role = ?,
-                phone = ?,
-                gender = ?,
-                experience = ?,
-                avatarUrl = ?,
-                birthday = ?,
-                employed = ?,
-                hourlyPayRate = ?,
-                trackAttendance = ?,
-                ptoDays = ?
-            WHERE id = ?
-        `);
-
-        return stmt.run(
-            employee.name,
-            employee.role,
-            employee.phone,
-            employee.gender,
-            employee.experience,
-            employee.avatarUrl,
-            employee.birthday,
-            employee.employed ? 1 : 0,
-            employee.hourlyPayRate || null,
-            employee.trackAttendance ? 1 : 0,
-            employee.ptoDays ?? 0,
-            employee.id
-        );
+    update: async (employee: Employee): Promise<void> => {
+        await ensureInitialized();
+        const index = db.data!.employees.findIndex(e => e.id === employee.id);
+        if (index !== -1) {
+            db.data!.employees[index] = { ...db.data!.employees[index], ...employee };
+            await db.write();
+        }
     },
 
-    delete: (id: string) => {
-        return db.prepare('DELETE FROM employees WHERE id = ?').run(id);
+    delete: async (id: string): Promise<void> => {
+        await ensureInitialized();
+        db.data!.employees = db.data!.employees.filter(employee => employee.id !== id);
+        await db.write();
     }
 };
 
@@ -100,149 +67,121 @@ function calculateCappedHours(checkInTime: string, checkOutTime?: string): numbe
 
 // Attendance Operations
 export const AttendanceOperations = {
-    getAll: () => {
-        return db.prepare('SELECT * FROM attendance_records ORDER BY date DESC').all();
+    getAll: async (): Promise<AttendanceRecord[]> => {
+        await ensureInitialized();
+        return db.data!.attendance_records.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     },
 
-    getByEmployeeId: (employeeId: string) => {
-        return db.prepare(
-            'SELECT * FROM attendance_records WHERE employeeId = ? ORDER BY date DESC'
-        ).all(employeeId);
+    getByEmployeeId: async (employeeId: string): Promise<AttendanceRecord[]> => {
+        await ensureInitialized();
+        return db.data!.attendance_records.filter(record => record.employeeId === employeeId).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     },
 
-    getByDate: (date: string) => {
-        return db.prepare(
-            'SELECT * FROM attendance_records WHERE date = ?'
-        ).all(date);
+    getByDate: async (date: string): Promise<AttendanceRecord[]> => {
+        await ensureInitialized();
+        return db.data!.attendance_records.filter(record => record.date === date);
     },
 
-    create: (record: AttendanceRecord) => {
-        const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
-        const stmt = db.prepare(`
-            INSERT INTO attendance_records (
-                id, employeeId, employeeName, date,
-                status, checkInTime, checkOutTime, hoursWorked
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-
-        return stmt.run(
-            `${record.employeeId}-${record.date}`,
-            record.employeeId,
-            record.employeeName,
-            record.date,
-            record.status,
-            record.checkInTime,
-            record.checkOutTime,
-            hoursWorked
-        );
-    },
-
-    update: (record: AttendanceRecord) => {
-        const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
-        // First try to update existing record
-        const updateStmt = db.prepare(`
-            UPDATE attendance_records SET
-                status = ?,
-                checkInTime = ?,
-                checkOutTime = ?,
-                hoursWorked = ?
-            WHERE employeeId = ? AND date = ?
-        `);
-
-        const updateResult = updateStmt.run(
-            record.status,
-            record.checkInTime,
-            record.checkOutTime,
-            hoursWorked,
-            record.employeeId,
-            record.date
-        );
-
-        // If no rows were affected, create a new record
-        if (updateResult.changes === 0) {
-            const insertStmt = db.prepare(`
-                INSERT INTO attendance_records 
-                (id, employeeId, employeeName, date, status, checkInTime, checkOutTime, hoursWorked)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `);
-            
-            return insertStmt.run(
-                `${record.employeeId}-${record.date}`,
-                record.employeeId,
-                record.employeeName,
-                record.date,
-                record.status,
-                record.checkInTime,
-                record.checkOutTime,
-                hoursWorked
-            );
+    create: async (record: AttendanceRecord): Promise<void> => {
+        await ensureInitialized();
+        const existingIndex = db.data!.attendance_records.findIndex(r => r.employeeId === record.employeeId && r.date === record.date);
+        if (existingIndex !== -1) {
+            db.data!.attendance_records[existingIndex] = record;
+        } else {
+            db.data!.attendance_records.push(record);
         }
-
-        return updateResult;
+        await db.write();
     },
 
-    // Bulk operations for efficiency
-    bulkCreate: (records: AttendanceRecord[]) => {
-        const insert = db.prepare(`
-            INSERT INTO attendance_records (
-                id, employeeId, employeeName, date,
-                status, checkInTime, checkOutTime, hoursWorked
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `);
+    update: async (record: AttendanceRecord): Promise<void> => {
+        await ensureInitialized();
+        const index = db.data!.attendance_records.findIndex(r => r.employeeId === record.employeeId && r.date === record.date);
+        if (index !== -1) {
+            // Update existing record
+            db.data!.attendance_records[index] = { ...db.data!.attendance_records[index], ...record };
+        } else {
+            // Create new record if it doesn't exist
+            db.data!.attendance_records.push(record);
+        }
+        // Always write to database
+        await db.write();
+    },
 
-        const insertMany = db.transaction((records: AttendanceRecord[]) => {
-            for (const record of records) {
-                const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
-                insert.run(
-                    `${record.employeeId}-${record.date}`,
-                    record.employeeId,
-                    record.employeeName,
-                    record.date,
-                    record.status,
-                    record.checkInTime,
-                    record.checkOutTime,
-                    hoursWorked
-                );
+    // LowDB does not have direct transaction support like SQLite, 
+    // so we'll simulate it by ensuring `db.write()` is called after all updates in a batch.
+    bulkCreate: async (records: AttendanceRecord[]): Promise<void> => {
+        await ensureInitialized();
+        for (const record of records) {
+            const hoursWorked = calculateCappedHours(record.checkInTime, record.checkOutTime) ?? null;
+            const existingIndex = db.data!.attendance_records.findIndex(r => r.employeeId === record.employeeId && r.date === record.date);
+            if (existingIndex !== -1) {
+                db.data!.attendance_records[existingIndex] = { ...db.data!.attendance_records[existingIndex], ...record, hoursWorked };
+            } else {
+                db.data!.attendance_records.push({ ...record, hoursWorked });
+            }
+        }
+        await db.write();
+    },
+
+    getDateRangeSummary: async (startDate: string, endDate: string) => {
+        await ensureInitialized();
+        const filteredRecords = db.data!.attendance_records.filter(record => record.date >= startDate && record.date <= endDate);
+
+        const summaryMap = new Map<string, any>();
+
+        filteredRecords.forEach(record => {
+            const key = `${record.employeeId}-${record.employeeName}`;
+            if (!summaryMap.has(key)) {
+                summaryMap.set(key, {
+                    employeeId: record.employeeId,
+                    employeeName: record.employeeName,
+                    totalDays: 0,
+                    presentDays: 0,
+                    lateDays: 0,
+                    absentDays: 0,
+                    totalHoursWorked: 0
+                });
+            }
+            const summary = summaryMap.get(key);
+            summary.totalDays++;
+            if (record.status === 'Present') {
+                summary.presentDays++;
+            } else if (record.status === 'Late') {
+                summary.lateDays++;
+            } else if (record.status === 'Absent') {
+                summary.absentDays++;
+            }
+            if (record.hoursWorked) {
+                summary.totalHoursWorked += record.hoursWorked;
             }
         });
 
-        return insertMany(records);
-    },
-
-    // Get attendance summary for a date range
-    getDateRangeSummary: (startDate: string, endDate: string) => {
-        return db.prepare(`
-            SELECT 
-                employeeId,
-                employeeName,
-                COUNT(*) as totalDays,
-                SUM(CASE WHEN status = 'Present' THEN 1 ELSE 0 END) as presentDays,
-                SUM(CASE WHEN status = 'Late' THEN 1 ELSE 0 END) as lateDays,
-                SUM(CASE WHEN status = 'Absent' THEN 1 ELSE 0 END) as absentDays,
-                SUM(hoursWorked) as totalHoursWorked
-            FROM attendance_records
-            WHERE date BETWEEN ? AND ?
-            GROUP BY employeeId, employeeName
-        `).all(startDate, endDate);
+        return Array.from(summaryMap.values());
     }
 };
 
 // Holiday Operations
 export const HolidayOperations = {
-    getAll: () => {
-        return db.prepare('SELECT * FROM holidays ORDER BY date').all();
+    getAll: async (): Promise<{ date: string; name: string }[]> => {
+        await ensureInitialized();
+        return db.data!.holidays.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     },
 
-    create: (holiday: { date: string; name: string }) => {
-        const stmt = db.prepare(`
-            INSERT OR REPLACE INTO holidays (date, name)
-            VALUES (?, ?)
-        `);
-        return stmt.run(holiday.date, holiday.name);
+    create: async (holiday: { date: string; name: string }): Promise<void> => {
+        await ensureInitialized();
+        const existingIndex = db.data!.holidays.findIndex(h => h.date === holiday.date);
+        if (existingIndex !== -1) {
+            db.data!.holidays[existingIndex] = holiday;
+        } else {
+            db.data!.holidays.push(holiday);
+        }
+        await db.write();
     },
 
-    delete: (date: string) => {
-        return db.prepare('DELETE FROM holidays WHERE date = ?').run(date);
+    delete: async (date: string): Promise<void> => {
+        await ensureInitialized();
+        db.data!.holidays = db.data!.holidays.filter(holiday => holiday.date !== date);
+        await db.write();
     }
 };
 

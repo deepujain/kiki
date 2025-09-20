@@ -1,43 +1,47 @@
 import { join } from 'path';
 import { promises as fs } from 'fs';
-import Database from 'better-sqlite3';
-import { allTimeAttendanceStore } from '../src/lib/store';
-import type { AttendanceRecord } from '../src/lib/types';
+import { open } from 'node:sqlite';
+import sqlite3 from 'sqlite3';
+import { allTimeAttendanceStore } from '../src/lib/store.js';
+import type { AttendanceRecord } from '../src/lib/types.js';
 
 async function migrateAttendance() {
     const dbPath = join(process.cwd(), 'attendance.db');
-    const db = new Database(dbPath);
+    const db = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+    });
 
     try {
-        const migration = db.transaction(() => {
-            const insertAttendance = db.prepare(`
-                INSERT INTO attendance_records (id, employeeId, employeeName, date, status, checkInTime, checkOutTime)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `);
+        await db.run('BEGIN TRANSACTION');
+        const insertAttendance = await db.prepare(`
+            INSERT INTO attendance_records (id, employeeId, employeeName, date, status, checkInTime, checkOutTime)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `);
             
-            for (const [employeeId, records] of allTimeAttendanceStore.entries()) {
-                for (const record of records) {
-                    insertAttendance.run(
-                        `${record.employeeId}-${record.date}`,
-                        record.employeeId,
-                        record.employeeName,
-                        record.date,
-                        record.status,
-                        record.checkInTime,
-                        record.checkOutTime
-                    );
-                }
+        for (const [employeeId, records] of allTimeAttendanceStore.entries()) {
+            for (const record of records) {
+                await insertAttendance.run(
+                    `${record.employeeId}-${record.date}`,
+                    record.employeeId,
+                    record.employeeName,
+                    record.date,
+                    record.status,
+                    record.checkInTime,
+                    record.checkOutTime
+                );
             }
-        });
-        
-        migration();
+        }
+        await insertAttendance.finalize();
+        await db.run('COMMIT');
         
         console.log('Attendance records migration completed successfully.');
     } catch (error: any) {
         console.error('Attendance records migration failed:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        await db.run('ROLLBACK');
         throw error;
     } finally {
-        db.close();
+        await db.close();
     }
 }
 

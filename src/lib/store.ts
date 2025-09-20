@@ -1,13 +1,12 @@
-import { AttendanceRecord, AttendanceStatus } from "./types";
-import { employees as mockEmployees } from "./data";
-import { format, parse, differenceInHours, differenceInMinutes, isBefore } from "date-fns";
-import { holidays } from "./holidays";
+import { AttendanceRecord, AttendanceStatus, Employee } from "./types.js";
+import { employees as mockEmployees } from "./data.js";
+import { format, parse, isBefore } from "date-fns";
+import { holidays } from "./holidays.js";
+import { db } from "./database/database.js"; // Import LowDB instance
 
 // Store for today's attendance, initialized from historical data if the day matches.
-export const attendanceStore = new Map<string, AttendanceRecord>();
+// export const attendanceStore = new Map<string, AttendanceRecord>();
 
-// Store for historical attendance data
-export const allTimeAttendanceStore = new Map<string, AttendanceRecord[]>();
 
 const julyData = {
   Sathish: {
@@ -506,7 +505,7 @@ function processAttendanceData(data: any, employee: any, store: Map<string, Atte
         
         if (existingDates.has(formattedDate)) return;
 
-        if (holidays.some(h => h.date === formattedDate)) return;
+        if (holidays.some((h: { date: string; name: string }) => h.date === formattedDate)) return;
         
         if (recordDate.getDay() === 0) return;
 
@@ -568,28 +567,47 @@ function processAttendanceData(data: any, employee: any, store: Map<string, Atte
 
 let dataSeeded = false;
 
-function seedInitialData() {
+export async function seedInitialData() {
   if (dataSeeded) return;
+
+  // Only seed if the database is empty
+  if (db.data!.employees.length > 0) {
+    dataSeeded = true;
+    return;
+  }
+
+  // Initialize empty collections
+  db.data!.employees = [];
+  db.data!.attendance_records = [];
+  db.data!.holidays = [];
+
+  // Add employees
+  db.data!.employees = [...mockEmployees];
+
+  // Add holidays
+  db.data!.holidays = [...holidays];
+
+  // Create a temporary Map to store attendance records during processing
+  const tempAttendanceStore = new Map<string, AttendanceRecord[]>();
+
+  // Process attendance data for each employee
+  mockEmployees.forEach((employee: Employee) => {
+    if (!tempAttendanceStore.has(employee.id)) {
+      tempAttendanceStore.set(employee.id, []);
+    }
+    processAttendanceData(julyData, employee, tempAttendanceStore);
+    processAttendanceData(augustData, employee, tempAttendanceStore);
+    processAttendanceData(septemberData, employee, tempAttendanceStore);
+  });
+
+  // Flatten all attendance records into a single array
+  db.data!.attendance_records = Array.from(tempAttendanceStore.values()).flat();
+
+  // Sort attendance records by date
+  db.data!.attendance_records.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // Write the changes to disk
+  await db.write();
   
-  allTimeAttendanceStore.clear(); 
-
-  mockEmployees.forEach((employee) => {
-    if (!allTimeAttendanceStore.has(employee.id)) {
-        allTimeAttendanceStore.set(employee.id, []);
-    }
-    processAttendanceData(julyData, employee, allTimeAttendanceStore);
-    processAttendanceData(augustData, employee, allTimeAttendanceStore);
-    processAttendanceData(septemberData, employee, allTimeAttendanceStore);
-  });
-
-  const todayStr = format(new Date(), "yyyy-MM-dd");
-  allTimeAttendanceStore.forEach((records, employeeId) => {
-    const todayRecord = records.find(r => r.date === todayStr);
-    if (todayRecord) {
-        attendanceStore.set(employeeId, todayRecord);
-    }
-  });
   dataSeeded = true;
 }
-
-seedInitialData();

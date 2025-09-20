@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { promises as fs } from 'fs';
-import Database from 'better-sqlite3';
+import { open } from 'node:sqlite';
+import sqlite3 from 'sqlite3';
 
 async function migrateDatabase() {
     const dbPath = join(process.cwd(), 'attendance.db');
@@ -17,7 +18,10 @@ async function migrateDatabase() {
     }
     
     // Create new database
-    const db = new Database(dbPath);
+    const db = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+    });
     
     try {
         // Read and execute schema
@@ -26,21 +30,19 @@ async function migrateDatabase() {
             'utf8'
         );
         
-        // Enable foreign keys
-        db.pragma('foreign_keys = ON');
-        
-        // Execute schema
-        db.exec(schema);
+        // Enable foreign keys and execute schema
+        await db.exec('PRAGMA foreign_keys = ON;');
+        await db.exec(schema);
         
         console.log('Database migration completed successfully: Empty tables created.');
     } catch (error: any) {
         console.error('Migration failed:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
         // Clean up on failure
-        db.close();
+        await db.close();
         await fs.unlink(dbPath).catch(() => {});
         throw error;
     } finally {
-        db.close();
+        await db.close();
     }
 }
 

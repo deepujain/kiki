@@ -1,17 +1,21 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
+import { initializeDatabase } from '@/lib/database/database';
+import { seedInitialData } from '@/lib/store';
 
 export const metadata: Metadata = {
   title: 'Kiki 🦀',
   description: 'Effortless Attendance Management',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await initializeDatabase();
+  await seedInitialData(); // Call seedInitialData after database initialization
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

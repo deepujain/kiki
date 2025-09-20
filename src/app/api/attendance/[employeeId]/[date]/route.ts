@@ -19,7 +19,8 @@ export async function PUT(
             );
         }
 
-        const result = AttendanceOperations.update(record);
+        await AttendanceOperations.update(record);
+        const result = record;
         return NextResponse.json(result);
     } catch (error) {
         console.error('Failed to update attendance record:', error);

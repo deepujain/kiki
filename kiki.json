@@ -1,0 +1,2994 @@
+{
+  "employees": [
+    {
+      "id": "6",
+      "name": "Aman",
+      "role": "Logistics",
+      "phone": "+91 98765 43215",
+      "gender": "Male",
+      "experience": 6,
+      "avatarUrl": "/avatars/06.png",
+      "birthday": "1987-01-20",
+      "employed": false,
+      "hourlyPayRate": 50,
+      "trackAttendance": true,
+      "ptoDays": 10
+    },
+    {
+      "id": "5",
+      "name": "Arjun",
+      "role": "Logistics",
+      "phone": "+91 98765 43214",
+      "gender": "Male",
+      "experience": 4,
+      "avatarUrl": "/avatars/05.png",
+      "birthday": "1991-09-05",
+      "employed": true,
+      "hourlyPayRate": 50,
+      "trackAttendance": true,
+      "ptoDays": 10
+    },
+    {
+      "id": "4",
+      "name": "Dhiren",
+      "role": "MIS",
+      "phone": "+91 98765 43213",
+      "gender": "Male",
+      "experience": 8,
+      "avatarUrl": "/avatars/04.png",
+      "birthday": "1985-08-01",
+      "employed": true,
+      "hourlyPayRate": 73,
+      "trackAttendance": true,
+      "ptoDays": 10
+    },
+    {
+      "id": "8",
+      "name": "Neetha Jain",
+      "role": "Founder & CEO",
+      "phone": "+91 99999 99999",
+      "gender": "Female",
+      "experience": 15,
+      "avatarUrl": "/avatars/1xai.png",
+      "birthday": "2000-07-31",
+      "employed": true,
+      "trackAttendance": false,
+      "ptoDays": 10
+    },
+    {
+      "id": "2",
+      "name": "Raghavendra",
+      "role": "TSE",
+      "phone": "+91 98765 43211",
+      "gender": "Male",
+      "experience": 3,
+      "avatarUrl": "/avatars/02.png",
+      "birthday": "1992-11-22",
+      "employed": true,
+      "hourlyPayRate": 50,
+      "trackAttendance": true,
+      "ptoDays": 10
+    },
+    {
+      "id": "3",
+      "name": "Safee",
+      "role": "TSE",
+      "phone": "+91 98765 43212",
+      "gender": "Male",
+      "experience": 5,
+      "avatarUrl": "/avatars/03.png",
+      "birthday": "1990-03-10",
+      "employed": false,
+      "hourlyPayRate": 50,
+      "trackAttendance": true,
+      "ptoDays": 10
+    },
+    {
+      "id": "1",
+      "name": "Sathish",
+      "role": "Logistics",
+      "phone": "+91 98765 43210",
+      "gender": "Male",
+      "experience": 7,
+      "avatarUrl": "/avatars/01.png",
+      "birthday": "1988-05-15",
+      "employed": true,
+      "hourlyPayRate": 50,
+      "trackAttendance": true,
+      "ptoDays": 10
+    },
+    {
+      "id": "9",
+      "name": "Vijay Jain",
+      "role": "GM",
+      "phone": "+91 99999 99999",
+      "gender": "Male",
+      "experience": 15,
+      "avatarUrl": "/avatars/1xai.png",
+      "birthday": "2000-09-01",
+      "employed": true,
+      "trackAttendance": false,
+      "ptoDays": 10
+    }
+  ],
+  "attendance_records": [
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-01",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-01",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-01",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-01",
+      "status": "Present",
+      "checkInTime": "10:20",
+      "checkOutTime": "19:21"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-01",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-02",
+      "status": "Late",
+      "checkInTime": "12:18",
+      "checkOutTime": "18:49"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-02",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-02",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-02",
+      "status": "Present",
+      "checkInTime": "10:24",
+      "checkOutTime": "20:10"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-03",
+      "status": "Late",
+      "checkInTime": "14:46",
+      "checkOutTime": "19:26"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-03",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-03",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-03",
+      "status": "Present",
+      "checkInTime": "10:38",
+      "checkOutTime": "19:26"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-03",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-04",
+      "status": "Late",
+      "checkInTime": "12:03",
+      "checkOutTime": "19:29"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-04",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-04",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-04",
+      "status": "Late",
+      "checkInTime": "12:51",
+      "checkOutTime": "20:22"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-04",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-05",
+      "status": "Late",
+      "checkInTime": "12:17",
+      "checkOutTime": "19:53"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-05",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-05",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-05",
+      "status": "Present",
+      "checkInTime": "10:23",
+      "checkOutTime": "19:53"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-05",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-07",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-07",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-07",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-07",
+      "status": "Present",
+      "checkInTime": "10:31",
+      "checkOutTime": "19:20"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-07",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-08",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-08",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-08",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-08",
+      "status": "Present",
+      "checkInTime": "10:33",
+      "checkOutTime": "19:45"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-08",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-09",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-09",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-09",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-09",
+      "status": "Present",
+      "checkInTime": "10:23",
+      "checkOutTime": "18:56"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-09",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-10",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-10",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-10",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-10",
+      "status": "Present",
+      "checkInTime": "10:26",
+      "checkOutTime": "19:18"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-10",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-11",
+      "status": "Late",
+      "checkInTime": "12:27",
+      "checkOutTime": "20:12"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-11",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-11",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-11",
+      "status": "Present",
+      "checkInTime": "10:38",
+      "checkOutTime": "19:45"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-11",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-12",
+      "status": "Late",
+      "checkInTime": "12:02",
+      "checkOutTime": "19:10"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-14",
+      "status": "Late",
+      "checkInTime": "11:32",
+      "checkOutTime": "19:37"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-14",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-14",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-14",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-14",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-15",
+      "status": "Late",
+      "checkInTime": "12:27",
+      "checkOutTime": "20:13"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-15",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-15",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-15",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-15",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-16",
+      "status": "Present",
+      "checkInTime": "10:59",
+      "checkOutTime": "17:39"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-18",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-18",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-18",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-18",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-18",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-19",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-19",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-19",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-19",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-19",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-21",
+      "status": "Late",
+      "checkInTime": "12:17",
+      "checkOutTime": "19:14"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-21",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-21",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-21",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-21",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-22",
+      "status": "Late",
+      "checkInTime": "12:24",
+      "checkOutTime": "18:59"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-22",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-22",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-22",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-22",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-23",
+      "status": "Late",
+      "checkInTime": "12:39",
+      "checkOutTime": "18:01"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-24",
+      "status": "Late",
+      "checkInTime": "13:23",
+      "checkOutTime": "16:19"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-24",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-24",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-24",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-24",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-25",
+      "status": "Late",
+      "checkInTime": "14:15",
+      "checkOutTime": "19:53"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-25",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-25",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-25",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-25",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-26",
+      "status": "Late",
+      "checkInTime": "13:23",
+      "checkOutTime": "18:24"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-26",
+      "status": "Late",
+      "checkInTime": "14:14",
+      "checkOutTime": "19:07"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-26",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-26",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-26",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-28",
+      "status": "Late",
+      "checkInTime": "13:59",
+      "checkOutTime": "20:27"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-28",
+      "status": "Present",
+      "checkInTime": "10:39",
+      "checkOutTime": "18:43"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-28",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-28",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-28",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-29",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-29",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-29",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-29",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-29",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-30",
+      "status": "Late",
+      "checkInTime": "11:59",
+      "checkOutTime": "18:44"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-30",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-30",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-30",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-30",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-07-31",
+      "status": "Late",
+      "checkInTime": "12:25",
+      "checkOutTime": "19:15"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-07-31",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-07-31",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-07-31",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-07-31",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-01",
+      "status": "Late",
+      "checkInTime": "12:09",
+      "checkOutTime": "19:28"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-01",
+      "status": "Present",
+      "checkInTime": "10:44",
+      "checkOutTime": "18:52"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-01",
+      "status": "Late",
+      "checkInTime": "13:10",
+      "checkOutTime": "17:30"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-01",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-01",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-01",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-02",
+      "status": "Late",
+      "checkInTime": "11:11",
+      "checkOutTime": "17:59"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-02",
+      "status": "Present",
+      "checkInTime": "10:27",
+      "checkOutTime": "16:47"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:30"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-04",
+      "status": "Late",
+      "checkInTime": "12:08",
+      "checkOutTime": "19:17"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-04",
+      "status": "Late",
+      "checkInTime": "11:14",
+      "checkOutTime": "14:10"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-04",
+      "status": "Late",
+      "checkInTime": "12:54",
+      "checkOutTime": "17:30"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-04",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-04",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-04",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-05",
+      "status": "Late",
+      "checkInTime": "12:00",
+      "checkOutTime": "18:02"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-05",
+      "status": "Late",
+      "checkInTime": "11:19",
+      "checkOutTime": "19:03"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-05",
+      "status": "Late",
+      "checkInTime": "11:45",
+      "checkOutTime": "19:00"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-05",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-05",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-05",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-06",
+      "status": "Late",
+      "checkInTime": "12:31",
+      "checkOutTime": "19:15"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-06",
+      "status": "Present",
+      "checkInTime": "10:33",
+      "checkOutTime": "19:01"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-06",
+      "status": "Present",
+      "checkInTime": "10:30",
+      "checkOutTime": "18:27"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-06",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-06",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-06",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-07",
+      "status": "Late",
+      "checkInTime": "12:14",
+      "checkOutTime": "20:10"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-07",
+      "status": "Present",
+      "checkInTime": "10:46",
+      "checkOutTime": "19:20"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-07",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-07",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-07",
+      "status": "Present",
+      "checkInTime": "10:11",
+      "checkOutTime": "21:22"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-07",
+      "status": "Present",
+      "checkInTime": "10:21",
+      "checkOutTime": "18:55"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-08",
+      "status": "Late",
+      "checkInTime": "12:22",
+      "checkOutTime": "18:57"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-08",
+      "status": "Late",
+      "checkInTime": "11:45",
+      "checkOutTime": "19:23"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-08",
+      "status": "Late",
+      "checkInTime": "13:14",
+      "checkOutTime": "17:40"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-08",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-08",
+      "status": "Present",
+      "checkInTime": "10:03",
+      "checkOutTime": "21:19"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-08",
+      "status": "Present",
+      "checkInTime": "10:03",
+      "checkOutTime": "20:13"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-09",
+      "status": "Late",
+      "checkInTime": "13:54",
+      "checkOutTime": "19:13"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-09",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-09",
+      "status": "Present",
+      "checkInTime": "10:22",
+      "checkOutTime": "18:32"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-09",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-09",
+      "status": "Present",
+      "checkInTime": "09:49",
+      "checkOutTime": "22:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-09",
+      "status": "Present",
+      "checkInTime": "10:05",
+      "checkOutTime": "19:49"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-11",
+      "status": "Late",
+      "checkInTime": "12:01",
+      "checkOutTime": "18:37"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-11",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "20:38"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-11",
+      "status": "Late",
+      "checkInTime": "12:29",
+      "checkOutTime": "17:54"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-11",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-11",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-11",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-12",
+      "status": "Late",
+      "checkInTime": "11:35",
+      "checkOutTime": "19:32"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-12",
+      "status": "Present",
+      "checkInTime": "11:00",
+      "checkOutTime": "19:35"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-12",
+      "status": "Present",
+      "checkInTime": "10:23",
+      "checkOutTime": "19:45"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-12",
+      "status": "Present",
+      "checkInTime": "11:00",
+      "checkOutTime": "18:56"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-12",
+      "status": "Present",
+      "checkInTime": "10:28",
+      "checkOutTime": "23:06"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-12",
+      "status": "Present",
+      "checkInTime": "10:19",
+      "checkOutTime": "20:48"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-13",
+      "status": "Late",
+      "checkInTime": "12:34",
+      "checkOutTime": "19:41"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-13",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "18:36"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-13",
+      "status": "Present",
+      "checkInTime": "10:31",
+      "checkOutTime": "18:05"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-13",
+      "status": "Present",
+      "checkInTime": "10:43",
+      "checkOutTime": "19:21"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-13",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "22:21"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-13",
+      "status": "Present",
+      "checkInTime": "10:04",
+      "checkOutTime": "20:14"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-14",
+      "status": "Late",
+      "checkInTime": "12:19",
+      "checkOutTime": "21:01"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-14",
+      "status": "Late",
+      "checkInTime": "13:46",
+      "checkOutTime": "19:27"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-14",
+      "status": "Present",
+      "checkInTime": "10:35",
+      "checkOutTime": "18:43"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-14",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "17:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-14",
+      "status": "Present",
+      "checkInTime": "10:17",
+      "checkOutTime": "20:19"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-14",
+      "status": "Present",
+      "checkInTime": "10:18",
+      "checkOutTime": "21:39"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-16",
+      "status": "Late",
+      "checkInTime": "11:40",
+      "checkOutTime": "19:29"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-16",
+      "status": "Present",
+      "checkInTime": "10:15",
+      "checkOutTime": "19:54"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-18",
+      "status": "Late",
+      "checkInTime": "12:18",
+      "checkOutTime": "21:08"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-18",
+      "status": "Present",
+      "checkInTime": "10:47",
+      "checkOutTime": "19:46"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-18",
+      "status": "Late",
+      "checkInTime": "11:49",
+      "checkOutTime": "17:25"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-18",
+      "status": "Late",
+      "checkInTime": "11:15",
+      "checkOutTime": "19:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-18",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-18",
+      "status": "Present",
+      "checkInTime": "10:11",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-19",
+      "status": "Late",
+      "checkInTime": "11:53",
+      "checkOutTime": "18:40"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-19",
+      "status": "Present",
+      "checkInTime": "10:55",
+      "checkOutTime": "20:12"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-19",
+      "status": "Present",
+      "checkInTime": "10:18",
+      "checkOutTime": "18:51"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-19",
+      "status": "Late",
+      "checkInTime": "11:17",
+      "checkOutTime": "19:15"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-19",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-19",
+      "status": "Present",
+      "checkInTime": "09:42",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-20",
+      "status": "Late",
+      "checkInTime": "11:53",
+      "checkOutTime": "19:08"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-20",
+      "status": "Present",
+      "checkInTime": "10:54",
+      "checkOutTime": "20:10"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-20",
+      "status": "Present",
+      "checkInTime": "10:19",
+      "checkOutTime": "18:37"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-20",
+      "status": "Present",
+      "checkInTime": "10:49",
+      "checkOutTime": "18:57"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-20",
+      "status": "Present",
+      "checkInTime": "10:16",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-20",
+      "status": "Present",
+      "checkInTime": "09:57",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-21",
+      "status": "Late",
+      "checkInTime": "12:16",
+      "checkOutTime": "20:26"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-21",
+      "status": "Late",
+      "checkInTime": "11:34",
+      "checkOutTime": "20:07"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-21",
+      "status": "Present",
+      "checkInTime": "10:29",
+      "checkOutTime": "17:37"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-21",
+      "status": "Present",
+      "checkInTime": "10:50",
+      "checkOutTime": "18:58"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-21",
+      "status": "Present",
+      "checkInTime": "10:15",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-21",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-22",
+      "status": "Late",
+      "checkInTime": "12:52",
+      "checkOutTime": "19:08"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-22",
+      "status": "Present",
+      "checkInTime": "10:53",
+      "checkOutTime": "18:37"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-22",
+      "status": "Present",
+      "checkInTime": "10:37",
+      "checkOutTime": "18:04"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-22",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "18:53"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-22",
+      "status": "Present",
+      "checkInTime": "10:11",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-22",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-23",
+      "status": "Late",
+      "checkInTime": "11:32",
+      "checkOutTime": "17:08"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-23",
+      "status": "Present",
+      "checkInTime": "10:40",
+      "checkOutTime": "18:44"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-23",
+      "status": "Present",
+      "checkInTime": "09:42",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-23",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-25",
+      "status": "Late",
+      "checkInTime": "11:35",
+      "checkOutTime": "20:39"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-25",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-25",
+      "status": "Present",
+      "checkInTime": "10:01",
+      "checkOutTime": "18:36"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-25",
+      "status": "Present",
+      "checkInTime": "10:43",
+      "checkOutTime": "18:52"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-25",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-25",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-27",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-27",
+      "status": "Present",
+      "checkInTime": "10:49",
+      "checkOutTime": "19:26"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-27",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-27",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-27",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-27",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-28",
+      "status": "Late",
+      "checkInTime": "11:55",
+      "checkOutTime": "19:10"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-28",
+      "status": "Present",
+      "checkInTime": "10:56",
+      "checkOutTime": "19:21"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-28",
+      "status": "Present",
+      "checkInTime": "10:25",
+      "checkOutTime": "18:30"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-28",
+      "status": "Present",
+      "checkInTime": "10:36",
+      "checkOutTime": "18:40"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-28",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-28",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-29",
+      "status": "Late",
+      "checkInTime": "12:03",
+      "checkOutTime": "20:43"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-29",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-29",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-29",
+      "status": "Present",
+      "checkInTime": "10:53",
+      "checkOutTime": "18:46"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-29",
+      "status": "Present",
+      "checkInTime": "10:14",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-29",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-08-30",
+      "status": "Late",
+      "checkInTime": "12:23",
+      "checkOutTime": "19:03"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-08-30",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-08-30",
+      "status": "Present",
+      "checkInTime": "10:31",
+      "checkOutTime": "17:26"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-08-30",
+      "status": "Present",
+      "checkInTime": "10:28",
+      "checkOutTime": "18:43"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-08-30",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-08-30",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-01",
+      "status": "Late",
+      "checkInTime": "12:08",
+      "checkOutTime": "20:15"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-01",
+      "status": "Present",
+      "checkInTime": "10:47",
+      "checkOutTime": "20:07"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-01",
+      "status": "Present",
+      "checkInTime": "10:54",
+      "checkOutTime": "19:16"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-01",
+      "status": "Present",
+      "checkInTime": "10:52",
+      "checkOutTime": "19:04"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-01",
+      "status": "Present",
+      "checkInTime": "10:11",
+      "checkOutTime": "20:06"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-01",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-02",
+      "status": "Late",
+      "checkInTime": "12:01",
+      "checkOutTime": "19:39"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-02",
+      "status": "Present",
+      "checkInTime": "10:58",
+      "checkOutTime": "20:39"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-02",
+      "status": "Present",
+      "checkInTime": "10:18",
+      "checkOutTime": "18:56"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-02",
+      "status": "Present",
+      "checkInTime": "10:54",
+      "checkOutTime": "18:52"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-02",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-03",
+      "status": "Late",
+      "checkInTime": "12:48",
+      "checkOutTime": "18:17"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-03",
+      "status": "Late",
+      "checkInTime": "11:09",
+      "checkOutTime": "17:44"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-03",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "18:13"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-03",
+      "status": "Present",
+      "checkInTime": "10:57",
+      "checkOutTime": "18:53"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-03",
+      "status": "Present",
+      "checkInTime": "10:18",
+      "checkOutTime": "20:29"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-03",
+      "status": "Present",
+      "checkInTime": "10:19",
+      "checkOutTime": "21:29"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-04",
+      "status": "Late",
+      "checkInTime": "12:16",
+      "checkOutTime": "20:48"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-04",
+      "status": "Present",
+      "checkInTime": "10:47",
+      "checkOutTime": "19:26"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-04",
+      "status": "Present",
+      "checkInTime": "11:00",
+      "checkOutTime": "18:22"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-04",
+      "status": "Late",
+      "checkInTime": "11:09",
+      "checkOutTime": "18:51"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-04",
+      "status": "Present",
+      "checkInTime": "10:19",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-04",
+      "status": "Present",
+      "checkInTime": "10:10",
+      "checkOutTime": "21:27"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-05",
+      "status": "Late",
+      "checkInTime": "12:49",
+      "checkOutTime": "19:39"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-05",
+      "status": "Present",
+      "checkInTime": "10:54",
+      "checkOutTime": "19:56"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-05",
+      "status": "Present",
+      "checkInTime": "10:46",
+      "checkOutTime": "18:15"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-05",
+      "status": "Present",
+      "checkInTime": "10:45",
+      "checkOutTime": "18:55"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-05",
+      "status": "Present",
+      "checkInTime": "10:11",
+      "checkOutTime": "21:39"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-05",
+      "status": "Present",
+      "checkInTime": "10:59",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-06",
+      "status": "Late",
+      "checkInTime": "12:26",
+      "checkOutTime": "20:26"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-06",
+      "status": "Present",
+      "checkInTime": "10:57",
+      "checkOutTime": "21:10"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-06",
+      "status": "Present",
+      "checkInTime": "10:25",
+      "checkOutTime": "19:11"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-06",
+      "status": "Present",
+      "checkInTime": "10:45",
+      "checkOutTime": "15:48"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-06",
+      "status": "Present",
+      "checkInTime": "10:00",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-06",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-08",
+      "status": "Late",
+      "checkInTime": "12:07",
+      "checkOutTime": "20:56"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-08",
+      "status": "Present",
+      "checkInTime": "10:53",
+      "checkOutTime": "20:25"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-08",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-08",
+      "status": "Present",
+      "checkInTime": "10:33",
+      "checkOutTime": "18:43"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-08",
+      "status": "Present",
+      "checkInTime": "10:22",
+      "checkOutTime": "17:49"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-08",
+      "status": "Present",
+      "checkInTime": "10:46",
+      "checkOutTime": "21:46"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-09",
+      "status": "Late",
+      "checkInTime": "11:52",
+      "checkOutTime": "20:42"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-09",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-09",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-09",
+      "status": "Late",
+      "checkInTime": "11:11",
+      "checkOutTime": "18:54"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-09",
+      "status": "Present",
+      "checkInTime": "10:37",
+      "checkOutTime": "18:54"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-09",
+      "status": "Present",
+      "checkInTime": "10:41",
+      "checkOutTime": "10:10"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-10",
+      "status": "Late",
+      "checkInTime": "13:06",
+      "checkOutTime": "21:29"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-10",
+      "status": "Present",
+      "checkInTime": "10:53",
+      "checkOutTime": "20:45"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-10",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-10",
+      "status": "Late",
+      "checkInTime": "11:06",
+      "checkOutTime": "18:55"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-10",
+      "status": "Present",
+      "checkInTime": "10:39",
+      "checkOutTime": "15:39"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-10",
+      "status": "Present",
+      "checkInTime": "10:38",
+      "checkOutTime": "21:37"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-11",
+      "status": "Late",
+      "checkInTime": "11:24",
+      "checkOutTime": "20:48"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-11",
+      "status": "Present",
+      "checkInTime": "10:47",
+      "checkOutTime": "20:40"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-11",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-11",
+      "status": "Late",
+      "checkInTime": "11:01",
+      "checkOutTime": "18:50"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-11",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-11",
+      "status": "Present",
+      "checkInTime": "10:02",
+      "checkOutTime": "15:45"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-12",
+      "status": "Present",
+      "checkInTime": "10:40",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-12",
+      "status": "Present",
+      "checkInTime": "10:33",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-12",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "6",
+      "employeeName": "Aman",
+      "date": "2025-09-12",
+      "status": "Present",
+      "checkInTime": "10:05",
+      "checkOutTime": "18:00"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-13",
+      "status": "Late",
+      "checkInTime": "12:31",
+      "checkOutTime": "19:57"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-15",
+      "status": "Late",
+      "checkInTime": "11:45",
+      "checkOutTime": "19:01"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-15",
+      "status": "Late",
+      "checkInTime": "11:29",
+      "checkOutTime": "20:36"
+    },
+    {
+      "employeeId": "3",
+      "employeeName": "Safee",
+      "date": "2025-09-15",
+      "status": "Present",
+      "checkInTime": "10:28",
+      "checkOutTime": "18:44"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-15",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-15",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "5",
+      "employeeName": "Arjun",
+      "date": "2025-09-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "4",
+      "employeeName": "Dhiren",
+      "date": "2025-09-16",
+      "status": "Late",
+      "checkInTime": "12:00",
+      "checkOutTime": "20:00"
+    },
+    {
+      "employeeId": "2",
+      "employeeName": "Raghavendra",
+      "date": "2025-09-16",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-16",
+      "status": "Present",
+      "checkInTime": "09:00",
+      "checkOutTime": "17:00"
+    }
+  ],
+  "holidays": [
+    {
+      "date": "2025-01-01",
+      "name": "New Year's Day"
+    },
+    {
+      "date": "2025-01-26",
+      "name": "Republic Day"
+    },
+    {
+      "date": "2025-03-08",
+      "name": "Maha Shivaratri"
+    },
+    {
+      "date": "2025-03-25",
+      "name": "Holi"
+    },
+    {
+      "date": "2025-03-29",
+      "name": "Good Friday"
+    },
+    {
+      "date": "2025-04-10",
+      "name": "Eid al-Fitr"
+    },
+    {
+      "date": "2025-04-17",
+      "name": "Ram Navami"
+    },
+    {
+      "date": "2025-04-21",
+      "name": "Mahavir Jayanti"
+    },
+    {
+      "date": "2025-05-01",
+      "name": "May Day"
+    },
+    {
+      "date": "2025-06-16",
+      "name": "Eid al-Adha"
+    },
+    {
+      "date": "2025-07-17",
+      "name": "Muharram"
+    },
+    {
+      "date": "2025-08-15",
+      "name": "Independence Day"
+    },
+    {
+      "date": "2025-08-26",
+      "name": "Janmashtami"
+    },
+    {
+      "date": "2025-09-07",
+      "name": "Ganesh Chaturthi"
+    },
+    {
+      "date": "2025-10-02",
+      "name": "Gandhi Jayanti"
+    },
+    {
+      "date": "2025-10-12",
+      "name": "Dussehra"
+    },
+    {
+      "date": "2025-10-31",
+      "name": "Diwali"
+    },
+    {
+      "date": "2025-11-15",
+      "name": "Guru Nanak Jayanti"
+    },
+    {
+      "date": "2025-12-25",
+      "name": "Christmas"
+    }
+  ]
+}

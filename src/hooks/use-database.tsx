@@ -129,7 +129,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
             throw new Error('Failed to update attendance');
         }
 
-        // Removed refreshData() from here
+        await refreshData(); // Add refreshData back to update UI
     };
 
     const updateMultipleAttendance = async (records: AttendanceRecord[]) => {
