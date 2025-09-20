@@ -64,6 +64,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/auth-context";
+import { EmployeeMonthlyStats } from "@/components/employee-monthly-stats";
 
 
 const today = new Date();
@@ -82,6 +83,7 @@ interface AttendanceSummary {
   ptoUsedSoFar: number;
   ptoLeft: number;
   lateDays: number;
+  ptosUsedThisMonth: number;
 }
 
 interface PaySummary {
@@ -249,6 +251,9 @@ function StaffPageContent() {
     const ptoUsedSoFar = Math.min(totalAnnualAbsences, annualPTODays);
     const ptoLeft = Math.max(0, annualPTODays - ptoUsedSoFar);
 
+    // Calculate PTOs used this month
+    const ptosUsedThisMonth = Math.min(absentCount, ptoLeft);
+
     const summary: AttendanceSummary = {
       workDays: getWorkingDays(startDate, endDate),
       present: presentCount,
@@ -256,7 +261,8 @@ function StaffPageContent() {
       annualPTODays: annualPTODays,
       ptoUsedSoFar: ptoUsedSoFar,
       ptoLeft: ptoLeft,
-      lateDays: lateCount
+      lateDays: lateCount,
+      ptosUsedThisMonth: ptosUsedThisMonth
     };
 
     setMtdSummary(summary);
@@ -746,11 +752,12 @@ function StaffPageContent() {
                     {!mtdSummary || !ytdSummary ? <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : (
                         <div className="space-y-4">
                         <div>
-                            <div className="grid grid-cols-7 gap-2 text-center">
+                            <div className="grid grid-cols-8 gap-2 text-center">
                                 <div><p className="font-bold">{mtdSummary.workDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
                                 <div><p className="font-bold text-green-600">{mtdSummary.present}</p><p className="text-xs text-muted-foreground">Present</p></div>
                                 <div><p className="font-bold text-orange-500">{mtdSummary.lateDays}</p><p className="text-xs text-muted-foreground">Late</p></div>
                                 <div><p className="font-bold text-red-500">{mtdSummary.absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
+                                <div><p className="font-bold text-purple-500">{mtdSummary.ptosUsedThisMonth}</p><p className="text-xs text-muted-foreground">PTOs Used This Month</p></div>
                                 <div><p className="font-bold">{mtdSummary.annualPTODays}</p><p className="text-xs text-muted-foreground">Annual PTO Days</p></div>
                                 <div><p className="font-bold text-yellow-600">{mtdSummary.ptoUsedSoFar}</p><p className="text-xs text-muted-foreground">PTO Used So Far</p></div>
                                 <div><p className="font-bold">{mtdSummary.ptoLeft}</p><p className="text-xs text-muted-foreground">PTO Left</p></div>
@@ -908,6 +915,12 @@ function StaffPageContent() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Monthly Statistics */}
+            <EmployeeMonthlyStats 
+              employee={selectedEmployee} 
+              attendanceRecords={attendanceRecords.get(selectedEmployee.id) || []} 
+            />
 
             {/* Spacing after attendance section */}
             <div className="h-12"></div>
