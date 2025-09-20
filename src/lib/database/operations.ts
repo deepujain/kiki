@@ -107,7 +107,7 @@ export const AttendanceOperations = {
         await db.write();
     },
 
-    // LowDB does not have direct transaction support like SQLite, 
+    // Process records in a batch
     // so we'll simulate it by ensuring `db.write()` is called after all updates in a batch.
     bulkCreate: async (records: AttendanceRecord[]): Promise<void> => {
         await ensureInitialized();
