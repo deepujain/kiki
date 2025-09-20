@@ -138,6 +138,23 @@ function StaffPageContent() {
   const isAdmin = user?.role === "Admin"; // Determine if user is admin
   const [paySummary, setPaySummary] = useState<PaySummary | null>(null); // New state for pay summary
   const [selectedMonth, setSelectedMonth] = useState<Date>(startOfMonth(today));
+  const [aadharImageExists, setAadharImageExists] = useState<boolean>(false);
+
+  // Check if Aadhaar image exists when employee is selected
+  useEffect(() => {
+    if (selectedEmployee?.name) {
+      const aadharFileName = selectedEmployee.name.toLowerCase().replace(/\s+/g, '-') + '-aadhar.jpeg';
+      const aadharImagePath = `/images/aadhar/${aadharFileName}`;
+      
+      fetch(aadharImagePath)
+        .then(response => {
+          setAadharImageExists(response.ok);
+        })
+        .catch(() => {
+          setAadharImageExists(false);
+        });
+    }
+  }, [selectedEmployee?.name]);
 
   useEffect(() => {
     if (employeeIdFromQuery) {
@@ -594,14 +611,114 @@ function StaffPageContent() {
           <h1 className="text-2xl font-bold font-headline">Employee Details</h1>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="lg:col-span-1 flex flex-col items-center justify-center p-6">
-            <Avatar className="h-32 w-32 mb-4">
-              <AvatarImage src={selectedEmployee.avatarUrl} alt={selectedEmployee.name} data-ai-hint="person profile" />
-              <AvatarFallback className="text-5xl">{selectedEmployee.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <h2 className="text-2xl font-bold">{selectedEmployee.name}</h2>
-            <p className="text-muted-foreground">{selectedEmployee.role}</p>
-          </Card>
+          <div className="lg:col-span-1 space-y-6">
+            <Card className="flex flex-col items-center justify-center p-6">
+              <Avatar className="h-32 w-32 mb-4">
+                <AvatarImage src={selectedEmployee.avatarUrl} alt={selectedEmployee.name} data-ai-hint="person profile" />
+                <AvatarFallback className="text-5xl">{selectedEmployee.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <h2 className="text-2xl font-bold">{selectedEmployee.name}</h2>
+              <p className="text-muted-foreground">{selectedEmployee.role}</p>
+            </Card>
+            
+            <Card className="p-6">
+              <CardHeader className="px-0 pt-0">
+                <CardTitle className="text-lg">Aadhaar Details</CardTitle>
+              </CardHeader>
+              <CardContent className="px-0 pb-0">
+                {selectedEmployee.name && (
+                  <div className="flex flex-col items-center gap-4">
+                    {/* Move state and effect to component level */}
+                    {(() => {
+                      const aadharFileName = selectedEmployee.name.toLowerCase().replace(/\s+/g, '-') + '-aadhar.jpeg';
+                      const aadharImagePath = `/images/aadhar/${aadharFileName}`;
+                      
+                      if (aadharImageExists) {
+                        return (
+                          <div className="w-full aspect-[1.586] relative rounded-lg overflow-hidden border">
+                            {/* 1.586 is the aspect ratio of an Aadhaar card */}
+                            <img 
+                              src={aadharImagePath} 
+                              alt="Aadhaar Card" 
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className="w-full flex flex-col items-center gap-3">
+                            <p className="text-sm text-muted-foreground text-center">No Aadhaar card uploaded</p>
+                            <Label htmlFor="aadhar-upload" className="cursor-pointer">
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="p-4 rounded-lg bg-muted">
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                  </svg>
+                                </div>
+                                <span className="text-sm font-medium">Upload Aadhaar Card</span>
+                              </div>
+                            </Label>
+                            <Input 
+                              id="aadhar-upload" 
+                              type="file" 
+                              accept="image/jpeg,image/png"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  try {
+                                    // Create FormData
+                                    const formData = new FormData();
+                                    formData.append('file', file);
+                                    formData.append('employeeName', selectedEmployee.name);
+
+                                    // Upload file
+                                    const response = await fetch('/api/upload/aadhar', {
+                                      method: 'POST',
+                                      body: formData,
+                                    });
+
+                                    if (!response.ok) {
+                                      throw new Error('Upload failed');
+                                    }
+
+                                    // Show success message
+                                    toast({
+                                      title: "Upload Successful",
+                                      description: "Aadhaar card has been uploaded successfully.",
+                                    });
+
+                                    // Trigger a re-check for the image
+                                    const aadharFileName = selectedEmployee.name.toLowerCase().replace(/\s+/g, '-') + '-aadhar.jpeg';
+                                    const aadharImagePath = `/images/aadhar/${aadharFileName}`;
+                                    
+                                    // Wait a brief moment for the file to be available
+                                    await new Promise(resolve => setTimeout(resolve, 500));
+                                    
+                                    const checkResponse = await fetch(aadharImagePath);
+                                    setAadharImageExists(checkResponse.ok);
+                                  } catch (error) {
+                                    console.error('Error uploading file:', error);
+                                    toast({
+                                      variant: "destructive",
+                                      title: "Upload Failed",
+                                      description: "Failed to upload Aadhaar card. Please try again.",
+                                    });
+                                  }
+                                }
+                              }}
+                            />
+                          </div>
+                        );
+                      }
+                    })()}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
           <Card className="lg:col-span-2">
             <CardHeader>

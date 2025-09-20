@@ -7,7 +7,7 @@
       "phone": "+91 98765 43215",
       "gender": "Male",
       "experience": 6,
-      "avatarUrl": "🦉",
+      "avatarUrl": "/avatars/06.png",
       "birthday": "1987-01-20",
       "employed": false,
       "hourlyPayRate": 50,
@@ -21,7 +21,7 @@
       "phone": "+91 98765 43214",
       "gender": "Male",
       "experience": 4,
-      "avatarUrl": "🐼",
+      "avatarUrl": "/avatars/05.png",
       "birthday": "1991-09-05",
       "employed": true,
       "hourlyPayRate": 50,
@@ -35,12 +35,13 @@
       "phone": "+91 98765 43213",
       "gender": "Male",
       "experience": 8,
-      "avatarUrl": "🐯",
+      "avatarUrl": "/avatars/04.png",
       "birthday": "1985-08-01",
       "employed": true,
       "hourlyPayRate": 73,
       "trackAttendance": true,
-      "ptoDays": 10
+      "ptoDays": 10,
+      "status": "Not Marked"
     },
     {
       "id": "8",
@@ -49,7 +50,7 @@
       "phone": "+91 99999 99999",
       "gender": "Female",
       "experience": 15,
-      "avatarUrl": "🦋",
+      "avatarUrl": "/avatars/1xai.png",
       "birthday": "2000-07-31",
       "employed": true,
       "trackAttendance": false,
@@ -62,7 +63,7 @@
       "phone": "+91 98765 43211",
       "gender": "Male",
       "experience": 3,
-      "avatarUrl": "🦊",
+      "avatarUrl": "/avatars/02.png",
       "birthday": "1992-11-22",
       "employed": true,
       "hourlyPayRate": 50,
@@ -76,7 +77,7 @@
       "phone": "+91 98765 43212",
       "gender": "Male",
       "experience": 5,
-      "avatarUrl": "🦅",
+      "avatarUrl": "/avatars/03.png",
       "birthday": "1990-03-10",
       "employed": false,
       "hourlyPayRate": 50,
@@ -90,7 +91,7 @@
       "phone": "+91 98765 43210",
       "gender": "Male",
       "experience": 7,
-      "avatarUrl": "🦁",
+      "avatarUrl": "/avatars/01.png",
       "birthday": "1988-05-15",
       "employed": true,
       "hourlyPayRate": 50,
@@ -104,7 +105,7 @@
       "phone": "+91 99999 99999",
       "gender": "Male",
       "experience": 15,
-      "avatarUrl": "🦒",
+      "avatarUrl": "/avatars/1xai.png",
       "birthday": "2000-09-01",
       "employed": true,
       "trackAttendance": false,
@@ -2863,86 +2864,6 @@
       "status": "Present",
       "checkInTime": "10:28",
       "checkOutTime": "18:44"
-    },
-    {
-      "employeeId": "5",
-      "employeeName": "Arjun",
-      "date": "2025-09-15",
-      "status": "Absent",
-      "checkInTime": "--:--",
-      "checkOutTime": "--:--"
-    },
-    {
-      "employeeId": "4",
-      "employeeName": "Dhiren",
-      "date": "2025-09-15",
-      "status": "Absent",
-      "checkInTime": "--:--",
-      "checkOutTime": "--:--"
-    },
-    {
-      "employeeId": "5",
-      "employeeName": "Arjun",
-      "date": "2025-09-16",
-      "status": "Present",
-      "checkInTime": "09:00",
-      "checkOutTime": "19:00"
-    },
-    {
-      "employeeId": "4",
-      "employeeName": "Dhiren",
-      "date": "2025-09-16",
-      "status": "Late",
-      "checkInTime": "12:00",
-      "checkOutTime": "20:00"
-    },
-    {
-      "employeeId": "2",
-      "employeeName": "Raghavendra",
-      "date": "2025-09-16",
-      "status": "Absent",
-      "checkInTime": "--:--",
-      "checkOutTime": "--:--"
-    },
-    {
-      "employeeId": "1",
-      "employeeName": "Sathish",
-      "date": "2025-09-16",
-      "status": "Present",
-      "checkInTime": "09:00",
-      "checkOutTime": "17:00"
-    },
-    {
-      "employeeId": "5",
-      "employeeName": "Arjun",
-      "date": "2025-09-20",
-      "status": "Absent",
-      "checkInTime": "--:--",
-      "checkOutTime": "--:--"
-    },
-    {
-      "employeeId": "4",
-      "employeeName": "Dhiren",
-      "date": "2025-09-20",
-      "status": "Absent",
-      "checkInTime": "--:--",
-      "checkOutTime": "--:--"
-    },
-    {
-      "employeeId": "2",
-      "employeeName": "Raghavendra",
-      "date": "2025-09-20",
-      "status": "Late",
-      "checkInTime": "12:00",
-      "checkOutTime": "21:00"
-    },
-    {
-      "employeeId": "1",
-      "employeeName": "Sathish",
-      "date": "2025-09-20",
-      "status": "Present",
-      "checkInTime": "10:00",
-      "checkOutTime": "18:00"
     }
   ],
   "holidays": [
