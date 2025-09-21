@@ -24,7 +24,7 @@
       "avatarUrl": "/avatars/05.png",
       "birthday": "1991-09-05",
       "employed": true,
-      "hourlyPayRate": 50,
+      "hourlyPayRate": 75,
       "trackAttendance": true,
       "ptoDays": 10
     },
@@ -38,7 +38,7 @@
       "avatarUrl": "/avatars/04.png",
       "birthday": "1985-08-01",
       "employed": true,
-      "hourlyPayRate": 73,
+      "hourlyPayRate": 83.25,
       "trackAttendance": true,
       "ptoDays": 10,
       "status": "Not Marked"
@@ -66,7 +66,7 @@
       "avatarUrl": "/avatars/02.png",
       "birthday": "1992-11-22",
       "employed": true,
-      "hourlyPayRate": 50,
+      "hourlyPayRate": 166.625,
       "trackAttendance": true,
       "ptoDays": 10
     },
@@ -80,7 +80,7 @@
       "avatarUrl": "/avatars/03.png",
       "birthday": "1990-03-10",
       "employed": true,
-      "hourlyPayRate": 50,
+      "hourlyPayRate": 104.25,
       "trackAttendance": true,
       "ptoDays": 10,
       "status": "Not Employed"
@@ -95,7 +95,7 @@
       "avatarUrl": "/avatars/01.png",
       "birthday": "1988-05-15",
       "employed": true,
-      "hourlyPayRate": 50,
+      "hourlyPayRate": 137.5,
       "trackAttendance": true,
       "ptoDays": 10
     },
