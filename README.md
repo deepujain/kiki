@@ -106,9 +106,11 @@ Perfect for organizations looking to:
 - Intuitive navigation with breadcrumbs
 
 ### 🗄️ **Data Persistence**
+- **[LowDB](https://github.com/typicode/lowdb)** - Lightweight JSON database for local data storage
 - Secure data storage for employees, holidays, and attendance records
-- Automatic data synchronization
+- Automatic data synchronization and backup
 - Data integrity with comprehensive validation
+- File-based storage with `kiki.json` as the primary data file
 
 ---
 
@@ -164,12 +166,13 @@ This project is built with a modern, production-ready technology stack:
 ### **Core Framework**
 - **[Next.js 15.3.3](https://nextjs.org/)** - React framework with App Router and Turbopack
 - **[TypeScript](https://www.typescriptlang.org/)** - Type safety and enhanced developer experience
-- **[React 19](https://react.dev/)** - Latest React features and optimizations
+- **[React 18.3.1](https://react.dev/)** - Modern React with hooks and concurrent features
 
 ### **State Management**
 - **Custom Context API** - Centralized state management
 - **Local Storage** - Session persistence
 - **Real-time Data Sync** - Automatic data synchronization
+- **[LowDB](https://github.com/typicode/lowdb)** - Lightweight JSON database for data persistence
 
 ### **UI & Styling**
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
@@ -180,11 +183,14 @@ This project is built with a modern, production-ready technology stack:
 ### **Forms & Validation**
 - **[React Hook Form](https://react-hook-form.com/)** - Performant forms with minimal re-renders
 - **[Zod](https://zod.dev/)** - TypeScript-first schema validation
+- **[@hookform/resolvers](https://github.com/react-hook-form/resolvers)** - Validation resolvers for React Hook Form
 
 ### **Development Tools**
 - **[ESLint](https://eslint.org/)** - Code quality and consistency
 - **[Turbopack](https://turbo.build/pack)** - Lightning-fast build tool
 - **[TypeScript](https://www.typescriptlang.org/)** - Static type checking
+- **[Rimraf](https://github.com/isaacs/rimraf)** - Cross-platform file deletion utility
+- **[Cross-env](https://github.com/kentcdodds/cross-env)** - Cross-platform environment variables
 
 ## Getting Started
 
@@ -211,11 +217,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with modern toolin
    yarn install
    ```
 
-3. **Set up the database:**
-   ```bash
-   npm run migrate
-   ```
-   This will create `attendance.db` with the schema and populate it with initial employee data and holidays.
+3. **Initialize the application:**
+   The application will automatically create the necessary data files (`kiki.json`) and populate them with sample data on first run.
 
 4. **Start the development server:**
    ```bash
@@ -232,8 +235,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with modern toolin
 The application comes with sample data pre-configured:
 - Employee records with sample data
 - Holiday calendar (Indian holidays for 2025)
-- Attendance records with historical data
+- Historical attendance records (July-September 2025)
 - Today's attendance entries for active employees
+- All data is stored in `kiki.json` using LowDB
 
 ### 🔑 Default Login Credentials
 - **Admin User**:
@@ -249,13 +253,12 @@ The application comes with sample data pre-configured:
 
 ```bash
 # Development
-npm run dev          # Start development server on port 9002
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run typecheck    # Type checking without build
-
-# Development Commands
+npm run dev          # Start development server with Turbopack on port 9002
+npm run build        # Build the application for production
+npm run start        # Start production server on port 3001
+npm run clean        # Clean the .next build directory
+npm run lint         # Run ESLint for code quality checks
+npm run typecheck    # Run TypeScript type checking without building
 ```
 
 ### 🏗️ Project Structure
@@ -264,6 +267,7 @@ npm run typecheck    # Type checking without build
 kiki/
 ├── src/
 │   ├── app/                 # Next.js App Router pages
+│   │   ├── api/             # API routes
 │   │   ├── dashboard/       # Main application pages
 │   │   └── login/           # Authentication
 │   ├── components/          # Reusable UI components
@@ -271,10 +275,10 @@ kiki/
 │   ├── context/            # React Context providers
 │   ├── hooks/              # Custom React hooks
 │   └── lib/                # Utilities and database
-│       ├── database/       # Database schema and operations
+│       ├── database/       # LowDB operations and schema
 │       └── types.ts        # TypeScript type definitions
-├── scripts/                # Database migration scripts
-└── public/                 # Static assets
+├── public/                 # Static assets
+└── kiki.json              # LowDB data file (auto-generated)
 ```
 
 ### 🚀 Deployment
@@ -288,16 +292,25 @@ kiki/
    ```bash
    npm run start
    ```
+   The production server will run on port 3001.
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
 
 **Port already in use:**
-The app runs on port 9002. Change it in `package.json` if needed.
+- Development server runs on port 9002
+- Production server runs on port 3001
+- Change ports in `package.json` if needed
 
 **Session not persisting:**
 Clear browser localStorage and login again.
+
+**Data not loading:**
+Ensure `kiki.json` file exists in the project root. The application will create it automatically on first run.
+
+**Database errors:**
+If you encounter database-related errors, delete `kiki.json` and restart the application to regenerate the data file.
 
 ## 🤝 Contributing
 

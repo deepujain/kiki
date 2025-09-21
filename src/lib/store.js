@@ -546,7 +546,7 @@ function processAttendanceData(data, employee, store) {
     }
 }
 let dataSeeded = false;
-function seedInitialData() {
+export function seedInitialData() {
     if (dataSeeded)
         return;
     allTimeAttendanceStore.clear();
@@ -567,4 +567,3 @@ function seedInitialData() {
     });
     dataSeeded = true;
 }
-seedInitialData();
