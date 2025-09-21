@@ -106,7 +106,7 @@ export default function LoginPage() {
           </Form>
           <div className="pt-4 border-t text-center">
             <img src="/images/1xAI.PNG" alt="1xAI Logo" className="h-8 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground font-medium">AI-Powered Applications</p>
+            <p className="text-sm text-muted-foreground font-medium">Payroll & Time Tracking System</p>
           </div>
         </CardContent>
       </Card>

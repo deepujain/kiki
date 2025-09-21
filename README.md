@@ -1,19 +1,19 @@
 # **Kiki 🦀**
-### Employee Attendance & Payroll Management System
+### Payroll & Time Tracking Management System
 
 ## Introduction
 
-Welcome to **Kiki** 🦀, a modern and comprehensive workforce management system that combines powerful attendance tracking with sophisticated payroll management. This application streamlines employee time tracking, automates payroll calculations, and provides detailed analytics, making it an all-in-one solution for small to medium-sized organizations.
+Welcome to **Kiki** 🦀, a modern and comprehensive workforce management system that combines powerful payroll management with sophisticated time tracking. This application streamlines employee time tracking, automates payroll calculations, and provides detailed analytics, making it an all-in-one solution for small to medium-sized organizations.
 
 **Kiki** 🦀 stands out with its:
-- 👥 Smart attendance tracking with automatic late detection
-- 💰 Sophisticated payroll calculation based on attendance
+- 💰 Sophisticated payroll management
+- 👥 Smart time tracking with automatic late detection
 - 📊 Comprehensive analytics and reporting
 - 🔄 Real-time data synchronization
 - 🎨 Clean, responsive interface
 
 Perfect for organizations looking to:
-- Automate attendance and payroll processes
+- Streamline payroll and time tracking processes
 - Reduce manual calculation errors
 - Make data-driven workforce decisions
 - Maintain transparent payment records
@@ -56,7 +56,7 @@ Perfect for organizations looking to:
 - Current date handling (no more hardcoded dates!)
 - Flexible attendance tracking for any staff member with "Track Attendance" enabled
 
-### 👥 **Complete Staff Management & Payroll**
+### 👥 **Staff & Payroll Management**
 - Full employee lifecycle management (add, edit, view, deactivate, delete)
 - Personal details with birthday tracking and celebrations
 - Experience and role management
