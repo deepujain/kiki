@@ -1,13 +1,39 @@
 # **Kiki 🦀**
-### Employee Attendance Management System
+### Employee Attendance & Payroll Management System
 
 ## Introduction
 
-Welcome to **Kiki** 🦀, a modern and intuitive attendance management system designed to streamline workforce operations. This application provides a comprehensive suite of tools for tracking employee attendance, managing staff records, monitoring performance metrics, and generating detailed analytics reports with features like automatic late detection and holiday management.
+Welcome to **Kiki** 🦀, a modern and comprehensive workforce management system that combines powerful attendance tracking with sophisticated payroll management. This application streamlines employee time tracking, automates payroll calculations, and provides detailed analytics, making it an all-in-one solution for small to medium-sized organizations.
 
-**Kiki** 🦀 offers a clean, responsive interface with real-time data synchronization and persistent storage, making it perfect for small to medium-sized organizations looking to digitize their attendance tracking processes.
+**Kiki** 🦀 stands out with its:
+- 👥 Smart attendance tracking with automatic late detection
+- 💰 Sophisticated payroll calculation based on attendance
+- 📊 Comprehensive analytics and reporting
+- 🔄 Real-time data synchronization
+- 🎨 Clean, responsive interface
+
+Perfect for organizations looking to:
+- Automate attendance and payroll processes
+- Reduce manual calculation errors
+- Make data-driven workforce decisions
+- Maintain transparent payment records
 
 ## ✨ Key Features
+
+### 💰 **Payroll Management**
+- Automated salary calculation based on attendance
+- Support for hourly pay rates (TSE, Logistics, MIS roles)
+- Smart working hours calculation (8-hour daily cap)
+- Holiday pay integration
+- PTO (Paid Time Off) management
+- Monthly and historical pay summaries
+- Role-based access control for payroll data
+- Detailed pay breakdowns including:
+  - Regular working days
+  - Holiday pay
+  - PTO adjustments
+  - Net payable days
+  - Gross pay calculation
 
 ### 🔐 **Authentication & Security**
 - Secure login system with persistent session management
@@ -30,24 +56,47 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Current date handling (no more hardcoded dates!)
 - Flexible attendance tracking for any staff member with "Track Attendance" enabled
 
-### 👥 **Complete Staff Management**
+### 👥 **Complete Staff Management & Payroll**
 - Full employee lifecycle management (add, edit, view, deactivate, delete)
 - Personal details with birthday tracking and celebrations
 - Experience and role management
-- Filterable staff directory (current, former, all employees) with sortable columns by default Today's Status
+- Filterable staff directory (current, former, all employees) with sortable columns
 - Individual attendance history with calendar view
 - CSV export functionality for attendance records
+
+#### 💰 **Comprehensive Payroll System**
 - Hourly Pay Rate management for eligible roles (TSE, Logistics, MIS)
-- Detailed Pay Summary (Month-To-Date / Year-To-Date)** including total present, late, absent days, net payable days, and gross pay
-- Role-based visibility of hourly pay rate and pay summary (Admin only)
+- Automatic working hours calculation (capped at 8 hours per day)
+- Sophisticated pay calculation considering:
+  - Regular working days
+  - Holidays (counted as paid days)
+  - Late arrivals
+  - Absences and PTO management
+- Monthly Pay Summary including:
+  - Total present days (including holidays)
+  - Late days tracking
+  - Absent days calculation
+  - PTO usage and balance
+  - Net payable days computation
+  - Final gross pay calculation
+- Historical pay data tracking with month-by-month breakdown
+- Role-based access control (Admin only) for sensitive payroll information
 
 ### 📈 **Analytics & Reporting**
-- Month-to-Date (MTD) and Year-to-Date (YTD) analytics
-- Period selection (Month-To-Date / Year-To-Date) for both Attendance and Pay Summaries
-- Attendance patterns and working days calculations
-- Late streak tracking and performance metrics
-- Export functionality for multiple time ranges
-- Visual calendar with color-coded attendance status
+- Comprehensive financial analytics:
+  - Monthly payroll summaries
+  - Year-to-Date (YTD) earnings reports
+  - Pay trend analysis
+  - Department-wise salary distribution
+- Attendance analytics:
+  - Month-to-Date (MTD) attendance patterns
+  - Working days calculations
+  - Holiday impact analysis
+- Flexible reporting:
+  - Period selection (MTD/YTD) for all reports
+  - Export functionality for payroll and attendance data
+  - Visual calendar with color-coded status
+  - Custom date range reporting
 
 ### 🎯 **User Experience**
 - Responsive design optimized for desktop and mobile
@@ -56,10 +105,10 @@ Welcome to **Kiki** 🦀, a modern and intuitive attendance management system de
 - Real-time data updates without page refreshes
 - Intuitive navigation with breadcrumbs
 
-### 🗄️ **Database-Backed Persistence**
-- SQLite database with comprehensive schema for employees, holidays, and attendance records
-- Automatic migration system with initial data seeding
-- Data integrity with foreign key constraints and proper validation
+### 🗄️ **Data Persistence**
+- Secure data storage for employees, holidays, and attendance records
+- Automatic data synchronization
+- Data integrity with comprehensive validation
 
 ---
 
@@ -98,10 +147,10 @@ This project is built with a modern, production-ready technology stack:
 - **[TypeScript](https://www.typescriptlang.org/)** - Type safety and enhanced developer experience
 - **[React 19](https://react.dev/)** - Latest React features and optimizations
 
-### **Database & State**
-- **[SQLite](https://www.sqlite.org/)** with **[better-sqlite3](https://github.com/WiseLibs/better-sqlite3)** - Fast, reliable database
+### **State Management**
 - **Custom Context API** - Centralized state management
 - **Local Storage** - Session persistence
+- **Real-time Data Sync** - Automatic data synchronization
 
 ### **UI & Styling**
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
@@ -159,21 +208,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with modern toolin
 5. **Open the application:**
    Navigate to [http://localhost:9002](http://localhost:9002) in your browser.
 
-### Database Setup
+### Initial Setup
 
-The application uses SQLite for data persistence. On a fresh installation, you **must** run the migration script to set up the database:
-
-```bash
-npm run migrate
-```
-
-This creates:
-- Employee records (7 employees with sample data)
+The application comes with sample data pre-configured:
+- Employee records with sample data
 - Holiday calendar (Indian holidays for 2025)
-- Attendance records with historical data (up to the current day for tracked employees)
-- Today's attendance entries for all active employees
-
-**Note**: Running `npm run migrate` will **reset** your `attendance.db` database, deleting all existing attendance data and re-populating it with initial mock data. Only run this if you intend to start with a fresh dataset. Database files (`*.db`) are excluded from git for security and size reasons.
+- Attendance records with historical data
+- Today's attendance entries for active employees
 
 ### 🔑 Default Login Credentials
 - **Admin User**:
@@ -195,8 +236,7 @@ npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run typecheck    # Type checking without build
 
-# Database
-npm run migrate      # Set up database with initial data
+# Development Commands
 ```
 
 ### 🏗️ Project Structure
@@ -225,55 +265,20 @@ kiki/
    npm run build
    ```
 
-2. Run database migration on your server:
-   ```bash
-   npm run migrate
-   ```
-
-3. Start the production server:
+2. Start the production server:
    ```bash
    npm run start
    ```
 
-**Note**: Ensure your deployment environment has write permissions for SQLite database creation.
-
-
 ## 🔧 Troubleshooting
 
 ### Common Issues
-
-**Database not found error:**
-```bash
-npm run migrate
-```
 
 **Port already in use:**
 The app runs on port 9002. Change it in `package.json` if needed.
 
 **Session not persisting:**
 Clear browser localStorage and login again.
-
-### 📝 Recent Updates
-
-- ✅ Fixed session persistence across browser reloads
-- ✅ Migrated from hardcoded dates to real-time date handling
-- ✅ Improved database migration system
-- ✅ Enhanced staff management with employee removal
-- ✅ Added comprehensive data validation
-- ✅ Implemented proper .gitignore for database files
-- ✅ Redesigned About page for modern theme and layout
-- ✅ Implemented role-based attendance filtering for TSE, Logistics, and MIS staff
-- ✅ Corrected Total Employees count on Dashboard to include all staff
-- ✅ Added sortable columns to "Today's Attendance" and "All Employees" tables
-- ✅ Configured default sorting for attendance and employee tables
-- ✅ Made "Top 3 Late Comers" clickable, linking to staff detail pages
-- ✅ Integrated Hourly Pay Rate for eligible staff members (Logistics, TSE, MIS)
-- ✅ Added a comprehensive Pay Summary section with late hour deductions
-- ✅ Implemented role-based visibility for Hourly Pay Rate and Pay Summary (Admin only)
-- ✅ Removed redundant "Payroll & Streaks" from Attendance Summary
-- ✅ Implemented period selection (Month-To-Date / Year-To-Date) for Attendance and Pay Summaries
-- ✅ Added Regular User login credentials
-- ✅ Implemented "Track Attendance" toggle for employees
 
 ## 🤝 Contributing
 
