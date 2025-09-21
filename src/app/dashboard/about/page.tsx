@@ -68,7 +68,7 @@ export default function AboutPage() {
             </div>
 
             <div className="text-center text-muted-foreground">
-              <p>1xAI is the creator of Kiki 🦀 application, focused on intelligent analytics and actionable insights through AI-powered technologies.</p>
+              <p>1xAI is the creator of Kiki 🦀, an AI-powered Payroll & Time Tracking Management System that streamlines workforce operations with intelligent automation and actionable insights.</p>
             </div>
 
             <div className="text-center space-y-4">

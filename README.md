@@ -118,28 +118,52 @@ Below are screenshots of the main pages of the Kiki application, showcasing its 
 
 ### Login
 
-![Login Screenshot](/public/images/login.png)
+![Login Screenshot](/public/images/help/login.png)
 *Clean and secure login interface with role-based authentication and session persistence.*
 
 ### Dashboard
 
-![Dashboard Screenshot](/public/images/dashboard.png)
+![Dashboard Screenshot](/public/images/help/dashboard.png)
 *A quick overview of today's attendance and overall employee statistics.*
 
 ### Attendance Calendar
 
-![Attendance Calendar Screenshot](/public/images/attendance_calendar.png)
+![Attendance Calendar Screenshot](/public/images/help/attendance_calendar.png)
 
-![Update Attendance Screenshot](/public/images/mark_attendance.png)
+![Update Attendance Screenshot](/public/images/help/mark_attendance.png)
 
 *An interactive calendar to manage and view daily attendance records and holidays.*
 
 ### Staff Management
 
-![Staff Management Screenshot](/public/images/allemployees.png)
+![Staff Management Screenshot](/public/images/help/allemployees.png)
 
-![Staff Management Screenshot](/public/images/staff_management.png)
+![Staff Management Screenshot](/public/images/help/staff_management.png)
 *Manage employee profiles, view individual attendance histories, and update details.*
+
+---
+
+## 👋 About
+
+### About 1xAI
+
+1xAI is a pioneering technology company specializing in AI-powered business solutions. As the creator of Kiki 🦀, we focus on developing intelligent applications that transform traditional business processes through automation and data-driven insights.
+
+### About Kiki 🦀
+
+Kiki 🦀 is our flagship Payroll & Time Tracking Management System, designed to revolutionize how organizations handle workforce management. By combining sophisticated payroll processing with intelligent time tracking, Kiki helps businesses:
+
+- 💡 **Automate Complex Calculations**: Eliminate manual payroll processing errors
+- 🎯 **Improve Accuracy**: Ensure precise time tracking and payment calculations
+- 📊 **Generate Insights**: Make informed decisions with comprehensive analytics
+- ⚡ **Boost Efficiency**: Streamline workforce management operations
+- 🔒 **Maintain Compliance**: Keep accurate records and manage permissions
+
+### Connect With Us
+
+- 📧 **Email**: [onexai.inc@gmail.com](mailto:onexai.inc@gmail.com)
+- 💼 **LinkedIn**: [1xAI on LinkedIn](https://www.linkedin.com/company/1xai)
+- 🐦 **X (Twitter)**: [@onexai_inc](https://x.com/onexai_inc)
 
 ---
 
