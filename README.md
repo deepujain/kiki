@@ -116,6 +116,11 @@ Perfect for organizations looking to:
 
 Below are screenshots of the main pages of the Kiki application, showcasing its key features.
 
+### Login
+
+![Login Screenshot](/public/images/login.png)
+*Clean and secure login interface with role-based authentication and session persistence.*
+
 ### Dashboard
 
 ![Dashboard Screenshot](/public/images/dashboard.png)
