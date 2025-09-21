@@ -145,19 +145,9 @@ Below are screenshots of the main pages of the Kiki application, showcasing its 
 
 ## 👋 About
 
-### About 1xAI
+![Staff Management Screenshot](/public/images/help/about.png)
 
 1xAI is a pioneering technology company specializing in AI-powered business solutions. As the creator of Kiki 🦀, we focus on developing intelligent applications that transform traditional business processes through automation and data-driven insights.
-
-### About Kiki 🦀
-
-Kiki 🦀 is our flagship Payroll & Time Tracking Management System, designed to revolutionize how organizations handle workforce management. By combining sophisticated payroll processing with intelligent time tracking, Kiki helps businesses:
-
-- 💡 **Automate Complex Calculations**: Eliminate manual payroll processing errors
-- 🎯 **Improve Accuracy**: Ensure precise time tracking and payment calculations
-- 📊 **Generate Insights**: Make informed decisions with comprehensive analytics
-- ⚡ **Boost Efficiency**: Streamline workforce management operations
-- 🔒 **Maintain Compliance**: Keep accurate records and manage permissions
 
 ### Connect With Us
 
