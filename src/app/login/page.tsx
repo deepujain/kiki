@@ -68,7 +68,8 @@ export default function LoginPage() {
             <img src="/images/vikings.png" alt="Kiki Logo" className="h-12 w-12" />
           </div>
           <CardTitle>Kiki 🦀</CardTitle>
-          <CardDescription>Please enter your credentials.</CardDescription>
+          <p className="text-sm text-muted-foreground font-medium">Payroll & Time Tracking System</p>
+          <CardDescription className="mt-2">Please enter your credentials.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Form {...form}>
@@ -106,7 +107,7 @@ export default function LoginPage() {
           </Form>
           <div className="pt-4 border-t text-center">
             <img src="/images/1xAI.PNG" alt="1xAI Logo" className="h-8 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground font-medium">Payroll & Time Tracking System</p>
+            <p className="text-sm text-muted-foreground font-medium">AI-Powered Applications</p>
           </div>
         </CardContent>
       </Card>
