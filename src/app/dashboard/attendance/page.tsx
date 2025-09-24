@@ -467,7 +467,6 @@ export default function AttendancePage() {
         </CardContent>
       </Card>
 
-
       {/* Calendar */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
