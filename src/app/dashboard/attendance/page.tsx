@@ -42,6 +42,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/status-badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AttendanceSummaryBar } from "@/components/attendance-summary-bar";
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const earliestDate = new Date("2025-03-01T00:00:00");
@@ -73,7 +74,8 @@ export default function AttendancePage() {
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState("");
   const [isEditingHoliday, setIsEditingHoliday] = useState(false);
-  const [isSaving, setIsSaving] = useState(false); // New state for saving status
+  const [isSaving, setIsSaving] = useState(false);
+  const [highlightedDate, setHighlightedDate] = useState<string | null>(null);
 
   const activeEmployees = useMemo(() => {
     return employees.filter(e => e.employed && e.trackAttendance && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS'));
@@ -393,12 +395,13 @@ export default function AttendancePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-headline">Attendance Calendar</h1>
-        <div className="flex gap-2">
-           <DropdownMenu>
+      {/* Attendance Summary by Staff */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Summary</CardTitle>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>
+              <Button variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export CSV
               </Button>
@@ -410,8 +413,62 @@ export default function AttendancePage() {
               <DropdownMenuItem onClick={() => exportToCsv("YearToDate")}>Year to Date</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-      </div>
+        </CardHeader>
+        <CardContent className="relative">
+          <div className="space-y-4 pr-20">
+            {activeEmployees.map((employee, index) => {
+              const employeeRecords = attendanceRecords.get(employee.id) || [];
+              return (
+                <AttendanceSummaryBar
+                  key={employee.id}
+                  employeeName={employee.name}
+                  month={currentMonth}
+                  records={employeeRecords}
+                  holidays={holidays}
+                  showHeaders={index === 0}
+                  highlightedDate={highlightedDate}
+                  onDateHover={setHighlightedDate}
+                />
+              );
+            })}
+          </div>
+          
+          {/* Legend */}
+          <div className="absolute top-4 right-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-3 rounded-lg shadow-sm border space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-green-500" />
+              <span className="text-sm">Present</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-yellow-500" />
+              <span className="text-sm">Late</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-red-500" />
+              <span className="text-sm">Absent</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-blue-500" />
+              <span className="text-sm">Holiday</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-gray-200 dark:bg-gray-700" />
+              <span className="text-sm">Sunday</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-purple-100 dark:bg-purple-900" />
+              <span className="text-sm">Future date</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-orange-200 dark:bg-orange-900" />
+              <span className="text-sm">Missing Data</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+
+      {/* Calendar */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-headline">{format(currentMonth, 'MMMM yyyy')}</CardTitle>
@@ -491,7 +548,7 @@ export default function AttendancePage() {
       </Card>
 
       {/* Spacing after monthly calendar */}
-      <div className="h-12"></div>
+      <div className="h-6"></div>
 
       {selectedDate && (
         <Dialog open={!!selectedDate} onOpenChange={(isOpen) => !isOpen && setSelectedDate(null)}>
