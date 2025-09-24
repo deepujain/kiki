@@ -49,12 +49,12 @@ Perfect for organizations looking to:
 - Quick access to all major functions
 
 ### ⏰ **Smart Attendance Management**
+- Visual attendance summary with color-coded status indicators
+- Interactive calendar with attendance tracking
 - Automatic late detection (configurable threshold: 11:00 AM)
 - Check-in/check-out time tracking with working hours calculation
-- Bulk attendance marking with status management
 - Holiday management with automatic attendance adjustment
-- Current date handling (no more hardcoded dates!)
-- Flexible attendance tracking for any staff member with "Track Attendance" enabled
+- Flexible attendance tracking for any staff member
 
 ### 👥 **Staff & Payroll Management**
 - Full employee lifecycle management (add, edit, view, deactivate, delete)
