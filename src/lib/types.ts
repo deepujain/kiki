@@ -6,6 +6,8 @@ export interface Employee {
   name: string;
   role: string;
   phone: string;
+  email?: string;
+  address?: string;
   gender: "Male" | "Female";
   experience: number; // years
   avatarUrl: string;
@@ -29,4 +31,11 @@ export interface AttendanceRecord {
 
 export const AllStatuses: AttendanceStatus[] = ["Present", "Late", "Absent", "Not Marked"];
 
+export interface Document {
+  id: string;
+  name: string;
+  type: "profile-picture" | "aadhaar-card" | "other";
+  dateUploaded: string; // YYYY-MM-DD
+  url: string;
+}
     

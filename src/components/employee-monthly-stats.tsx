@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { format, parse, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceRecord, Employee } from '@/lib/types';
 import {
   LineChart,
@@ -82,49 +83,49 @@ export function EmployeeMonthlyStats({ employee, attendanceRecords }: Props) {
   }, [monthRange, attendanceRecords, employee.hourlyPayRate]);
 
   return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly Attendance Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyStats}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="presentDays" name="Present Days" stroke="#10b981" />
-                <Line type="monotone" dataKey="lateDays" name="Late Days" stroke="#f59e0b" />
-                <Line type="monotone" dataKey="absentDays" name="Absent Days" stroke="#ef4444" />
-                <Line type="monotone" dataKey="ptosUsed" name="PTOs Used" stroke="#8b5cf6" strokeDasharray="5 5" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly Gross Pay</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyStats}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
-                <Legend />
-                <Line type="monotone" dataKey="grossPay" name="Gross Pay (₹)" stroke="#6366f1" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Monthly Trends</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="attendance" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="attendance">Attendance</TabsTrigger>
+            <TabsTrigger value="gross">Gross Pay</TabsTrigger>
+          </TabsList>
+          <TabsContent value="attendance" className="space-y-4 pt-4">
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={monthlyStats}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="presentDays" name="Present Days" stroke="#10b981" />
+                  <Line type="monotone" dataKey="lateDays" name="Late Days" stroke="#f59e0b" />
+                  <Line type="monotone" dataKey="absentDays" name="Absent Days" stroke="#ef4444" />
+                  <Line type="monotone" dataKey="ptosUsed" name="PTOs Used" stroke="#8b5cf6" strokeDasharray="5 5" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+          <TabsContent value="gross" className="space-y-4 pt-4">
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={monthlyStats}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+                  <Legend />
+                  <Line type="monotone" dataKey="grossPay" name="Gross Pay (₹)" stroke="#6366f1" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 }

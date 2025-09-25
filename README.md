@@ -35,13 +35,6 @@ Perfect for organizations looking to:
   - Net payable days
   - Gross pay calculation
 
-### 🔐 **Authentication & Security**
-- Secure login system with persistent session management
-- Session state preserved across browser reloads/refreshes
-- Protected routes with automatic redirection
-- Delightful login celebration animation
-- Role-based access control for Admin and Regular users
-
 ### 📊 **Real-Time Dashboard**
 - Live attendance metrics: total employees (all staff), present count, late arrivals, and absences
 - Interactive leaderboard showcasing employee performance, with clickable late comers to their detail pages
@@ -97,6 +90,13 @@ Perfect for organizations looking to:
   - Export functionality for payroll and attendance data
   - Visual calendar with color-coded status
   - Custom date range reporting
+
+### 🔐 **Authentication & Security**
+- Secure login system with persistent session management
+- Session state preserved across browser reloads/refreshes
+- Protected routes with automatic redirection
+- Delightful login celebration animation
+- Role-based access control for Admin and Regular users
 
 ### 🎯 **User Experience**
 - Responsive design optimized for desktop and mobile

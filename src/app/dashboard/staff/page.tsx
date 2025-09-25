@@ -7,6 +7,7 @@ import {
   AttendanceRecord,
   Employee,
   AttendanceStatus,
+  Document // Import Document type
 } from "@/lib/types";
 import { useData } from "@/hooks/use-database";
 import {
@@ -63,6 +64,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/auth-context";
 import { EmployeeMonthlyStats } from "@/components/employee-monthly-stats";
 
@@ -138,27 +140,55 @@ function StaffPageContent() {
   const isAdmin = user?.role === "Admin"; // Determine if user is admin
   const [paySummary, setPaySummary] = useState<PaySummary | null>(null); // New state for pay summary
   const [selectedMonth, setSelectedMonth] = useState<Date>(startOfMonth(today));
-  const [aadharImageExists, setAadharImageExists] = useState<boolean>(false);
-
-  // Check if Aadhaar image exists when employee is selected
+  // const [aadharImageExists, setAadharImageExists] = useState<boolean>(false);
+  // const [aadharImageKey, setAadharImageKey] = useState<number>(Date.now());
+  // const [profileImageExists, setProfileImageExists] = useState<boolean>(false);
+  // const [profileImageKey, setProfileImageKey] = useState<number>(Date.now());
+  const [documents, setDocuments] = useState<Document[]>([]);
+  
+  // Check for document existence and populate documents state
   useEffect(() => {
     if (selectedEmployee?.name) {
-      const aadharFileName = selectedEmployee.name.toLowerCase().replace(/\s+/g, '-') + '-aadhar.jpeg';
-      const aadharImagePath = `/images/aadhar/${aadharFileName}`;
-      
-      fetch(aadharImagePath)
-        .then(response => {
-          setAadharImageExists(response.ok);
-        })
-        .catch(() => {
-          setAadharImageExists(false);
-        });
+      const fetchDocumentStatus = async () => {
+        const newDocuments: Document[] = [];
+
+        // Check Aadhaar Card
+        const aadharFileName = `${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-aadhar-card.jpeg`;
+        const aadharImagePath = `/images/aadhar/${aadharFileName}`;
+        const aadharResponse = await fetch(aadharImagePath);
+        if (aadharResponse.ok) {
+          newDocuments.push({
+            id: 'aadhar-card',
+            name: 'Aadhaar Card',
+            type: 'aadhaar-card',
+            dateUploaded: format(new Date(), 'yyyy-MM-dd'), // Placeholder for now, will get real date later
+            url: `/images/aadhar/${aadharFileName}?key=${Date.now()}`,
+          });
+        }
+
+        // Check Profile Picture
+        const profileFileName = `${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-profile-picture.jpeg`;
+        const profileImagePath = `/images/profile-pictures/${profileFileName}`;
+        const profileResponse = await fetch(profileImagePath);
+        if (profileResponse.ok) {
+          newDocuments.push({
+            id: 'profile-picture',
+            name: 'Profile Picture',
+            type: 'profile-picture',
+            dateUploaded: format(new Date(), 'yyyy-MM-dd'), // Placeholder for now, will get real date later
+            url: `/images/profile-pictures/${profileFileName}?key=${Date.now()}`,
+          });
+        }
+
+        setDocuments(newDocuments);
+      };
+      fetchDocumentStatus();
     }
-  }, [selectedEmployee?.name]);
+  }, [selectedEmployee?.name]); // Dependency on selectedEmployee.name to re-fetch when employee changes
 
   useEffect(() => {
     if (employeeIdFromQuery) {
-      const employee = employees.find(e => e.id === employeeIdFromQuery);
+      const employee = employees.find((e: Employee) => e.id === employeeIdFromQuery);
       if (employee) {
         handleEmployeeClick(employee);
       }
@@ -167,7 +197,7 @@ function StaffPageContent() {
 
   useEffect(() => {
     if (selectedEmployee) {
-      const freshEmployeeData = employees.find(e => e.id === selectedEmployee.id);
+      const freshEmployeeData = employees.find((e: Employee) => e.id === selectedEmployee.id);
       if(freshEmployeeData) {
         setSelectedEmployee(freshEmployeeData);
         fetchAttendanceSummary(selectedEmployee);
@@ -190,9 +220,9 @@ function StaffPageContent() {
 
   const getWorkingDays = (start: Date, end: Date) => {
       const days = eachDayOfInterval({ start, end });
-      return days.filter(day => {
+      return days.filter((day: Date) => {
         const dayStr = format(day, 'yyyy-MM-dd');
-        return getDay(day) !== 0 && !holidays.some(h => h.date === dayStr) && (isBefore(day, today) || isToday(day));
+        return getDay(day) !== 0 && !holidays.some((h: { date: string }) => h.date === dayStr) && (isBefore(day, today) || isToday(day));
       }).length;
   }
 
@@ -258,7 +288,7 @@ function StaffPageContent() {
     });
 
     // Add holidays to present count
-    presentCount += holidays.filter(h => {
+    presentCount += holidays.filter((h: { date: string }) => {
         const hDate = new Date(h.date);
         return hDate >= startDate && hDate <= endDate;
     }).length;
@@ -295,7 +325,7 @@ function StaffPageContent() {
       const lateDays = filteredRecords.filter((r: AttendanceRecord) => r.status === 'Late').length;
       
       // Add holidays to present days
-      const holidayDays = holidays.filter(h => {
+      const holidayDays = holidays.filter((h: { date: string }) => {
         const hDate = new Date(h.date);
         return hDate >= startDate && hDate <= effectiveEndDate;
       }).length;
@@ -355,6 +385,91 @@ function StaffPageContent() {
       setPaySummary(null);
     }
 
+  };
+
+  const handleReuploadDocument = async (e: React.ChangeEvent<HTMLInputElement>, docId: string) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedEmployee) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('employeeName', selectedEmployee.name);
+      formData.append('documentId', docId); // Pass the document ID
+
+      const response = await fetch('/api/upload/document', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      toast({
+        title: "Upload Successful",
+        description: `Document has been re-uploaded successfully.`,
+      });
+
+      // Trigger a re-fetch of documents
+      setDocuments(prev => prev.map(doc => {
+        if (doc.id === docId) {
+          const newUrl = `/images/${doc.type === 'aadhaar-card' ? 'aadhar' : (doc.type === 'profile-picture' ? 'profile-pictures' : 'documents')}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${doc.id}.jpeg?key=${Date.now()}`;
+          return { ...doc, dateUploaded: format(new Date(), 'yyyy-MM-dd'), url: newUrl };
+        }
+        return doc;
+      }));
+
+      // If profile picture, update avatarUrl
+      if (docId === 'profile-picture') {
+        const newAvatarUrl = `/images/profile-pictures/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-profile-picture.jpeg?key=${Date.now()}`;
+        setEditableEmployee((prev: Employee | null) => prev ? {...prev, avatarUrl: newAvatarUrl} : null);
+        updateEmployee({...selectedEmployee, avatarUrl: newAvatarUrl});
+      }
+
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast({
+        variant: "destructive",
+        title: "Upload Failed",
+        description: "Failed to re-upload document. Please try again.",
+      });
+    }
+  };
+
+  const handleDeleteDocument = async (docId: string, docType: Document['type']) => {
+    if (!selectedEmployee) return;
+    try {
+      const fileName = `${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docId}.jpeg`;
+      const response = await fetch(`/api/delete/document/${fileName}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete document');
+      }
+
+      toast({
+        title: "Document Deleted",
+        description: `Document has been deleted.`,
+      });
+
+      setDocuments(prev => prev.filter(doc => doc.id !== docId));
+
+      // If profile picture, update avatarUrl to default
+      if (docId === 'profile-picture') {
+        const defaultAvatarUrl = `https://picsum.photos/seed/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '')}/100/100`;
+        setEditableEmployee((prev: Employee | null) => prev ? {...prev, avatarUrl: defaultAvatarUrl} : null);
+        updateEmployee({...selectedEmployee, avatarUrl: defaultAvatarUrl});
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast({
+        variant: "destructive",
+        title: "Error Deleting Document",
+        description: "Failed to delete document. Please try again.",
+      });
+    }
   };
 
   const handleEmployeeClick = (employee: Employee) => {
@@ -479,7 +594,7 @@ function StaffPageContent() {
     }
 
     // Generate unique ID by finding the highest existing ID and adding 1
-    const maxId = Math.max(...employees.map(emp => parseInt(emp.id) || 0));
+    const maxId = Math.max(...employees.map((emp: Employee) => parseInt(emp.id) || 0));
     const newId = (maxId + 1).toString();
 
     const newEmployee: Employee = {
@@ -514,6 +629,76 @@ function StaffPageContent() {
     }
   };
 
+  const handleAddNewDocument = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedEmployee) return;
+
+    const profilePictureExists = documents.some(doc => doc.id === 'profile-picture');
+    const aadharCardExists = documents.some(doc => doc.id === 'aadhar-card');
+
+    let docIdToUpload: string | null = null;
+    let docTypeToUpload: "profile-picture" | "aadhaar-card" | "other" = "other";
+
+    if (!profilePictureExists) {
+      docIdToUpload = 'profile-picture';
+      docTypeToUpload = 'profile-picture';
+    } else if (!aadharCardExists) {
+      docIdToUpload = 'aadhar-card';
+      docTypeToUpload = 'aadhaar-card';
+    } else {
+      toast({
+        variant: "destructive",
+        title: "All documents already uploaded",
+        description: "Both Profile Picture and Aadhaar Card are already present.",
+      });
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('employeeName', selectedEmployee.name);
+      formData.append('documentId', docIdToUpload); 
+
+      const response = await fetch('/api/upload/document', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      toast({
+        title: "Upload Successful",
+        description: `${docIdToUpload === 'profile-picture' ? 'Profile picture' : 'Aadhaar card'} has been uploaded successfully.`,
+      });
+
+      // Trigger a re-fetch of documents
+      setDocuments(prev => [...prev, {
+        id: docIdToUpload!,
+        name: docIdToUpload === 'profile-picture' ? 'Profile Picture' : 'Aadhaar Card',
+        type: docTypeToUpload,
+        dateUploaded: format(new Date(), 'yyyy-MM-dd'),
+        url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docIdToUpload}.jpeg?key=${Date.now()}`,
+      }]);
+
+      // If profile picture, update avatarUrl
+      if (docIdToUpload === 'profile-picture') {
+        const newAvatarUrl = `/images/profile-pictures/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-profile-picture.jpeg?key=${Date.now()}`;
+        setEditableEmployee((prev: Employee | null) => prev ? {...prev, avatarUrl: newAvatarUrl} : null);
+        updateEmployee({...selectedEmployee, avatarUrl: newAvatarUrl});
+      }
+
+    } catch (error) {
+      console.error('Error adding new document:', error);
+      toast({
+        variant: "destructive",
+        title: "Error Adding Document",
+        description: "Failed to add new document. Please try again.",
+      });
+    }
+  };
 
   const calendarDays = useMemo(() => {
     const start = startOfMonth(calendarMonth);
@@ -527,7 +712,7 @@ function StaffPageContent() {
 
   const getEmployeeDayStatus = useCallback((day: Date, employeeId: string) => {
     const dateStr = format(day, 'yyyy-MM-dd');
-    const holiday = holidays.find(h => h.date === dateStr);
+    const holiday = holidays.find((h: { date: string }) => h.date === dateStr);
     if (holiday) return { status: 'Present' as const, holiday: holiday.name, checkIn: '', checkOut: ''};
     
     if (getDay(day) === 0) return null;
@@ -549,16 +734,16 @@ function StaffPageContent() {
   const filteredEmployees = useMemo(() => {
     switch (employeeFilter) {
       case "current":
-        return employees.filter(e => e.employed);
+        return employees.filter((e: Employee) => e.employed);
       case "not_employed":
-        return employees.filter(e => !e.employed);
+        return employees.filter((e: Employee) => !e.employed);
       case "all":
         return employees;
     }
   }, [employees, employeeFilter]);
 
   const handleSort = (column: keyof Employee) => {
-    setSortDirection(prevDirection => (
+    setSortDirection((prevDirection: 'asc' | 'desc') => (
       sortColumn === column ? (prevDirection === 'asc' ? 'desc' : 'asc') : 'asc'
     ));
     setSortColumn(column);
@@ -569,7 +754,7 @@ function StaffPageContent() {
     const empRecords = attendanceRecords.get(employee.id) || [];
     const record = empRecords.find((r: AttendanceRecord) => r.date === todayStr);
       const isTodayRecord = record && record.date === todayStr;
-      const isHolidayToday = holidays.some(h => h.date === todayStr);
+      const isHolidayToday = holidays.some((h: { date: string }) => h.date === todayStr);
 
       let status: AttendanceStatus | "Not Employed" | "Remote" = "Not Marked";
       if (!employee.employed) {
@@ -603,356 +788,227 @@ function StaffPageContent() {
     const isPrevMonthDisabled = false; // You might want to define the earliest selectable month
     
     return (
-      <div className="flex flex-col gap-6">
+      <>
+        <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={handleBackToList}>
             <ArrowLeft />
           </Button>
           <h1 className="text-2xl font-bold font-headline">Employee Details</h1>
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-1 space-y-6">
-            <Card className="flex flex-col items-center justify-center p-6">
-              <Avatar className="h-32 w-32 mb-4">
-                <AvatarImage src={selectedEmployee.avatarUrl} alt={selectedEmployee.name} data-ai-hint="person profile" />
-                <AvatarFallback className="text-5xl">{selectedEmployee.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <h2 className="text-2xl font-bold">{selectedEmployee.name}</h2>
-              <p className="text-muted-foreground">{selectedEmployee.role}</p>
-            </Card>
-            
-            <Card className="p-6">
-              <CardHeader className="px-0 pt-0">
-                <CardTitle className="text-lg">Aadhaar Details</CardTitle>
-              </CardHeader>
-              <CardContent className="px-0 pb-0">
-                {selectedEmployee.name && (
-                  <div className="flex flex-col items-center gap-4">
-                    {/* Move state and effect to component level */}
-                    {(() => {
-                      const aadharFileName = selectedEmployee.name.toLowerCase().replace(/\s+/g, '-') + '-aadhar.jpeg';
-                      const aadharImagePath = `/images/aadhar/${aadharFileName}`;
-                      
-                      if (aadharImageExists) {
-                        return (
-                          <div className="w-full aspect-[1.586] relative rounded-lg overflow-hidden border">
-                            {/* 1.586 is the aspect ratio of an Aadhaar card */}
-                            <img 
-                              src={aadharImagePath} 
-                              alt="Aadhaar Card" 
-                              className="object-cover w-full h-full"
-                            />
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div className="w-full flex flex-col items-center gap-3">
-                            <p className="text-sm text-muted-foreground text-center">No Aadhaar card uploaded</p>
-                            <Label htmlFor="aadhar-upload" className="cursor-pointer">
-                              <div className="flex flex-col items-center gap-2">
-                                <div className="p-4 rounded-lg bg-muted">
-                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="17 8 12 3 7 8" />
-                                    <line x1="12" y1="3" x2="12" y2="15" />
-                                  </svg>
-                                </div>
-                                <span className="text-sm font-medium">Upload Aadhaar Card</span>
-                              </div>
-                            </Label>
-                            <Input 
-                              id="aadhar-upload" 
-                              type="file" 
-                              accept="image/jpeg,image/png"
-                              className="hidden"
-                              onChange={async (e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  try {
-                                    // Create FormData
-                                    const formData = new FormData();
-                                    formData.append('file', file);
-                                    formData.append('employeeName', selectedEmployee.name);
-
-                                    // Upload file
-                                    const response = await fetch('/api/upload/aadhar', {
-                                      method: 'POST',
-                                      body: formData,
-                                    });
-
-                                    if (!response.ok) {
-                                      throw new Error('Upload failed');
-                                    }
-
-                                    // Show success message
-                                    toast({
-                                      title: "Upload Successful",
-                                      description: "Aadhaar card has been uploaded successfully.",
-                                    });
-
-                                    // Trigger a re-check for the image
-                                    const aadharFileName = selectedEmployee.name.toLowerCase().replace(/\s+/g, '-') + '-aadhar.jpeg';
-                                    const aadharImagePath = `/images/aadhar/${aadharFileName}`;
-                                    
-                                    // Wait a brief moment for the file to be available
-                                    await new Promise(resolve => setTimeout(resolve, 500));
-                                    
-                                    const checkResponse = await fetch(aadharImagePath);
-                                    setAadharImageExists(checkResponse.ok);
-                                  } catch (error) {
-                                    console.error('Error uploading file:', error);
-                                    toast({
-                                      variant: "destructive",
-                                      title: "Upload Failed",
-                                      description: "Failed to upload Aadhaar card. Please try again.",
-                                    });
-                                  }
-                                }
-                              }}
-                            />
-                          </div>
-                        );
-                      }
-                    })()}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="lg:col-span-2">
+        <div className="grid gap-6 lg:grid-cols-1">
+          <Card className="lg:col-span-1">
             <CardHeader>
-                <CardTitle>Employee Information</CardTitle>
-                <CardDescription>Edit employee details below.</CardDescription>
+              <CardTitle>Profile</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4">
-               <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Name</Label>
-                  <Input 
-                    value={editableEmployee.name} 
-                    onChange={(e) => setEditableEmployee({...editableEmployee, name: e.target.value})}
-                    className="col-span-2"
-                  />
-               </div>
-               <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Role</Label>
-                  <Input 
-                    value={editableEmployee.role} 
-                    onChange={(e) => setEditableEmployee({...editableEmployee, role: e.target.value})}
-                    className="col-span-2"
-                  />
-               </div>
-               <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Gender</Label>
-                  <Input 
-                    value={editableEmployee.gender} 
-                    onChange={(e) => setEditableEmployee({...editableEmployee, gender: e.target.value as "Male" | "Female"})}
-                    className="col-span-2"
-                  />
-               </div>
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Birthday</Label>
-                  <Input 
-                    type="date"
-                    value={editableEmployee.birthday} 
-                    onChange={(e) => setEditableEmployee({...editableEmployee, birthday: e.target.value})}
-                    className="col-span-2"
-                  />
-               </div>
-               <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Experience</Label>
-                   <Input 
-                    type="number"
-                    value={editableEmployee.experience} 
-                    onChange={(e) => setEditableEmployee({...editableEmployee, experience: parseInt(e.target.value) || 0})}
-                    className="col-span-2"
-                  />
-               </div>
-               <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Phone</Label>
-                  <Input 
-                    value={editableEmployee.phone} 
-                    onChange={(e) => setEditableEmployee({...editableEmployee, phone: e.target.value})}
-                    className="col-span-2"
-                  />
-               </div>
-                <div className="grid grid-cols-3 items-center gap-4">
-                  <Label className="text-right">Employed</Label>
-                  <Switch
-                    checked={editableEmployee.employed}
-                    onCheckedChange={(checked) => setEditableEmployee({...editableEmployee, employed: checked})}
-                    className="col-span-2"
-                  />
-               </div>
-               <div className="grid grid-cols-3 items-center gap-4">
-                <Label className="text-right">Track Attendance</Label>
-                <Switch
-                  checked={editableEmployee.trackAttendance}
-                  onCheckedChange={(checked) => setEditableEmployee({...editableEmployee, trackAttendance: checked})}
-                  className="col-span-2"
-                />
-               </div>
-               {isAdmin && (
-                 <div className="grid grid-cols-3 items-center gap-4">
-                    <Label className="text-right">Annual PTO Days</Label>
-                     <Input 
-                      type="number"
-                      value={editableEmployee.ptoDays} 
-                      onChange={(e) => setEditableEmployee({...editableEmployee, ptoDays: parseInt(e.target.value) || 0})}
-                      className="col-span-2"
-                    />
-                 </div>
-               )}
-               <div className="grid grid-cols-3 items-center gap-4">
-                <Label className="text-right">Today's Status</Label>
-                <div className="col-span-2">
-                   {holidays.some(h => h.date === todayStr) ? <StatusBadge status="Present" /> : (() => {
-                     const empRecords = attendanceRecords.get(selectedEmployee.id) || [];
-                     const todayRecord = empRecords.find((r: AttendanceRecord) => r.date === todayStr);
-                     return todayRecord ? (
-                       <StatusBadge status={todayRecord.status} />
-                     ) : (
-                       <StatusBadge status={"Not Marked"} />
-                     );
-                   })()}
-                </div>
-               </div>
-               {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
-                 <div className="grid grid-cols-3 items-center gap-4">
-                   <Label className="text-right">Daily Pay Rate (INR)</Label>
-                   <Input 
-                     type="number"
-                     value={editableEmployee.hourlyPayRate ? (editableEmployee.hourlyPayRate * 8) : ''}
-                     onChange={(e) => setEditableEmployee({...editableEmployee, hourlyPayRate: (parseFloat(e.target.value) / 8) || undefined})}
-                     className="col-span-2"
-                     placeholder="e.g., 2000"
-                   />
-                 </div>
-               )}
+            <CardContent className="grid gap-6">
+              <Tabs defaultValue="personal" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="personal">Personal</TabsTrigger>
+                  <TabsTrigger value="contact">Contact Details</TabsTrigger>
+                  <TabsTrigger value="employment">Employment</TabsTrigger>
+                  <TabsTrigger value="documents">Documents</TabsTrigger>
+                </TabsList>
+                <TabsContent value="personal" className="space-y-4 pt-4">
+                    
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Name</Label>
+                        <Input
+                            value={editableEmployee.name}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, name: e.target.value})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Role</Label>
+                        <Input
+                            value={editableEmployee.role}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, role: e.target.value})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Gender</Label>
+                        <Input
+                            value={editableEmployee.gender}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, gender: e.target.value as "Male" | "Female"})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Birthday</Label>
+                        <Input
+                            type="date"
+                            value={editableEmployee.birthday}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, birthday: e.target.value})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Experience</Label>
+                        <Input
+                            type="number"
+                            value={editableEmployee.experience}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, experience: parseInt(e.target.value) || 0})}
+                            className="col-span-2"
+                        />
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="contact" className="space-y-4 pt-4">
+                    
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Phone</Label>
+                        <Input
+                            value={editableEmployee.phone}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, phone: e.target.value})}
+                            className="col-span-2"
+                        />
+                    </div>
+                     <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Email</Label>
+                        <Input
+                            type="email"
+                            value={editableEmployee.email || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, email: e.target.value})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Address</Label>
+                        <Input
+                            value={editableEmployee.address || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, address: e.target.value})}
+                            className="col-span-2"
+                        />
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="employment" className="space-y-4 pt-4">
+                    
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Employed Status</Label>
+                        <Switch
+                            checked={editableEmployee.employed}
+                            onCheckedChange={(checked: boolean) => setEditableEmployee({...editableEmployee, employed: checked})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Track Attendance</Label>
+                        <Switch
+                            checked={editableEmployee.trackAttendance}
+                            onCheckedChange={(checked: boolean) => setEditableEmployee({...editableEmployee, trackAttendance: checked})}
+                            className="col-span-2"
+                        />
+                    </div>
+                    {isAdmin && (
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label className="text-right">Annual PTO Days</Label>
+                            <Input
+                                type="number"
+                                value={editableEmployee.ptoDays}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, ptoDays: parseInt(e.target.value) || 0})}
+                                className="col-span-2"
+                            />
+                        </div>
+                    )}
+                    
+                </TabsContent>
+
+                <TabsContent value="payroll" className="space-y-4 pt-4">
+                    {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
+                        <div className="space-y-4">
+                            
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <Label className="text-right">Daily Pay Rate (INR)</Label>
+                                <Input
+                                    type="number"
+                                    value={editableEmployee.hourlyPayRate ? (editableEmployee.hourlyPayRate * 8) : ''}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, hourlyPayRate: (parseFloat(e.target.value) / 8) || undefined})}
+                                    className="col-span-2"
+                                    placeholder="e.g., 2000"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </TabsContent>
+
+                <TabsContent value="documents" className="space-y-4 pt-4">
+                    {selectedEmployee.name && (
+                        <div className="space-y-4">
+                            <div className="flex justify-end">
+                                <Label htmlFor="add-new-document" className="cursor-pointer">
+                                    <Button variant="outline" size="sm" asChild>
+                                        <span>Add New Document</span>
+                                    </Button>
+                                </Label>
+                                <Input
+                                    id="add-new-document"
+                                    type="file"
+                                    accept="image/jpeg,image/png"
+                                    className="hidden"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleAddNewDocument(e)}
+                                />
+                            </div>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Document</TableHead>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {documents.map((doc: Document) => (
+                                        <TableRow key={doc.id}>
+                                            <TableCell className="font-medium flex items-center gap-2">
+                                                {doc.type === 'profile-picture' && (
+                                                    <div className="w-8 h-8 rounded-full overflow-hidden border">
+                                                        <img src={doc.url} alt={doc.name} className="object-cover w-full h-full" />
+                                                    </div>
+                                                )}
+                                                {doc.type === 'aadhaar-card' && (
+                                                    <div className="w-12 h-auto relative rounded overflow-hidden border">
+                                                        <img src={doc.url} alt={doc.name} className="object-cover w-full h-full" />
+                                                    </div>
+                                                )}
+                                                {doc.name}
+                                            </TableCell>
+                                            <TableCell>{doc.dateUploaded}</TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <Label htmlFor={`upload-${doc.id}`} className="cursor-pointer">
+                                                        <Button variant="outline" size="sm" asChild>
+                                                            <span>Re-upload</span>
+                                                        </Button>
+                                                    </Label>
+                                                    <Input
+                                                        id={`upload-${doc.id}`}
+                                                        type="file"
+                                                        accept="image/jpeg,image/png"
+                                                        className="hidden"
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleReuploadDocument(e, doc.id)}
+                                                    />
+                                                    <Button variant="destructive" size="sm" onClick={() => handleDeleteDocument(doc.id, doc.type)}>Delete</Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    )}
+                </TabsContent>
+              </Tabs>
             </CardContent>
              <CardFooter className="justify-end">
                 <Button onClick={handleSaveEmployeeDetails}>Save Changes</Button>
             </CardFooter>
           </Card>
         </div>
-        { selectedEmployee.role !== 'Owner' && (
-          <>
-            <Card>
-                <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                    <CardTitle className="text-base">Attendance Summary</CardTitle>
-                    <Select 
-                      value={format(selectedMonth, 'yyyy-MM')}
-                      onValueChange={(value) => {
-                        const [year, month] = value.split('-').map(Number);
-                        setSelectedMonth(new Date(year, month - 1, 1));
-                      }}
-                    >
-                      <SelectTrigger className="w-[150px]">
-                        <SelectValue>
-                          {format(selectedMonth, 'MMMM yyyy')}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
-                          // Start from July 2025 (month index 6)
-                          const date = new Date(2025, 6 + i, 1);
-                          return (
-                            <SelectItem key={i} value={format(date, 'yyyy-MM')}>
-                              {format(date, 'MMMM yyyy')}
-                            </SelectItem>
-                          );
-                        }).reverse()}
-                      </SelectContent>
-                    </Select>
-                </CardHeader>
-                <CardContent>
-                    {!mtdSummary || !ytdSummary ? <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : (
-                        <div className="space-y-4">
-                        <div>
-                            <div className="grid grid-cols-8 gap-2 text-center">
-                                <div><p className="font-bold">{mtdSummary.workDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
-                                <div><p className="font-bold text-green-600">{mtdSummary.present}</p><p className="text-xs text-muted-foreground">Present</p></div>
-                                <div><p className="font-bold text-orange-500">{mtdSummary.lateDays}</p><p className="text-xs text-muted-foreground">Late</p></div>
-                                <div><p className="font-bold text-red-500">{mtdSummary.absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
-                                <div><p className="font-bold text-purple-500">{mtdSummary.ptosUsedThisMonth}</p><p className="text-xs text-muted-foreground">PTOs Used This Month</p></div>
-                                <div><p className="font-bold">{mtdSummary.annualPTODays}</p><p className="text-xs text-muted-foreground">Annual PTO Days</p></div>
-                                <div><p className="font-bold text-yellow-600">{mtdSummary.ptoUsedSoFar}</p><p className="text-xs text-muted-foreground">PTO Used So Far</p></div>
-                                <div><p className="font-bold">{mtdSummary.ptoLeft}</p><p className="text-xs text-muted-foreground">PTO Left</p></div>
-                            </div>
-                        </div>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            {isAdmin && paySummary && (
-              <Card>
-                <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                  <CardTitle className="text-base">Pay Summary </CardTitle>
-                  <Select 
-                    value={format(selectedMonth, 'yyyy-MM')}
-                    onValueChange={(value) => {
-                      const [year, month] = value.split('-').map(Number);
-                      setSelectedMonth(new Date(year, month - 1, 1));
-                    }}
-                  >
-                    <SelectTrigger className="w-[150px]">
-                      <SelectValue>
-                        {format(selectedMonth, 'MMMM yyyy')}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
-                        // Start from July 2025 (month index 6)
-                        const date = new Date(2025, 6 + i, 1);
-                        return (
-                          <SelectItem key={i} value={format(date, 'yyyy-MM')}>
-                            {format(date, 'MMMM yyyy')}
-                          </SelectItem>
-                        );
-                      }).reverse()}
-                    </SelectContent>
-                  </Select>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Total Present Days:</span>
-                      <span className="font-bold text-green-600">{paySummary.totalPresentDays} days</span>
-                    </div>
-                    {paySummary.lateDays > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Late Days:</span>
-                        <span className="font-bold text-yellow-600">{paySummary.lateDays} days</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Total Absent Days:</span>
-                      <span className="font-bold text-red-500">{paySummary.totalAbsentDays} days</span>
-                    </div>
-                    {paySummary.ptoUsedThisMonth > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">PTO Days Used:</span>
-                        <span className="font-bold text-yellow-600">{paySummary.ptoUsedThisMonth} days</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between border-t pt-2 mt-2">
-                      <span className="font-semibold">Net Payable Days:</span>
-                      <span className="font-bold">{paySummary.netPayableDays} days</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Daily Pay Rate:</span>
-                      <span className="font-bold">₹{((selectedEmployee.hourlyPayRate || 0) * 8).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-lg">
-                      <span>Gross Pay:</span>
-                      <span>₹{paySummary.grossPay.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-           
+        
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-headline">{selectedEmployee.name}'s Attendance</CardTitle>
@@ -1033,6 +1089,126 @@ function StaffPageContent() {
               </CardContent>
             </Card>
 
+            {/* Attendance Summary */}
+            {selectedEmployee.role !== 'Owner' && (
+              <Card>
+                <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                  <CardTitle className="text-base">Attendance</CardTitle>
+                  <Select
+                    value={format(selectedMonth, 'yyyy-MM')}
+                    onValueChange={(value: string) => {
+                      const [year, month] = value.split('-').map(Number);
+                      setSelectedMonth(new Date(year, month - 1, 1));
+                    }}
+                  >
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue>
+                        {format(selectedMonth, 'MMMM yyyy')}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
+                        // Start from July 2025 (month index 6)
+                        const date = new Date(2025, 6 + i, 1);
+                        return (
+                          <SelectItem key={i} value={format(date, 'yyyy-MM')}>
+                            {format(date, 'MMMM yyyy')}
+                          </SelectItem>
+                        );
+                      }).reverse()}
+                    </SelectContent>
+                  </Select>
+                </CardHeader>
+                <CardContent>
+                  {!mtdSummary || !ytdSummary ? <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : (
+                    <div className="space-y-4">
+                      <div>
+                        <div className="grid grid-cols-8 gap-2 text-center">
+                          <div><p className="font-bold">{mtdSummary.workDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
+                          <div><p className="font-bold text-green-600">{mtdSummary.present}</p><p className="text-xs text-muted-foreground">Present</p></div>
+                          <div><p className="font-bold text-orange-500">{mtdSummary.lateDays}</p><p className="text-xs text-muted-foreground">Late</p></div>
+                          <div><p className="font-bold text-red-500">{mtdSummary.absent}</p><p className="text-xs text-muted-foreground">Absent</p></div>
+                          <div><p className="font-bold text-purple-500">{mtdSummary.ptosUsedThisMonth}</p><p className="text-xs text-muted-foreground">PTOs Used This Month</p></div>
+                          <div><p className="font-bold">{mtdSummary.annualPTODays}</p><p className="text-xs text-muted-foreground">Annual PTO Days</p></div>
+                          <div><p className="font-bold text-yellow-600">{mtdSummary.ptoUsedSoFar}</p><p className="text-xs text-muted-foreground">PTO Used So Far</p></div>
+                          <div><p className="font-bold">{mtdSummary.ptoLeft}</p><p className="text-xs text-muted-foreground">PTO Left</p></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Payroll Summary */}
+            {selectedEmployee.role !== 'Owner' && isAdmin && paySummary && (
+              <Card>
+                <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                  <CardTitle className="text-base">Gross Pay</CardTitle>
+                  <Select
+                    value={format(selectedMonth, 'yyyy-MM')}
+                    onValueChange={(value: string) => {
+                      const [year, month] = value.split('-').map(Number);
+                      setSelectedMonth(new Date(year, month - 1, 1));
+                    }}
+                  >
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue>
+                        {format(selectedMonth, 'MMMM yyyy')}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
+                        // Start from July 2025 (month index 6)
+                        const date = new Date(2025, 6 + i, 1);
+                        return (
+                          <SelectItem key={i} value={format(date, 'yyyy-MM')}>
+                            {format(date, 'MMMM yyyy')}
+                          </SelectItem>
+                        );
+                      }).reverse()}
+                    </SelectContent>
+                  </Select>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Total Present Days:</span>
+                      <span className="font-bold text-green-600">{paySummary.totalPresentDays} days</span>
+                    </div>
+                    {paySummary.lateDays > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Late Days:</span>
+                        <span className="font-bold text-yellow-600">{paySummary.lateDays} days</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Total Absent Days:</span>
+                      <span className="font-bold text-red-500">{paySummary.totalAbsentDays} days</span>
+                    </div>
+                    {paySummary.ptoUsedThisMonth > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">PTO Days Used:</span>
+                        <span className="font-bold text-yellow-600">{paySummary.ptoUsedThisMonth} days</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between border-t pt-2 mt-2">
+                      <span className="font-semibold">Net Payable Days:</span>
+                      <span className="font-bold">{paySummary.netPayableDays} days</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Daily Pay Rate:</span>
+                      <span className="font-bold">₹{((selectedEmployee.hourlyPayRate || 0) * 8).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>Gross Pay:</span>
+                      <span>₹{paySummary.grossPay.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Monthly Statistics */}
             <EmployeeMonthlyStats 
               employee={selectedEmployee} 
@@ -1041,9 +1217,11 @@ function StaffPageContent() {
 
             {/* Spacing after attendance section */}
             <div className="h-12"></div>
-          </>
-        )}
-      </div>
+        </div>
+        
+        {/* Spacing after bottom menu */}
+        <div className="h-16"></div>
+      </>
     );
   }
 
@@ -1063,7 +1241,7 @@ function StaffPageContent() {
             <h1 className="text-2xl font-bold font-headline">Staff</h1>
             <div className="flex gap-4">
               <Button onClick={() => setIsAddStaffModalOpen(true)}>Add Staff</Button>
-              <Select value={employeeFilter} onValueChange={(value) => setEmployeeFilter(value as EmployeeFilter)}>
+              <Select value={employeeFilter} onValueChange={(value: EmployeeFilter) => setEmployeeFilter(value as EmployeeFilter)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter employees" />
                 </SelectTrigger>
@@ -1076,9 +1254,6 @@ function StaffPageContent() {
             </div>
         </div>
         <Card>
-          <CardHeader>
-            <CardTitle>All Employees</CardTitle>
-          </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex justify-center items-center h-40">
@@ -1102,17 +1277,17 @@ function StaffPageContent() {
                     </TableHead>
                     <TableHead>
                       <div className="flex items-center">
-                        Today's Status
+                        Attendance
                       </div>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedEmployees.map((employee) => {
+                  {sortedEmployees.map((employee: Employee & { status: AttendanceStatus | "Not Employed" | "Remote" }) => {
     const empRecords = attendanceRecords.get(employee.id) || [];
     const record = empRecords.find((r: AttendanceRecord) => r.date === todayStr);
                     const isTodayRecord = record && record.date === todayStr;
-                    const isHolidayToday = holidays.some(h => h.date === todayStr);
+                    const isHolidayToday = holidays.some((h: { date: string }) => h.date === todayStr);
 
                     let status: AttendanceStatus | "Not Employed" | "Remote" = "Not Marked";
                      if (!employee.employed) {
@@ -1129,13 +1304,18 @@ function StaffPageContent() {
                         <TableRow key={employee.id} onClick={() => handleEmployeeClick(employee)} className="cursor-pointer">
                         <TableCell>
                             <div className="flex items-center gap-3">
-                            <Avatar>
-                                <AvatarImage src={employee.avatarUrl} alt={employee.name} data-ai-hint="person portrait" />
-                                <AvatarFallback>{employee.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <div className="font-medium">{employee.name}</div>
-                            </div>
+                                <Avatar className="h-8 w-8">
+                                    <AvatarImage 
+                                        src={`/images/profile-pictures/${employee.name.toLowerCase().replace(/\s+/g, '-')}-profile-picture.jpeg`} 
+                                        alt={employee.name} 
+                                    />
+                                    <AvatarFallback className="text-xs">
+                                        {employee.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <div className="font-medium">{employee.name}</div>
+                                </div>
                             </div>
                         </TableCell>
                         <TableCell>{employee.role}</TableCell>
@@ -1151,10 +1331,6 @@ function StaffPageContent() {
           </CardContent>
         </Card>
       </div>
-      
-
-      {/* Spacing after bottom menu */}
-      <div className="h-16"></div>
     </>
   );
 }

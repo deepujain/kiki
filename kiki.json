@@ -21,12 +21,13 @@
       "phone": "+91 98765 43214",
       "gender": "Male",
       "experience": 4,
-      "avatarUrl": "/avatars/05.png",
+      "avatarUrl": "/images/profile-pictures/arjun-profile-picture.jpeg?key=1758771145116",
       "birthday": "1991-09-05",
       "employed": true,
       "hourlyPayRate": 75,
       "trackAttendance": true,
-      "ptoDays": 10
+      "ptoDays": 10,
+      "status": "Not Marked"
     },
     {
       "id": "4",
@@ -35,7 +36,7 @@
       "phone": "+91 98765 43213",
       "gender": "Male",
       "experience": 8,
-      "avatarUrl": "/avatars/04.png",
+      "avatarUrl": "/images/profile-pictures/dhiren-profile-picture.jpeg?key=1758771185828",
       "birthday": "1985-08-01",
       "employed": true,
       "hourlyPayRate": 83.25,

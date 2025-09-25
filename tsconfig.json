@@ -30,7 +30,8 @@
     },
     "types": [
       "node",
-      "sqlite3"
+      "sqlite3",
+      "node_modules/@types"
     ]
   },
   "include": [
