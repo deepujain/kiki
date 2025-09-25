@@ -65,7 +65,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { X } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { EmployeeMonthlyStats } from "@/components/employee-monthly-stats";
 
@@ -147,6 +147,14 @@ function StaffPageContent() {
   // const [profileImageKey, setProfileImageKey] = useState<number>(Date.now());
   const [documents, setDocuments] = useState<Document[]>([]);
   const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
+
+  // Cleanup effect for modal states when navigating
+  useEffect(() => {
+    return () => {
+      setPreviewDoc(null);
+      setIsAddStaffModalOpen(false);
+    };
+  }, []);
   
   // Check for document existence and populate documents state
   useEffect(() => {
@@ -958,9 +966,15 @@ function StaffPageContent() {
                                                     <>
                                                         <div 
                                                             className="w-12 h-auto relative rounded overflow-hidden border cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-                                                            onClick={() => {
+                                                            onClick={(e) => {
+                                                              e.stopPropagation();  // Prevent row click
+                                                              e.preventDefault();   // Prevent any default behavior
                                                               console.log('Opening preview for:', idDoc);
                                                               setPreviewDoc(idDoc);
+                                                              // Force a small delay to ensure state update
+                                                              setTimeout(() => {
+                                                                console.log('Preview doc state:', idDoc);
+                                                              }, 100);
                                                             }}
                                                         >
                                                             <img src={idDoc.url} alt="ID (Aadhaar)" className="object-cover w-full h-full" />
@@ -1212,6 +1226,29 @@ function StaffPageContent() {
 
             {/* Spacing after attendance section */}
             <div className="h-12"></div>
+
+            {/* Document Preview Modal */}
+            {previewDoc && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-black/50" onClick={() => setPreviewDoc(null)} />
+                <div className="relative z-50 bg-white dark:bg-gray-800 rounded-lg p-6 w-[90vw] max-w-[800px] max-h-[90vh] overflow-auto">
+                  <button
+                    onClick={() => setPreviewDoc(null)}
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <h2 className="text-xl font-semibold mb-4">{previewDoc.name}</h2>
+                  <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden bg-muted">
+                    <img 
+                      src={previewDoc.url} 
+                      alt={previewDoc.name} 
+                      className="object-contain w-full h-full"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
         </div>
         
         {/* Spacing after bottom menu */}
@@ -1327,28 +1364,170 @@ function StaffPageContent() {
         </Card>
       </div>
 
-      {/* Document Preview Dialog */}
-      <Dialog 
-        open={previewDoc !== null} 
-        onOpenChange={(open) => !open && setPreviewDoc(null)}
-      >
-        <DialogContent className="max-w-3xl p-0">
-          <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="text-xl">{previewDoc?.name}</DialogTitle>
-          </DialogHeader>
-          {previewDoc && (
-            <div className="relative w-full p-6">
-              <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden bg-muted">
-                <img 
-                  src={previewDoc.url} 
-                  alt={previewDoc.name} 
-                  className="object-contain w-full h-full"
-                />
+      {/* Add Staff Modal */}
+      {isAddStaffModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setIsAddStaffModalOpen(false)} />
+          <div className="relative z-50 bg-white dark:bg-gray-800 rounded-lg p-6 w-[90vw] max-w-[500px]">
+            <button
+              onClick={() => setIsAddStaffModalOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <h2 className="text-xl font-semibold mb-6">Add New Staff</h2>
+            <form onSubmit={handleAddStaff} className="space-y-4">
+              {/* Basic Details */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Basic Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      value={newStaff.name || ''}
+                      onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Role</Label>
+                    <Select
+                      value={newStaff.role}
+                      onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="TSE">TSE</SelectItem>
+                        <SelectItem value="Logistics">Logistics</SelectItem>
+                        <SelectItem value="MIS">MIS</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Gender</Label>
+                    <Select
+                      value={newStaff.gender}
+                      onValueChange={(value: "Male" | "Female") => setNewStaff({ ...newStaff, gender: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="birthday">Birthday</Label>
+                    <Input
+                      id="birthday"
+                      type="date"
+                      value={newStaff.birthday || ''}
+                      onChange={(e) => setNewStaff({ ...newStaff, birthday: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+
+              {/* Contact Details */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Contact Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      value={newStaff.phone || ''}
+                      onChange={(e) => setNewStaff({ ...newStaff, phone: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newStaff.email || ''}
+                      onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
+                    />
+                  </div>
+                  <div className="col-span-2 space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input
+                      id="address"
+                      value={newStaff.address || ''}
+                      onChange={(e) => setNewStaff({ ...newStaff, address: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Employment & Attendance */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Employment & Attendance</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="experience">Experience (years)</Label>
+                    <Input
+                      id="experience"
+                      type="number"
+                      value={newStaff.experience || 0}
+                      onChange={(e) => setNewStaff({ ...newStaff, experience: parseInt(e.target.value) })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ptoDays">Annual PTO Days</Label>
+                    <Input
+                      id="ptoDays"
+                      type="number"
+                      value={newStaff.ptoDays || 0}
+                      onChange={(e) => setNewStaff({ ...newStaff, ptoDays: parseInt(e.target.value) })}
+                      required
+                    />
+                  </div>
+                  <div className="col-span-2 flex items-center space-x-2">
+                    <Checkbox
+                      id="trackAttendance"
+                      checked={newStaff.trackAttendance}
+                      onCheckedChange={(checked) => setNewStaff({ ...newStaff, trackAttendance: !!checked })}
+                    />
+                    <Label htmlFor="trackAttendance">Track Attendance</Label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payroll Info */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Payroll Info</h3>
+                <div className="space-y-2">
+                  <Label htmlFor="hourlyPayRate">Hourly Pay Rate (₹)</Label>
+                  <Input
+                    id="hourlyPayRate"
+                    type="number"
+                    value={newStaff.hourlyPayRate || ''}
+                    onChange={(e) => setNewStaff({ ...newStaff, hourlyPayRate: parseFloat(e.target.value) })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end gap-2">
+                <Button variant="outline" type="button" onClick={() => setIsAddStaffModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Add Staff</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </>
   );
 }
