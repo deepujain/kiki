@@ -5,12 +5,11 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function DELETE(request: NextRequest, { params }: { params: { filename: string } }) {
   try {
     const { filename } = params;
-    const documentId = filename.split('-').pop()?.split('.')[0]; // Extract documentId from filename
-
+    // Extract document type from filename - handle both formats
     let deleteDir = '';
-    if (documentId === 'profile') { // Assuming filename will be `employeename-profile.jpeg`
+    if (filename.includes('profile-picture')) {
       deleteDir = path.join(process.cwd(), 'public', 'images', 'profile-pictures');
-    } else if (documentId === 'aadhar') { // Assuming filename will be `employeename-aadhar.jpeg`
+    } else if (filename.includes('aadhar-card') || filename.includes('aadhar')) {
       deleteDir = path.join(process.cwd(), 'public', 'images', 'aadhar');
     } else {
       deleteDir = path.join(process.cwd(), 'public', 'images', 'documents'); // Generic documents

@@ -387,55 +387,6 @@ function StaffPageContent() {
 
   };
 
-  const handleReuploadDocument = async (e: React.ChangeEvent<HTMLInputElement>, docId: string) => {
-    const file = e.target.files?.[0];
-    if (!file || !selectedEmployee) return;
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('employeeName', selectedEmployee.name);
-      formData.append('documentId', docId); // Pass the document ID
-
-      const response = await fetch('/api/upload/document', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-
-      toast({
-        title: "Upload Successful",
-        description: `Document has been re-uploaded successfully.`,
-      });
-
-      // Trigger a re-fetch of documents
-      setDocuments(prev => prev.map(doc => {
-        if (doc.id === docId) {
-          const newUrl = `/images/${doc.type === 'aadhaar-card' ? 'aadhar' : (doc.type === 'profile-picture' ? 'profile-pictures' : 'documents')}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${doc.id}.jpeg?key=${Date.now()}`;
-          return { ...doc, dateUploaded: format(new Date(), 'yyyy-MM-dd'), url: newUrl };
-        }
-        return doc;
-      }));
-
-      // If profile picture, update avatarUrl
-      if (docId === 'profile-picture') {
-        const newAvatarUrl = `/images/profile-pictures/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-profile-picture.jpeg?key=${Date.now()}`;
-        setEditableEmployee((prev: Employee | null) => prev ? {...prev, avatarUrl: newAvatarUrl} : null);
-        updateEmployee({...selectedEmployee, avatarUrl: newAvatarUrl});
-      }
-
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      toast({
-        variant: "destructive",
-        title: "Upload Failed",
-        description: "Failed to re-upload document. Please try again.",
-      });
-    }
-  };
 
   const handleDeleteDocument = async (docId: string, docType: Document['type']) => {
     if (!selectedEmployee) return;
@@ -629,30 +580,12 @@ function StaffPageContent() {
     }
   };
 
-  const handleAddNewDocument = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>, documentType: 'profile-picture' | 'aadhaar-card') => {
     const file = e.target.files?.[0];
     if (!file || !selectedEmployee) return;
 
-    const profilePictureExists = documents.some(doc => doc.id === 'profile-picture');
-    const aadharCardExists = documents.some(doc => doc.id === 'aadhar-card');
-
-    let docIdToUpload: string | null = null;
-    let docTypeToUpload: "profile-picture" | "aadhaar-card" | "other" = "other";
-
-    if (!profilePictureExists) {
-      docIdToUpload = 'profile-picture';
-      docTypeToUpload = 'profile-picture';
-    } else if (!aadharCardExists) {
-      docIdToUpload = 'aadhar-card';
-      docTypeToUpload = 'aadhaar-card';
-    } else {
-      toast({
-        variant: "destructive",
-        title: "All documents already uploaded",
-        description: "Both Profile Picture and Aadhaar Card are already present.",
-      });
-      return;
-    }
+    const docIdToUpload = documentType === 'profile-picture' ? 'profile-picture' : 'aadhar-card';
+    const docTypeToUpload = documentType;
 
     try {
       const formData = new FormData();
@@ -669,19 +602,35 @@ function StaffPageContent() {
         throw new Error('Upload failed');
       }
 
+      const existingDocument = documents.find(doc => doc.type === docTypeToUpload);
+      
       toast({
         title: "Upload Successful",
-        description: `${docIdToUpload === 'profile-picture' ? 'Profile picture' : 'Aadhaar card'} has been uploaded successfully.`,
+        description: `${docIdToUpload === 'profile-picture' ? 'Profile picture' : 'Aadhaar card'} has been ${existingDocument ? 'updated' : 'uploaded'} successfully.`,
       });
 
-      // Trigger a re-fetch of documents
-      setDocuments(prev => [...prev, {
-        id: docIdToUpload!,
-        name: docIdToUpload === 'profile-picture' ? 'Profile Picture' : 'Aadhaar Card',
-        type: docTypeToUpload,
-        dateUploaded: format(new Date(), 'yyyy-MM-dd'),
-        url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docIdToUpload}.jpeg?key=${Date.now()}`,
-      }]);
+      // Update or add document
+      if (existingDocument) {
+        // Update existing document
+        setDocuments(prev => prev.map(doc => 
+          doc.type === docTypeToUpload
+            ? {
+                ...doc,
+                dateUploaded: format(new Date(), 'yyyy-MM-dd'),
+                url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docIdToUpload}.jpeg?key=${Date.now()}`,
+              }
+            : doc
+        ));
+      } else {
+        // Add new document
+        setDocuments(prev => [...prev, {
+          id: docIdToUpload!,
+          name: docIdToUpload === 'profile-picture' ? 'Profile Picture' : 'Aadhaar Card',
+          type: docTypeToUpload,
+          dateUploaded: format(new Date(), 'yyyy-MM-dd'),
+          url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docIdToUpload}.jpeg?key=${Date.now()}`,
+        }]);
+      }
 
       // If profile picture, update avatarUrl
       if (docIdToUpload === 'profile-picture') {
@@ -938,64 +887,115 @@ function StaffPageContent() {
                 <TabsContent value="documents" className="space-y-4 pt-4">
                     {selectedEmployee.name && (
                         <div className="space-y-4">
-                            <div className="flex justify-end">
-                                <Label htmlFor="add-new-document" className="cursor-pointer">
-                                    <Button variant="outline" size="sm" asChild>
-                                        <span>Add New Document</span>
-                                    </Button>
-                                </Label>
-                                <Input
-                                    id="add-new-document"
-                                    type="file"
-                                    accept="image/jpeg,image/png"
-                                    className="hidden"
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleAddNewDocument(e)}
-                                />
-                            </div>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Document</TableHead>
+                                        <TableHead>Document Type</TableHead>
                                         <TableHead>Date</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {documents.map((doc: Document) => (
-                                        <TableRow key={doc.id}>
-                                            <TableCell className="font-medium flex items-center gap-2">
-                                                {doc.type === 'profile-picture' && (
-                                                    <div className="w-8 h-8 rounded-full overflow-hidden border">
-                                                        <img src={doc.url} alt={doc.name} className="object-cover w-full h-full" />
-                                                    </div>
+                                    {/* Profile Picture Row */}
+                                    <TableRow>
+                                        <TableCell className="font-medium flex items-center gap-2">
+                                            {(() => {
+                                                const profileDoc = documents.find(doc => doc.type === 'profile-picture');
+                                                return profileDoc ? (
+                                                    <>
+                                                        <div className="w-8 h-8 rounded-full overflow-hidden border">
+                                                            <img src={profileDoc.url} alt="Profile Picture" className="object-cover w-full h-full" />
+                                                        </div>
+                                                        Profile Picture
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="w-8 h-8 rounded-full bg-gray-200 border flex items-center justify-center">
+                                                            <span className="text-gray-400 text-xs">No Image</span>
+                                                        </div>
+                                                        Profile Picture
+                                                    </>
+                                                );
+                                            })()}
+                                        </TableCell>
+                                        <TableCell>Profile Picture</TableCell>
+                                        <TableCell>
+                                            {(() => {
+                                                const profileDoc = documents.find(doc => doc.type === 'profile-picture');
+                                                return profileDoc ? profileDoc.dateUploaded : '-';
+                                            })()}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Label htmlFor="upload-profile-picture" className="cursor-pointer">
+                                                    <Button variant="outline" size="sm" asChild>
+                                                        <span>{documents.find(doc => doc.type === 'profile-picture') ? 'Re-upload' : 'Upload'}</span>
+                                                    </Button>
+                                                </Label>
+                                                <Input
+                                                    id="upload-profile-picture"
+                                                    type="file"
+                                                    accept="image/jpeg,image/png"
+                                                    className="hidden"
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDocumentUpload(e, 'profile-picture')}
+                                                />
+                                                {documents.find(doc => doc.type === 'profile-picture') && (
+                                                    <Button variant="destructive" size="sm" onClick={() => handleDeleteDocument('profile-picture', 'profile-picture')}>Delete</Button>
                                                 )}
-                                                {doc.type === 'aadhaar-card' && (
-                                                    <div className="w-12 h-auto relative rounded overflow-hidden border">
-                                                        <img src={doc.url} alt={doc.name} className="object-cover w-full h-full" />
-                                                    </div>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+
+                                    {/* ID (Aadhaar) Row */}
+                                    <TableRow>
+                                        <TableCell className="font-medium flex items-center gap-2">
+                                            {(() => {
+                                                const idDoc = documents.find(doc => doc.type === 'aadhaar-card');
+                                                return idDoc ? (
+                                                    <>
+                                                        <div className="w-12 h-auto relative rounded overflow-hidden border">
+                                                            <img src={idDoc.url} alt="ID (Aadhaar)" className="object-cover w-full h-full" />
+                                                        </div>
+                                                        ID (Aadhaar)
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="w-12 h-8 bg-gray-200 border flex items-center justify-center rounded">
+                                                            <span className="text-gray-400 text-xs">No Image</span>
+                                                        </div>
+                                                        ID (Aadhaar)
+                                                    </>
+                                                );
+                                            })()}
+                                        </TableCell>
+                                        <TableCell>ID (Aadhaar)</TableCell>
+                                        <TableCell>
+                                            {(() => {
+                                                const idDoc = documents.find(doc => doc.type === 'aadhaar-card');
+                                                return idDoc ? idDoc.dateUploaded : '-';
+                                            })()}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Label htmlFor="upload-id-aadhaar" className="cursor-pointer">
+                                                    <Button variant="outline" size="sm" asChild>
+                                                        <span>{documents.find(doc => doc.type === 'aadhaar-card') ? 'Re-upload' : 'Upload'}</span>
+                                                    </Button>
+                                                </Label>
+                                                <Input
+                                                    id="upload-id-aadhaar"
+                                                    type="file"
+                                                    accept="image/jpeg,image/png"
+                                                    className="hidden"
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleDocumentUpload(e, 'aadhaar-card')}
+                                                />
+                                                {documents.find(doc => doc.type === 'aadhaar-card') && (
+                                                    <Button variant="destructive" size="sm" onClick={() => handleDeleteDocument('aadhar-card', 'aadhaar-card')}>Delete</Button>
                                                 )}
-                                                {doc.name}
-                                            </TableCell>
-                                            <TableCell>{doc.dateUploaded}</TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Label htmlFor={`upload-${doc.id}`} className="cursor-pointer">
-                                                        <Button variant="outline" size="sm" asChild>
-                                                            <span>Re-upload</span>
-                                                        </Button>
-                                                    </Label>
-                                                    <Input
-                                                        id={`upload-${doc.id}`}
-                                                        type="file"
-                                                        accept="image/jpeg,image/png"
-                                                        className="hidden"
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleReuploadDocument(e, doc.id)}
-                                                    />
-                                                    <Button variant="destructive" size="sm" onClick={() => handleDeleteDocument(doc.id, doc.type)}>Delete</Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
                                 </TableBody>
                             </Table>
                         </div>
