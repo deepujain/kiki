@@ -1035,7 +1035,7 @@ function StaffPageContent() {
               </CardHeader>
               <CardContent>
                 <h3 className="text-lg font-semibold text-center mb-4">{format(calendarMonth, 'MMMM yyyy')}</h3>
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7 gap-1 max-h-[600px] overflow-hidden">
                   {weekDays.map(day => (
                     <div key={day} className="text-center font-semibold text-muted-foreground text-sm">{day}</div>
                   ))}
@@ -1086,14 +1086,16 @@ function StaffPageContent() {
                     )
                   })}
                 </div>
+                {/* Add spacing to prevent overlap with content below */}
+                <div className="h-8"></div>
               </CardContent>
             </Card>
 
-            {/* Attendance Summary */}
+            {/* Monthly Summary Cards */}
             {selectedEmployee.role !== 'Owner' && (
-              <Card>
-                <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                  <CardTitle className="text-base">Attendance</CardTitle>
+              <div className="space-y-4">
+                {/* Month Selector */}
+                <div className="flex justify-center">
                   <Select
                     value={format(selectedMonth, 'yyyy-MM')}
                     onValueChange={(value: string) => {
@@ -1101,7 +1103,7 @@ function StaffPageContent() {
                       setSelectedMonth(new Date(year, month - 1, 1));
                     }}
                   >
-                    <SelectTrigger className="w-[150px]">
+                    <SelectTrigger className="w-[200px]">
                       <SelectValue>
                         {format(selectedMonth, 'MMMM yyyy')}
                       </SelectValue>
@@ -1118,12 +1120,19 @@ function StaffPageContent() {
                       }).reverse()}
                     </SelectContent>
                   </Select>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Attendance Summary */}
+                <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Attendance</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {!mtdSummary || !ytdSummary ? <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : (
                     <div className="space-y-4">
-                      <div>
-                        <div className="grid grid-cols-8 gap-2 text-center">
+                      <div className="max-w-4xl">
+                        <div className="grid grid-cols-2 gap-4 text-center">
                           <div><p className="font-bold">{mtdSummary.workDays}</p><p className="text-xs text-muted-foreground">Work Days</p></div>
                           <div><p className="font-bold text-green-600">{mtdSummary.present}</p><p className="text-xs text-muted-foreground">Present</p></div>
                           <div><p className="font-bold text-orange-500">{mtdSummary.lateDays}</p><p className="text-xs text-muted-foreground">Late</p></div>
@@ -1137,38 +1146,13 @@ function StaffPageContent() {
                     </div>
                   )}
                 </CardContent>
-              </Card>
-            )}
+                </Card>
 
-            {/* Payroll Summary */}
-            {selectedEmployee.role !== 'Owner' && isAdmin && paySummary && (
-              <Card>
-                <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                {/* Payroll Summary */}
+                {isAdmin && paySummary && (
+                  <Card>
+                <CardHeader className="pb-2">
                   <CardTitle className="text-base">Gross Pay</CardTitle>
-                  <Select
-                    value={format(selectedMonth, 'yyyy-MM')}
-                    onValueChange={(value: string) => {
-                      const [year, month] = value.split('-').map(Number);
-                      setSelectedMonth(new Date(year, month - 1, 1));
-                    }}
-                  >
-                    <SelectTrigger className="w-[150px]">
-                      <SelectValue>
-                        {format(selectedMonth, 'MMMM yyyy')}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
-                        // Start from July 2025 (month index 6)
-                        const date = new Date(2025, 6 + i, 1);
-                        return (
-                          <SelectItem key={i} value={format(date, 'yyyy-MM')}>
-                            {format(date, 'MMMM yyyy')}
-                          </SelectItem>
-                        );
-                      }).reverse()}
-                    </SelectContent>
-                  </Select>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-2">
@@ -1206,7 +1190,10 @@ function StaffPageContent() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+                  </Card>
+                )}
+                </div>
+              </div>
             )}
 
             {/* Monthly Statistics */}

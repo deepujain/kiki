@@ -7,7 +7,7 @@ Welcome to **Kiki** 🦀, a modern and comprehensive workforce management system
 
 **Kiki** 🦀 stands out with its:
 - 💰 Sophisticated payroll management
-- 👥 Smart time tracking with automatic late detection
+- 👥 Smart time tracking
 - 📊 Comprehensive analytics and reporting
 - 🔄 Real-time data synchronization
 - 🎨 Clean, responsive interface
@@ -54,8 +54,16 @@ Perfect for organizations looking to:
 - Personal details with birthday tracking and celebrations
 - Experience and role management
 - Filterable staff directory (current, former, all employees) with sortable columns
+- **Profile pictures in employee table** with avatar fallbacks showing initials
 - Individual attendance history with calendar view
 - CSV export functionality for attendance records
+- **Tabbed employee profile interface** with organized sections:
+  - Personal details, Contact information, Employment details, Payroll info
+  - Document management with upload/delete functionality
+- **Document Management System**:
+  - Upload and manage profile pictures and Aadhaar cards
+  - Table-based document view with actions (upload, re-upload, delete)
+  - Real-time document preview and management
 
 #### 💰 **Comprehensive Payroll System**
 - Hourly Pay Rate management for eligible roles (TSE, Logistics, MIS)
@@ -85,6 +93,13 @@ Perfect for organizations looking to:
   - Month-to-Date (MTD) attendance patterns
   - Working days calculations
   - Holiday impact analysis
+- **Enhanced Employee Analytics**:
+  - **Side-by-side attendance and gross pay summaries** with responsive layouts
+  - **Unified month selector** controlling both attendance and payroll data
+  - **Two-column attendance metrics** for better readability
+  - **Interactive monthly trend charts** with tabbed interface:
+    - Attendance trends (Present, Late, Absent, PTO usage)
+    - Gross pay trends over time
 - Flexible reporting:
   - Period selection (MTD/YTD) for all reports
   - Export functionality for payroll and attendance data
@@ -99,11 +114,16 @@ Perfect for organizations looking to:
 - Role-based access control for Admin and Regular users
 
 ### 🎯 **User Experience**
-- Responsive design optimized for desktop and mobile
+- **Enhanced responsive design** optimized for desktop and mobile
+  - **Adaptive layouts** that adjust based on screen width
+  - **Responsive grids** preventing content overlap with legends
+  - **Mobile-first approach** with proper spacing and touch targets
 - Dark/light theme support
 - Smooth animations and transitions
 - Real-time data updates without page refreshes
 - Intuitive navigation with breadcrumbs
+- **Improved visual hierarchy** with tabbed interfaces and organized layouts
+- **Professional profile management** with avatar displays and document handling
 
 ### 🗄️ **Data Persistence**
 - **[LowDB](https://github.com/typicode/lowdb)** - Lightweight JSON database for local data storage

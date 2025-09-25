@@ -15,21 +15,6 @@
       "ptoDays": 10
     },
     {
-      "id": "5",
-      "name": "Arjun",
-      "role": "Logistics",
-      "phone": "+91 98765 43214",
-      "gender": "Male",
-      "experience": 4,
-      "avatarUrl": "/images/profile-pictures/arjun-profile-picture.jpeg?key=1758771145116",
-      "birthday": "1991-09-05",
-      "employed": true,
-      "hourlyPayRate": 75,
-      "trackAttendance": true,
-      "ptoDays": 10,
-      "status": "Not Marked"
-    },
-    {
       "id": "4",
       "name": "Dhiren",
       "role": "MIS",
@@ -40,6 +25,21 @@
       "birthday": "1985-08-01",
       "employed": true,
       "hourlyPayRate": 83.25,
+      "trackAttendance": true,
+      "ptoDays": 10,
+      "status": "Not Marked"
+    },
+    {
+      "id": "5",
+      "name": "Arjun",
+      "role": "Logistics",
+      "phone": "+91 98765 43214",
+      "gender": "Male",
+      "experience": 4,
+      "avatarUrl": "/images/profile-pictures/arjun-profile-picture.jpeg?key=1758771145116",
+      "birthday": "1991-09-05",
+      "employed": true,
+      "hourlyPayRate": 75,
       "trackAttendance": true,
       "ptoDays": 10,
       "status": "Not Marked"
