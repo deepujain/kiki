@@ -74,7 +74,7 @@ export function AttendanceSummaryBar({
               bgColor = "bg-gray-200 dark:bg-gray-700";
             } else if (day <= today && !record && !holiday) {
               status = "Missing Data";
-              bgColor = "bg-orange-200 dark:bg-orange-900";
+              bgColor = "bg-pink-200 dark:bg-pink-900";
             } else if (holiday) {
               status = `Holiday: ${holiday.name}`;
               bgColor = "bg-blue-500 dark:bg-blue-600";
@@ -96,7 +96,7 @@ export function AttendanceSummaryBar({
             } else {
               // Missing Data - only for non-Sunday past dates
               status = "Missing Data";
-              bgColor = "bg-orange-200 dark:bg-orange-900";
+              bgColor = "bg-pink-200 dark:bg-pink-900";
             }
 
             return (

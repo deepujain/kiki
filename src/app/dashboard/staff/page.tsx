@@ -584,7 +584,7 @@ function StaffPageContent() {
     const file = e.target.files?.[0];
     if (!file || !selectedEmployee) return;
 
-    const docIdToUpload = documentType === 'profile-picture' ? 'profile-picture' : 'aadhar-card';
+    const docIdToUpload = documentType === 'profile-picture' ? 'profile-picture' : 'aadhaar-card';
     const docTypeToUpload = documentType;
 
     try {
@@ -1090,6 +1090,38 @@ function StaffPageContent() {
                 <div className="h-8"></div>
               </CardContent>
             </Card>
+
+            {/* Attendance Status Legend */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center mt-4 text-sm">
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-green-100 dark:bg-green-900/50"></span>
+                    <span>Present</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-yellow-100 dark:bg-yellow-900/50"></span>
+                    <span>Late</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-red-100 dark:bg-red-900/50"></span>
+                    <span>Absent</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-pink-200 dark:bg-pink-900"></span>
+                    <span>Missing Data</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-900/50"></span>
+                    <span>Holiday</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700"></span>
+                    <span>Sunday</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-purple-100 dark:bg-purple-900"></span>
+                    <span>Future Date</span>
+                </div>
+            </div>
 
             {/* Monthly Summary Cards */}
             {selectedEmployee.role !== 'Owner' && (
