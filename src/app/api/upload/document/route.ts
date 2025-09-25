@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     let uploadDir = '';
     if (documentId === 'profile-picture') {
       uploadDir = path.join(process.cwd(), 'public', 'images', 'profile-pictures');
-    } else if (documentId === 'aadhar-card') {
+    } else if (documentId === 'aadhaar-card') {
       uploadDir = path.join(process.cwd(), 'public', 'images', 'aadhar');
     } else {
       uploadDir = path.join(process.cwd(), 'public', 'images', 'documents'); // Generic documents

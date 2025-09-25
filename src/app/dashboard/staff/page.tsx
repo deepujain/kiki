@@ -65,6 +65,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { EmployeeMonthlyStats } from "@/components/employee-monthly-stats";
 
@@ -145,6 +146,7 @@ function StaffPageContent() {
   // const [profileImageExists, setProfileImageExists] = useState<boolean>(false);
   // const [profileImageKey, setProfileImageKey] = useState<number>(Date.now());
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
   
   // Check for document existence and populate documents state
   useEffect(() => {
@@ -153,12 +155,12 @@ function StaffPageContent() {
         const newDocuments: Document[] = [];
 
         // Check Aadhaar Card
-        const aadharFileName = `${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-aadhar-card.jpeg`;
+        const aadharFileName = `${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-aadhaar-card.jpeg`;
         const aadharImagePath = `/images/aadhar/${aadharFileName}`;
         const aadharResponse = await fetch(aadharImagePath);
         if (aadharResponse.ok) {
           newDocuments.push({
-            id: 'aadhar-card',
+            id: 'aadhaar-card',
             name: 'Aadhaar Card',
             type: 'aadhaar-card',
             dateUploaded: format(new Date(), 'yyyy-MM-dd'), // Placeholder for now, will get real date later
@@ -617,7 +619,7 @@ function StaffPageContent() {
             ? {
                 ...doc,
                 dateUploaded: format(new Date(), 'yyyy-MM-dd'),
-                url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docIdToUpload}.jpeg?key=${Date.now()}`,
+                url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docTypeToUpload}.jpeg?key=${Date.now()}`,
               }
             : doc
         ));
@@ -628,7 +630,7 @@ function StaffPageContent() {
           name: docIdToUpload === 'profile-picture' ? 'Profile Picture' : 'Aadhaar Card',
           type: docTypeToUpload,
           dateUploaded: format(new Date(), 'yyyy-MM-dd'),
-          url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docIdToUpload}.jpeg?key=${Date.now()}`,
+          url: `/images/${docTypeToUpload === 'aadhaar-card' ? 'aadhar' : 'profile-pictures'}/${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-${docTypeToUpload}.jpeg?key=${Date.now()}`,
         }]);
       }
 
@@ -954,7 +956,13 @@ function StaffPageContent() {
                                                 const idDoc = documents.find(doc => doc.type === 'aadhaar-card');
                                                 return idDoc ? (
                                                     <>
-                                                        <div className="w-12 h-auto relative rounded overflow-hidden border">
+                                                        <div 
+                                                            className="w-12 h-auto relative rounded overflow-hidden border cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                                                            onClick={() => {
+                                                              console.log('Opening preview for:', idDoc);
+                                                              setPreviewDoc(idDoc);
+                                                            }}
+                                                        >
                                                             <img src={idDoc.url} alt="ID (Aadhaar)" className="object-cover w-full h-full" />
                                                         </div>
                                                         ID (Aadhaar)
@@ -1318,6 +1326,29 @@ function StaffPageContent() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Document Preview Dialog */}
+      <Dialog 
+        open={previewDoc !== null} 
+        onOpenChange={(open) => !open && setPreviewDoc(null)}
+      >
+        <DialogContent className="max-w-3xl p-0">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="text-xl">{previewDoc?.name}</DialogTitle>
+          </DialogHeader>
+          {previewDoc && (
+            <div className="relative w-full p-6">
+              <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden bg-muted">
+                <img 
+                  src={previewDoc.url} 
+                  alt={previewDoc.name} 
+                  className="object-contain w-full h-full"
+                />
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
