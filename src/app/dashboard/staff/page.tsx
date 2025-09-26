@@ -558,9 +558,9 @@ function StaffPageContent() {
       const lineHeight = 7;
 
       const content = [
-        `This is to certify that ${employee.name}, was employed with Vikings as a ${employee.role} from ${startDate} to ${endDate}.`,
+        `This is to certify that ${employee.name} was employed with Vikings as a ${employee.role} (${employee.employmentType}) from ${startDate} to ${endDate}.`,
         '',
-        `During their tenure with us, ${employee.name} was found to be sincere, hardworking, and professional in carrying out their responsibilities. Their conduct and performance were satisfactory, and they contributed positively to the growth of our organization.`,
+        `During their tenure with us as ${employee.role}, ${employee.name} was found to be sincere, hardworking, and professional in carrying out their responsibilities. Their conduct and performance were satisfactory, and they contributed positively to the growth of our organization.`,
         '',
         `We wish ${employee.name} all the best in their future career endeavors.`,
         '',

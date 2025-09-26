@@ -27,13 +27,21 @@ TableHeader.displayName = "TableHeader"
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
-    {...props}
-  />
-))
+>(({ className, ...props }, ref) => {
+  // Remove any text nodes that are just whitespace
+  const children = React.Children.toArray(props.children).filter(
+    child => !(typeof child === 'string' && child.trim() === '')
+  );
+  
+  return (
+    <tbody
+      ref={ref}
+      className={cn("[&_tr:last-child]:border-0", className)}
+      {...props}
+      children={children}
+    />
+  );
+})
 TableBody.displayName = "TableBody"
 
 const TableFooter = React.forwardRef<
@@ -54,16 +62,24 @@ TableFooter.displayName = "TableFooter"
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-      className
-    )}
-    {...props}
-  />
-))
+>(({ className, ...props }, ref) => {
+  // Remove any text nodes that are just whitespace
+  const children = React.Children.toArray(props.children).filter(
+    child => !(typeof child === 'string' && child.trim() === '')
+  );
+  
+  return (
+    <tr
+      ref={ref}
+      className={cn(
+        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        className
+      )}
+      {...props}
+      children={children}
+    />
+  );
+})
 TableRow.displayName = "TableRow"
 
 const TableHead = React.forwardRef<

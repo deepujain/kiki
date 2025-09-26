@@ -23,11 +23,12 @@
       "experience": 4,
       "avatarUrl": "https://picsum.photos/seed/arjun/100/100",
       "birthday": "1991-09-05",
-      "employed": false,
+      "employed": true,
       "hourlyPayRate": 75,
       "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Not Marked"
+      "status": "Not Employed",
+      "startDate": "2024-10-08"
     },
     {
       "id": "4",
@@ -36,7 +37,7 @@
       "phone": "+91 98765 43213",
       "gender": "Male",
       "experience": 8,
-      "avatarUrl": "/images/profile-pictures/dhiren-profile-picture.jpeg?key=1758809780130",
+      "avatarUrl": "/images/profile-pictures/dhirendra-chowhan-profile-picture.jpeg?key=1758852054616",
       "birthday": "1988-02-24",
       "employed": true,
       "hourlyPayRate": 83.25,
@@ -63,12 +64,12 @@
     },
     {
       "id": "2",
-      "name": "Raghavendra",
+      "name": "Raghavendra KS",
       "role": "TSE",
       "phone": "+91 98765 43211",
       "gender": "Male",
       "experience": 3,
-      "avatarUrl": "/images/profile-pictures/raghavendra-profile-picture.jpeg?key=1758810016394",
+      "avatarUrl": "/images/profile-pictures/raghavendra-ks-profile-picture.jpeg?key=1758852138235",
       "birthday": "1980-09-02",
       "employed": true,
       "hourlyPayRate": 166.625,
