@@ -208,6 +208,19 @@ function StaffPageContent() {
   // Track calendar data loading state
   const [isCalendarLoading, setIsCalendarLoading] = useState(false);
 
+  // Handle ESC key for dialogs
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setPreviewDoc(null);
+        setIsAddStaffModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscKey);
+    return () => window.removeEventListener('keydown', handleEscKey);
+  }, []);
+
   useEffect(() => {
     const loadAttendanceData = async () => {
       if (selectedEmployee) {
