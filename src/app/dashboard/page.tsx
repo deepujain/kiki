@@ -68,12 +68,12 @@ export default function DashboardPage() {
 
   // Filter employees for display in dashboard
   const activeEmployees = useMemo(() => {
-    return employees.filter(e => e.employed && e.role !== 'Founder & CEO');
+    return employees.filter(e => e.employed && e.role !== 'Founder & CEO'); // Keep using role until database is updated
   }, [employees]);
 
   // Filter employees whose attendance is tracked (TSE, Logistics, and MIS)
   const attendanceTrackedEmployees = useMemo(() => {
-    return employees.filter(e => e.employed && e.trackAttendance && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS'));
+    return employees.filter(e => e.employed && e.trackAttendance && (e.role === 'TSE' || e.role === 'Logistics' || e.role === 'MIS')); // Keep using role until database is updated
   }, [employees]);
 
   useEffect(() => {
@@ -388,7 +388,7 @@ export default function DashboardPage() {
                     </TableHead>
                     <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('role')}>
                       <div className="flex items-center">
-                        Role
+                        Designation
                         {sortColumn === 'role' && <ArrowUpDown className="ml-2 h-4 w-4" />}
                       </div>
                     </TableHead>
@@ -430,7 +430,7 @@ export default function DashboardPage() {
                         <TableCell>
                           {isTodayRecord ? record.checkOutTime ?? "--:--" : "--:--"}
                         </TableCell>
-                        <TableCell>{employee.role}</TableCell>
+                        <TableCell>{employee.role}</TableCell> {/* Keep using role until database is updated */}
                       </TableRow>
                     );
                   })}

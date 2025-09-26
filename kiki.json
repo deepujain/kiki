@@ -23,7 +23,7 @@
       "experience": 4,
       "avatarUrl": "https://picsum.photos/seed/arjun/100/100",
       "birthday": "1991-09-05",
-      "employed": true,
+      "employed": false,
       "hourlyPayRate": 75,
       "trackAttendance": true,
       "ptoDays": 10,
@@ -31,7 +31,7 @@
     },
     {
       "id": "4",
-      "name": "Dhiren",
+      "name": "Dhirendra Chowhan",
       "role": "MIS",
       "phone": "+91 98765 43213",
       "gender": "Male",
@@ -42,7 +42,9 @@
       "hourlyPayRate": 83.25,
       "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Not Marked"
+      "status": "Not Marked",
+      "employmentType": "Full Time",
+      "startDate": "2025-04-28"
     },
     {
       "id": "8",
@@ -55,7 +57,9 @@
       "birthday": "2000-07-31",
       "employed": true,
       "trackAttendance": false,
-      "ptoDays": 10
+      "ptoDays": 10,
+      "status": "Not Marked",
+      "employmentType": "Full Time"
     },
     {
       "id": "2",
@@ -70,7 +74,8 @@
       "hourlyPayRate": 166.625,
       "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Not Marked"
+      "status": "Not Marked",
+      "employmentType": "Full Time"
     },
     {
       "id": "3",
@@ -85,7 +90,8 @@
       "hourlyPayRate": 104.25,
       "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Not Employed"
+      "status": "Not Marked",
+      "employmentType": "Full Time"
     },
     {
       "id": "1",
@@ -99,7 +105,9 @@
       "employed": true,
       "hourlyPayRate": 137.5,
       "trackAttendance": true,
-      "ptoDays": 10
+      "ptoDays": 10,
+      "status": "Not Marked",
+      "employmentType": "Full Time"
     },
     {
       "id": "9",
@@ -112,7 +120,9 @@
       "birthday": "2000-09-01",
       "employed": true,
       "trackAttendance": false,
-      "ptoDays": 10
+      "ptoDays": 10,
+      "status": "Not Marked",
+      "employmentType": "Full Time"
     }
   ],
   "attendance_records": [

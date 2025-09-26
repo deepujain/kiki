@@ -39,6 +39,8 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.5.0",
     "embla-carousel-react": "^8.6.0",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lowdb": "^7.0.1",
     "lucide-react": "^0.475.0",
     "next": "15.3.3",
@@ -55,10 +57,10 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/lowdb": "^1.0.14",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/lowdb": "^1.0.14",
     "cross-env": "^10.0.0",
     "postcss": "^8",
     "rimraf": "^5.0.5",

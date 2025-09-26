@@ -4,7 +4,7 @@ export type AttendanceStatus = "Present" | "Late" | "Absent" | "Not Marked";
 export interface Employee {
   id: string;
   name: string;
-  role: string;
+  designation: string; // Changed from role
   phone: string;
   email?: string;
   address?: string;
@@ -13,6 +13,9 @@ export interface Employee {
   avatarUrl: string;
   birthday: string; // YYYY-MM-DD
   employed: boolean;
+  employmentType: "Full Time" | "Contractor" | "Intern";
+  startDate: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD, optional for currently employed
   hourlyPayRate?: number;
   trackAttendance: boolean; // New field to control attendance tracking
   ptoDays: number; // New field for Paid Time Off days remaining

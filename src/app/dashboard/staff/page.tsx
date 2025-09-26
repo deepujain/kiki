@@ -130,12 +130,14 @@ function StaffPageContent() {
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
   const [newStaff, setNewStaff] = useState<Partial<Employee>>({
     employed: true,
-    experience: 0
+    experience: 0,
+    employmentType: "Full Time",
+    startDate: format(new Date(), 'yyyy-MM-dd') // Auto-populate with current date
   });
   const { toast } = useToast();
 
   const [calendarMonth, setCalendarMonth] = useState(startOfMonth(today));
-  const [sortColumn, setSortColumn] = useState<keyof Employee | 'status'>('name');
+  const [sortColumn, setSortColumn] = useState<keyof Employee | 'status' | 'employmentType'>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { user } = useAuth(); // Get user from auth context
   const isAdmin = user?.role === "Admin"; // Determine if user is admin
@@ -164,7 +166,7 @@ function StaffPageContent() {
 
         // Check Aadhaar Card
         const aadharFileName = `${selectedEmployee.name.toLowerCase().replace(/\s+/g, '-')}-aadhaar-card.jpeg`;
-        const aadharImagePath = `/images/aadhar/${aadharFileName}`;
+      const aadharImagePath = `/images/aadhar/${aadharFileName}`;
         const aadharResponse = await fetch(aadharImagePath);
         if (aadharResponse.ok) {
           newDocuments.push({
@@ -223,22 +225,22 @@ function StaffPageContent() {
 
   useEffect(() => {
     const loadAttendanceData = async () => {
-      if (selectedEmployee) {
+    if (selectedEmployee) {
         const freshEmployeeData = employees.find((e: Employee) => e.id === selectedEmployee.id);
-        if(freshEmployeeData) {
-          setSelectedEmployee(freshEmployeeData);
+      if(freshEmployeeData) {
+        setSelectedEmployee(freshEmployeeData);
           setIsCalendarLoading(true); // Start loading
           try {
             await fetchAttendanceSummary(selectedEmployee);
           } finally {
             setIsCalendarLoading(false); // End loading regardless of success/failure
           }
-        } else {
-          setSelectedEmployee(null);
-          setEditableEmployee(null);
-          setPaySummary(null); // Clear pay summary on employee change
-        }
+      } else {
+        setSelectedEmployee(null);
+        setEditableEmployee(null);
+        setPaySummary(null); // Clear pay summary on employee change
       }
+    }
     };
 
     loadAttendanceData();
@@ -489,6 +491,115 @@ function StaffPageContent() {
     setPaySummary(null); // Clear pay summary when going back to list
   }
 
+  const generateExperienceLetter = async (employee: Employee) => {
+    try {
+      // Import jsPDF dynamically to avoid server-side issues
+      const { default: jsPDF } = await import('jspdf');
+      
+      // Format dates
+      const currentDate = format(new Date(), 'dd/MM/yyyy');
+      
+      // Check if start date exists and parse it safely
+      if (!employee.startDate) {
+        toast({
+          variant: "destructive",
+          title: "Missing Start Date",
+          description: "Please set the employee's start date before generating the experience letter."
+        });
+        return;
+      }
+
+      // Parse start date
+      const [startYear, startMonth, startDay] = employee.startDate.split('-').map(Number);
+      const startDateObj = new Date(startYear, startMonth - 1, startDay);
+      const startDate = format(startDateObj, 'dd/MM/yyyy');
+      
+      // Parse end date if it exists
+      let endDate = 'Present';
+      if (employee.endDate) {
+        const [endYear, endMonth, endDay] = employee.endDate.split('-').map(Number);
+        const endDateObj = new Date(endYear, endMonth - 1, endDay);
+        endDate = format(endDateObj, 'dd/MM/yyyy');
+      }
+
+      // Create new PDF document
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Add company logo
+      const img = new Image();
+      img.src = '/images/vikings.png';
+      await new Promise((resolve) => {
+        img.onload = resolve;
+      });
+      doc.addImage(img, 'PNG', 15, 15, 30, 30); // Adjust size and position as needed
+
+      // Add company name
+      doc.setFontSize(24);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Vikings', 50, 30);
+
+      // Add title
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('EXPERIENCE CERTIFICATE', doc.internal.pageSize.width / 2, 60, { align: 'center' });
+
+      // Add date
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Date: ${currentDate}`, 15, 80);
+
+      // Add content
+      doc.setFontSize(12);
+      const contentStart = 100;
+      const lineHeight = 7;
+
+      const content = [
+        `This is to certify that ${employee.name}, was employed with Vikings as a ${employee.role} from ${startDate} to ${endDate}.`,
+        '',
+        `During their tenure with us, ${employee.name} was found to be sincere, hardworking, and professional in carrying out their responsibilities. Their conduct and performance were satisfactory, and they contributed positively to the growth of our organization.`,
+        '',
+        `We wish ${employee.name} all the best in their future career endeavors.`,
+        '',
+        'Sincerely,',
+        'Neetha Jain',
+        'Founder & CEO',
+        'Vikings'
+      ];
+
+      let yPos = contentStart;
+      content.forEach((line, index) => {
+        if (index === 6) yPos += lineHeight; // Add extra space before signature
+        if (index === 7) doc.setFont('helvetica', 'bold'); // Make name bold
+        if (index === 8) doc.setFont('helvetica', 'normal'); // Reset font
+        
+        const lines = doc.splitTextToSize(line, doc.internal.pageSize.width - 30);
+        lines.forEach(splitLine => {
+          doc.text(splitLine, 15, yPos);
+          yPos += lineHeight;
+        });
+      });
+
+      // Save the PDF
+      doc.save(`Experience_Letter_${employee.name.replace(/\s+/g, '_')}.pdf`);
+
+      toast({
+        title: "Experience Letter Generated",
+        description: "The PDF has been downloaded successfully.",
+      });
+    } catch (error) {
+      console.error('Error generating experience letter:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to generate experience letter. Please try again.",
+      });
+    }
+  }
+
   const exportEmployeeAttendance = (period: ExportPeriod) => {
     if (!selectedEmployee) return;
 
@@ -601,6 +712,7 @@ function StaffPageContent() {
       hourlyPayRate: newStaff.hourlyPayRate || undefined,
       trackAttendance: newStaff.trackAttendance ?? true,
       ptoDays: 10, // Default PTO days for new employees
+      employmentType: newStaff.employmentType || "Full Time" // Default to Full Time if not specified
     };
 
     try {
@@ -608,14 +720,14 @@ function StaffPageContent() {
       setIsAddStaffModalOpen(false);
       setNewStaff({ employed: true, experience: 0 });
       toast({
-        title: "Staff Added",
-        description: `${newEmployee.name} has been added to the staff list.`,
+        title: "Employee Added",
+        description: `${newEmployee.name} has been added to the employee list.`,
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error Adding Staff",
-        description: "Failed to add new staff member. Please try again.",
+        title: "Error Adding Employee",
+        description: "Failed to add new employee. Please try again.",
       });
     }
   };
@@ -714,10 +826,10 @@ function StaffPageContent() {
     console.log(`Fetching records for employee ${employeeId} on ${dateStr}:`, allEmpRecords);
     
     if (allEmpRecords) {
-      const record = allEmpRecords.find((r: AttendanceRecord) => r.date === dateStr);
+    const record = allEmpRecords.find((r: AttendanceRecord) => r.date === dateStr);
       console.log(`Found record for ${dateStr}:`, record);
-      
-      if(record) {
+    
+    if(record) {
         return { 
           status: record.status, 
           checkIn: record.checkInTime, 
@@ -792,7 +904,7 @@ function StaffPageContent() {
     
     return (
       <>
-        <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={handleBackToList}>
             <ArrowLeft />
@@ -814,71 +926,62 @@ function StaffPageContent() {
                 </TabsList>
                 <TabsContent value="personal" className="space-y-4 pt-4">
                     
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Name</Label>
-                        <Input
-                            value={editableEmployee.name}
+               <div className="grid grid-cols-3 items-center gap-4">
+                  <Label className="text-right">Name</Label>
+                  <Input 
+                    value={editableEmployee.name} 
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, name: e.target.value})}
-                            className="col-span-2"
-                        />
-                    </div>
+                    className="col-span-2"
+                  />
+               </div>
                     
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Role</Label>
-                        <Input
-                            value={editableEmployee.role}
+               <div className="grid grid-cols-3 items-center gap-4">
+                        <Label className="text-right">Designation</Label>
+                  <Input 
+                    value={editableEmployee.role} 
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, role: e.target.value})}
-                            className="col-span-2"
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Gender</Label>
-                        <Input
-                            value={editableEmployee.gender}
+                    className="col-span-2"
+                  />
+               </div>
+               <div className="grid grid-cols-3 items-center gap-4">
+                  <Label className="text-right">Gender</Label>
+                  <Input 
+                    value={editableEmployee.gender} 
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, gender: e.target.value as "Male" | "Female"})}
-                            className="col-span-2"
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Birthday</Label>
-                        <Input
-                            type="date"
-                            value={editableEmployee.birthday}
+                    className="col-span-2"
+                  />
+               </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label className="text-right">Birthday</Label>
+                  <Input 
+                    type="date"
+                    value={editableEmployee.birthday} 
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, birthday: e.target.value})}
-                            className="col-span-2"
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Experience</Label>
-                        <Input
-                            type="number"
-                            value={editableEmployee.experience}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, experience: parseInt(e.target.value) || 0})}
-                            className="col-span-2"
-                        />
-                    </div>
+                    className="col-span-2"
+                  />
+               </div>
                 </TabsContent>
 
                 <TabsContent value="contact" className="space-y-4 pt-4">
                     
-                    <div className="grid grid-cols-3 items-center gap-4">
+               <div className="grid grid-cols-3 items-center gap-4">
                         <Label className="text-right">Phone</Label>
-                        <Input
+                   <Input 
                             value={editableEmployee.phone}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, phone: e.target.value})}
-                            className="col-span-2"
-                        />
-                    </div>
-                     <div className="grid grid-cols-3 items-center gap-4">
+                    className="col-span-2"
+                  />
+               </div>
+               <div className="grid grid-cols-3 items-center gap-4">
                         <Label className="text-right">Email</Label>
-                        <Input
+                  <Input 
                             type="email"
                             value={editableEmployee.email || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, email: e.target.value})}
-                            className="col-span-2"
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
+                    className="col-span-2"
+                  />
+               </div>
+                <div className="grid grid-cols-3 items-center gap-4">
                         <Label className="text-right">Address</Label>
                         <Input
                             value={editableEmployee.address || ''}
@@ -889,52 +992,114 @@ function StaffPageContent() {
                 </TabsContent>
 
                 <TabsContent value="employment" className="space-y-4 pt-4">
-                    
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Employed Status</Label>
-                        <Switch
-                            checked={editableEmployee.employed}
-                            onCheckedChange={(checked: boolean) => setEditableEmployee({...editableEmployee, employed: checked})}
-                            className="col-span-2"
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                        <Label className="text-right">Track Attendance</Label>
-                        <Switch
-                            checked={editableEmployee.trackAttendance}
-                            onCheckedChange={(checked: boolean) => setEditableEmployee({...editableEmployee, trackAttendance: checked})}
-                            className="col-span-2"
-                        />
-                    </div>
-                    {isAdmin && (
+                    <div className="space-y-6">
                         <div className="grid grid-cols-3 items-center gap-4">
-                            <Label className="text-right">Annual PTO Days</Label>
-                            <Input
-                                type="number"
-                                value={editableEmployee.ptoDays}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, ptoDays: parseInt(e.target.value) || 0})}
+                            <Label className="text-right">Employed Status</Label>
+                            <Switch
+                                checked={editableEmployee.employed}
+                                onCheckedChange={(checked: boolean) => setEditableEmployee({...editableEmployee, employed: checked})}
                                 className="col-span-2"
                             />
                         </div>
-                    )}
-                    
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label className="text-right">Employment Type</Label>
+                            <Select
+                                value={editableEmployee.employmentType}
+                                onValueChange={(value: "Full Time" | "Contractor" | "Intern") => setEditableEmployee({...editableEmployee, employmentType: value})}
+                            >
+                                <SelectTrigger className="col-span-2">
+                                    <SelectValue placeholder="Select employment type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Full Time">Full Time</SelectItem>
+                                    <SelectItem value="Contractor">Contractor</SelectItem>
+                                    <SelectItem value="Intern">Intern</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label className="text-right">Start Date</Label>
+                            <Input
+                                type="date"
+                                value={editableEmployee.startDate || ''}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, startDate: e.target.value})}
+                                className="col-span-2"
+                                required
+                            />
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label className="text-right">End Date</Label>
+                            <Input
+                                type="date"
+                                value={editableEmployee.endDate || ''}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, endDate: e.target.value})}
+                                disabled={editableEmployee.employed}
+                                className="col-span-2"
+                            />
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label className="text-right">Track Attendance</Label>
+                            <Switch
+                                checked={editableEmployee.trackAttendance}
+                                onCheckedChange={(checked: boolean) => setEditableEmployee({...editableEmployee, trackAttendance: checked})}
+                                className="col-span-2"
+                            />
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label className="text-right">Experience (years)</Label>
+                            <Input
+                                type="number"
+                                value={editableEmployee.experience}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, experience: parseInt(e.target.value) || 0})}
+                                className="col-span-2"
+                            />
+                        </div>
+                        {isAdmin && (
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <Label className="text-right">Annual PTO Days</Label>
+                                <Input
+                                    type="number"
+                                    value={editableEmployee.ptoDays}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, ptoDays: parseInt(e.target.value) || 0})}
+                                    className="col-span-2"
+                                />
+                            </div>
+                        )}
+
+                        {/* Divider */}
+                        <div className="border-t my-6"></div>
+
+                        {/* Experience Letter Button */}
+                        {editableEmployee.employed && (
+                            <div className="flex justify-end">
+                                <Button 
+                                    variant="outline"
+                                    onClick={() => generateExperienceLetter(editableEmployee)}
+                                    className="flex items-center gap-2"
+                                >
+                                    <Download className="h-4 w-4" />
+                                    Experience Letter
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </TabsContent>
 
                 <TabsContent value="payroll" className="space-y-4 pt-4">
-                    {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
+               {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
                         <div className="space-y-4">
                             
-                            <div className="grid grid-cols-3 items-center gap-4">
-                                <Label className="text-right">Daily Pay Rate (INR)</Label>
-                                <Input
-                                    type="number"
-                                    value={editableEmployee.hourlyPayRate ? (editableEmployee.hourlyPayRate * 8) : ''}
+                 <div className="grid grid-cols-3 items-center gap-4">
+                   <Label className="text-right">Daily Pay Rate (INR)</Label>
+                   <Input 
+                     type="number"
+                     value={editableEmployee.hourlyPayRate ? (editableEmployee.hourlyPayRate * 8) : ''}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, hourlyPayRate: (parseFloat(e.target.value) / 8) || undefined})}
-                                    className="col-span-2"
-                                    placeholder="e.g., 2000"
-                                />
-                            </div>
-                        </div>
+                     className="col-span-2"
+                     placeholder="e.g., 2000"
+                   />
+                 </div>
+        </div>
                     )}
                 </TabsContent>
 
@@ -968,7 +1133,7 @@ function StaffPageContent() {
                                                             }}
                                                         >
                                                             <img src={profileDoc.url} alt="Profile Picture" className="object-cover w-full h-full" />
-                                                        </div>
+                            </div>
                                                         <span className="cursor-pointer hover:text-primary transition-colors"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -983,7 +1148,7 @@ function StaffPageContent() {
                                                     <>
                                                         <div className="w-8 h-8 rounded-full bg-gray-200 border flex items-center justify-center">
                                                             <span className="text-gray-400 text-xs">No Image</span>
-                                                        </div>
+                        </div>
                                                         Profile Picture
                                                     </>
                                                 );
@@ -1038,14 +1203,14 @@ function StaffPageContent() {
                                                             }}
                                                         >
                                                             <img src={idDoc.url} alt="ID (Aadhaar)" className="object-cover w-full h-full" />
-                                                        </div>
+                    </div>
                                                         ID (Aadhaar)
                                                     </>
                                                 ) : (
                                                     <>
                                                         <div className="w-12 h-8 bg-gray-200 border flex items-center justify-center rounded">
                                                             <span className="text-gray-400 text-xs">No Image</span>
-                                                        </div>
+                      </div>
                                                         ID (Aadhaar)
                                                     </>
                                                 );
@@ -1075,22 +1240,22 @@ function StaffPageContent() {
                                                 {documents.find(doc => doc.type === 'aadhaar-card') && (
                                                     <Button variant="destructive" size="sm" onClick={() => handleDeleteDocument('aadhar-card', 'aadhaar-card')}>Delete</Button>
                                                 )}
-                                            </div>
+                    </div>
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
-                        </div>
+                      </div>
                     )}
                 </TabsContent>
               </Tabs>
-            </CardContent>
-             <CardFooter className="justify-end">
+                </CardContent>
+             <CardFooter className="flex justify-end gap-2">
                 <Button onClick={handleSaveEmployeeDetails}>Save Changes</Button>
             </CardFooter>
-          </Card>
+              </Card>
         </div>
-        
+           
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-headline">{selectedEmployee.name}'s Attendance</CardTitle>
@@ -1135,10 +1300,10 @@ function StaffPageContent() {
 
                   {/* Calendar days */}
                   {calendarDays.map((day, index) => {
-                    if(day.getTime() === new Date(0,0,index).getTime()) return <div key={index}></div>;
+                     if(day.getTime() === new Date(0,0,index).getTime()) return <div key={index}></div>;
                     
-                    const dayStatus = getEmployeeDayStatus(day, selectedEmployee.id);
-                    const isBirthday = editableEmployee.birthday && format(new Date(editableEmployee.birthday), 'MM-dd') === format(day, 'MM-dd');
+                     const dayStatus = getEmployeeDayStatus(day, selectedEmployee.id);
+                     const isBirthday = editableEmployee.birthday && format(new Date(editableEmployee.birthday), 'MM-dd') === format(day, 'MM-dd');
                     const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
                     
                     return (
@@ -1147,11 +1312,11 @@ function StaffPageContent() {
                         className={cn(
                           "border rounded-md p-2 h-28 flex flex-col justify-between text-sm overflow-hidden relative",
                           isToday && "ring-2 ring-primary ring-offset-2",
-                          dayStatus?.status === 'Present' && 'bg-green-100 dark:bg-green-900/50',
-                          dayStatus?.status === 'Late' && 'bg-yellow-100 dark:bg-yellow-900/50',
-                          dayStatus?.status === 'Absent' && 'bg-red-100 dark:bg-red-900/50',
-                          getDay(day) === 0 && 'bg-muted/50',
-                          dayStatus?.holiday && 'bg-blue-100 dark:bg-blue-900/50'
+                           dayStatus?.status === 'Present' && 'bg-green-100 dark:bg-green-900/50',
+                           dayStatus?.status === 'Late' && 'bg-yellow-100 dark:bg-yellow-900/50',
+                           dayStatus?.status === 'Absent' && 'bg-red-100 dark:bg-red-900/50',
+                           getDay(day) === 0 && 'bg-muted/50',
+                           dayStatus?.holiday && 'bg-blue-100 dark:bg-blue-900/50'
                         )}
                       >
                         <div className="flex justify-between items-start">
@@ -1181,10 +1346,10 @@ function StaffPageContent() {
                             )}
                             {(dayStatus.status === 'Present' || dayStatus.status === 'Late') && 
                              dayStatus.checkIn && dayStatus.checkIn !== '--:--' && (
-                              <div className="text-gray-600 dark:text-gray-300">
-                                <p>{dayStatus.checkIn} - {dayStatus.checkOut}</p>
-                                <p className="text-xs mt-1">Hours: {calculateHours(dayStatus.checkIn, dayStatus.checkOut)}</p>
-                              </div>
+                                <div className="text-gray-600 dark:text-gray-300">
+                                    <p>{dayStatus.checkIn} - {dayStatus.checkOut}</p>
+                                    <p className="text-xs mt-1">Hours: {calculateHours(dayStatus.checkIn, dayStatus.checkOut)}</p>
+                                </div>
                             )}
                             {dayStatus.status && !dayStatus.holiday && (
                               <StatusBadge status={dayStatus.status} />
@@ -1340,7 +1505,7 @@ function StaffPageContent() {
                         previewDoc.type === 'profile-picture' ? "object-cover" : "object-contain"
                       )}
                     />
-                  </div>
+      </div>
                 </div>
               </div>
             )}
@@ -1365,9 +1530,9 @@ function StaffPageContent() {
     <>
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold font-headline">Staff</h1>
+            <h1 className="text-2xl font-bold font-headline">Employees</h1>
             <div className="flex gap-4">
-              <Button onClick={() => setIsAddStaffModalOpen(true)}>Add Staff</Button>
+              <Button onClick={() => setIsAddStaffModalOpen(true)}>Add Employee</Button>
               <Select value={employeeFilter} onValueChange={(value: EmployeeFilter) => setEmployeeFilter(value as EmployeeFilter)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter employees" />
@@ -1398,8 +1563,14 @@ function StaffPageContent() {
                     </TableHead>
                     <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('role')}>
                       <div className="flex items-center">
-                        Role
+                        Designation
                         {sortColumn === 'role' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="cursor-pointer hover:text-primary" onClick={() => handleSort('employmentType')}>
+                      <div className="flex items-center">
+                        Employment Type
+                        {sortColumn === 'employmentType' && <ArrowUpDown className="ml-2 h-4 w-4" />}
                       </div>
                     </TableHead>
                     <TableHead>
@@ -1439,13 +1610,18 @@ function StaffPageContent() {
                                     <AvatarFallback className="text-xs">
                                         {employee.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                     </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="font-medium">{employee.name}</div>
-                                </div>
+                            </Avatar>
+                            <div>
+                                <div className="font-medium">{employee.name}</div>
+                            </div>
                             </div>
                         </TableCell>
                         <TableCell>{employee.role}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="bg-background">
+                            {employee.employmentType || "Full Time"}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           {employee.status === 'Not Employed' ? <Badge variant="outline">Not Employed</Badge> : (employee.status === 'Remote' ? <Badge variant="secondary">Remote</Badge> : <StatusBadge status={employee.status} />)}
                         </TableCell>
@@ -1458,7 +1634,7 @@ function StaffPageContent() {
           </CardContent>
         </Card>
       </div>
-
+      
       {/* Add Staff Modal */}
       {isAddStaffModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -1470,7 +1646,7 @@ function StaffPageContent() {
             >
               <X className="h-4 w-4" />
             </button>
-            <h2 className="text-xl font-semibold mb-6">Add New Staff</h2>
+            <h2 className="text-xl font-semibold mb-6">Add New Employee</h2>
             <form onSubmit={handleAddStaff} className="space-y-4">
               {/* Basic Details */}
               <div className="space-y-4">
@@ -1486,20 +1662,20 @@ function StaffPageContent() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select
-                      value={newStaff.role}
-                      onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="TSE">TSE</SelectItem>
-                        <SelectItem value="Logistics">Logistics</SelectItem>
-                        <SelectItem value="MIS">MIS</SelectItem>
-                      </SelectContent>
-                    </Select>
+                        <Label htmlFor="role">Designation</Label>
+                        <Select
+                          value={newStaff.role}
+                          onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select designation" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="TSE">TSE</SelectItem>
+                            <SelectItem value="Logistics">Logistics</SelectItem>
+                            <SelectItem value="MIS">MIS</SelectItem>
+                          </SelectContent>
+                        </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="gender">Gender</Label>
@@ -1586,6 +1762,22 @@ function StaffPageContent() {
                       required
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="employmentType">Employment Type</Label>
+                    <Select
+                      value={newStaff.employmentType}
+                      onValueChange={(value: "Full Time" | "Contractor" | "Intern") => setNewStaff({ ...newStaff, employmentType: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select employment type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Full Time">Full Time</SelectItem>
+                        <SelectItem value="Contractor">Contractor</SelectItem>
+                        <SelectItem value="Intern">Intern</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="col-span-2 flex items-center space-x-2">
                     <Checkbox
                       id="trackAttendance"
@@ -1627,8 +1819,7 @@ function StaffPageContent() {
   );
 }
 
-
-export default function StaffPage() {
+function StaffPage() {
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
       <div id="dialog-root" />
@@ -1636,4 +1827,6 @@ export default function StaffPage() {
     </React.Suspense>
   );
 }
+
+export default StaffPage;
 
