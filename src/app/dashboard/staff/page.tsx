@@ -205,19 +205,31 @@ function StaffPageContent() {
     }
   }, [employeeIdFromQuery, employees]);
 
+  // Track calendar data loading state
+  const [isCalendarLoading, setIsCalendarLoading] = useState(false);
+
   useEffect(() => {
-    if (selectedEmployee) {
-      const freshEmployeeData = employees.find((e: Employee) => e.id === selectedEmployee.id);
-      if(freshEmployeeData) {
-        setSelectedEmployee(freshEmployeeData);
-        fetchAttendanceSummary(selectedEmployee);
-      } else {
-        setSelectedEmployee(null);
-        setEditableEmployee(null);
-        setPaySummary(null); // Clear pay summary on employee change
+    const loadAttendanceData = async () => {
+      if (selectedEmployee) {
+        const freshEmployeeData = employees.find((e: Employee) => e.id === selectedEmployee.id);
+        if(freshEmployeeData) {
+          setSelectedEmployee(freshEmployeeData);
+          setIsCalendarLoading(true); // Start loading
+          try {
+            await fetchAttendanceSummary(selectedEmployee);
+          } finally {
+            setIsCalendarLoading(false); // End loading regardless of success/failure
+          }
+        } else {
+          setSelectedEmployee(null);
+          setEditableEmployee(null);
+          setPaySummary(null); // Clear pay summary on employee change
+        }
       }
-    }
-  }, [employees, selectedEmployee]);
+    };
+
+    loadAttendanceData();
+  }, [employees, selectedEmployee, calendarMonth]); // Added calendarMonth dependency
 
   // Keep calendar month in sync with selected month
   useEffect(() => {
@@ -236,7 +248,7 @@ function StaffPageContent() {
       }).length;
   }
 
-  const fetchAttendanceSummary = (employee: Employee) => {
+  const fetchAttendanceSummary = async (employee: Employee) => {
     const allRecords = attendanceRecords.get(employee.id) || [];
 
     // Calculate start and end dates for the selected month
@@ -433,14 +445,19 @@ function StaffPageContent() {
     }
   };
 
-  const handleEmployeeClick = (employee: Employee) => {
+  const handleEmployeeClick = async (employee: Employee) => {
     setSelectedEmployee(employee);
     setEditableEmployee({...employee});
     setMtdSummary(null);
     setYtdSummary(null);
     setPaySummary(null); // Clear pay summary when going back to list
     if(employee.role !== 'Owner') {
-      fetchAttendanceSummary(employee);
+      setIsCalendarLoading(true);
+      try {
+        await fetchAttendanceSummary(employee);
+      } finally {
+        setIsCalendarLoading(false);
+      }
     }
   }
   
@@ -671,24 +688,38 @@ function StaffPageContent() {
 
   const getEmployeeDayStatus = useCallback((day: Date, employeeId: string) => {
     const dateStr = format(day, 'yyyy-MM-dd');
+    
+    // Check for holidays first
     const holiday = holidays.find((h: { date: string }) => h.date === dateStr);
     if (holiday) return { status: 'Present' as const, holiday: holiday.name, checkIn: '', checkOut: ''};
     
+    // Return null for Sundays
     if (getDay(day) === 0) return null;
 
-    const allEmpRecords = attendanceRecords.get(employeeId) || [];
-    const record = allEmpRecords.find((r: AttendanceRecord) => r.date === dateStr);
+    // Get employee records
+    const allEmpRecords = attendanceRecords.get(employeeId);
+    console.log(`Fetching records for employee ${employeeId} on ${dateStr}:`, allEmpRecords);
     
-    if(record) {
-      return { status: record.status, checkIn: record.checkInTime, checkOut: record.checkOutTime ?? '--:--' };
+    if (allEmpRecords) {
+      const record = allEmpRecords.find((r: AttendanceRecord) => r.date === dateStr);
+      console.log(`Found record for ${dateStr}:`, record);
+      
+      if(record) {
+        return { 
+          status: record.status, 
+          checkIn: record.checkInTime, 
+          checkOut: record.checkOutTime ?? '--:--' 
+        };
+      }
     }
 
+    // Only mark as "Not Marked" for past dates and today
     if (isBefore(day, today) || isToday(day)) {
       return { status: 'Not Marked' as const, checkIn: '', checkOut: '' };
     }
     
     return null;
-  }, []);
+  }, [holidays, attendanceRecords, today]);
 
   const filteredEmployees = useMemo(() => {
     switch (employeeFilter) {
@@ -914,10 +945,26 @@ function StaffPageContent() {
                                                 const profileDoc = documents.find(doc => doc.type === 'profile-picture');
                                                 return profileDoc ? (
                                                     <>
-                                                        <div className="w-8 h-8 rounded-full overflow-hidden border">
+                                                        <div 
+                                                            className="w-8 h-8 rounded-full overflow-hidden border cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                e.preventDefault();
+                                                                console.log('Opening preview for:', profileDoc);
+                                                                setPreviewDoc(profileDoc);
+                                                            }}
+                                                        >
                                                             <img src={profileDoc.url} alt="Profile Picture" className="object-cover w-full h-full" />
                                                         </div>
-                                                        Profile Picture
+                                                        <span className="cursor-pointer hover:text-primary transition-colors"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                e.preventDefault();
+                                                                setPreviewDoc(profileDoc);
+                                                            }}
+                                                        >
+                                                            Profile Picture
+                                                        </span>
                                                     </>
                                                 ) : (
                                                     <>
@@ -1057,24 +1104,41 @@ function StaffPageContent() {
               </CardHeader>
               <CardContent>
                 <h3 className="text-lg font-semibold text-center mb-4">{format(calendarMonth, 'MMMM yyyy')}</h3>
-                <div className="grid grid-cols-7 gap-1 max-h-[600px] overflow-hidden">
+                <div className="grid grid-cols-7 gap-1 max-h-[600px] overflow-hidden relative">
+                  {/* Calendar header */}
                   {weekDays.map(day => (
                     <div key={day} className="text-center font-semibold text-muted-foreground text-sm">{day}</div>
                   ))}
+                  
+                  {/* Loading overlay */}
+                  {isCalendarLoading && (
+                    <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-50">
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p className="text-sm text-muted-foreground">Loading attendance data...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Calendar days */}
                   {calendarDays.map((day, index) => {
-                     if(day.getTime() === new Date(0,0,index).getTime()) return <div key={index}></div>;
-                     const dayStatus = getEmployeeDayStatus(day, selectedEmployee.id);
-                     const isBirthday = editableEmployee.birthday && format(new Date(editableEmployee.birthday), 'MM-dd') === format(day, 'MM-dd');
+                    if(day.getTime() === new Date(0,0,index).getTime()) return <div key={index}></div>;
+                    
+                    const dayStatus = getEmployeeDayStatus(day, selectedEmployee.id);
+                    const isBirthday = editableEmployee.birthday && format(new Date(editableEmployee.birthday), 'MM-dd') === format(day, 'MM-dd');
+                    const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+                    
                     return (
                       <div 
                         key={day.toISOString()}
                         className={cn(
-                          "border rounded-md p-2 h-28 flex flex-col justify-between text-sm overflow-hidden",
-                           dayStatus?.status === 'Present' && 'bg-green-100 dark:bg-green-900/50',
-                           dayStatus?.status === 'Late' && 'bg-yellow-100 dark:bg-yellow-900/50',
-                           dayStatus?.status === 'Absent' && 'bg-red-100 dark:bg-red-900/50',
-                           getDay(day) === 0 && 'bg-muted/50',
-                           dayStatus?.holiday && 'bg-blue-100 dark:bg-blue-900/50'
+                          "border rounded-md p-2 h-28 flex flex-col justify-between text-sm overflow-hidden relative",
+                          isToday && "ring-2 ring-primary ring-offset-2",
+                          dayStatus?.status === 'Present' && 'bg-green-100 dark:bg-green-900/50',
+                          dayStatus?.status === 'Late' && 'bg-yellow-100 dark:bg-yellow-900/50',
+                          dayStatus?.status === 'Absent' && 'bg-red-100 dark:bg-red-900/50',
+                          getDay(day) === 0 && 'bg-muted/50',
+                          dayStatus?.holiday && 'bg-blue-100 dark:bg-blue-900/50'
                         )}
                       >
                         <div className="flex justify-between items-start">
@@ -1094,18 +1158,28 @@ function StaffPageContent() {
                         </div>
                         {dayStatus && (
                           <div className="text-xs text-center space-y-1">
-                            {dayStatus.holiday && <Badge variant="secondary" className="bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-100 text-xs whitespace-normal">{dayStatus.holiday}</Badge>}
-                            {(dayStatus.status === 'Present' || dayStatus.status === 'Late') && dayStatus.checkIn && dayStatus.checkIn !== '--:--' && (
-                                <div className="text-gray-600 dark:text-gray-300">
-                                    <p>{dayStatus.checkIn} - {dayStatus.checkOut}</p>
-                                    <p className="text-xs mt-1">Hours: {calculateHours(dayStatus.checkIn, dayStatus.checkOut)}</p>
-                                </div>
+                            {dayStatus.holiday && (
+                              <Badge 
+                                variant="secondary" 
+                                className="bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-100 text-xs whitespace-normal"
+                              >
+                                {dayStatus.holiday}
+                              </Badge>
                             )}
-                            {dayStatus.status && !dayStatus.holiday && <StatusBadge status={dayStatus.status} />}
+                            {(dayStatus.status === 'Present' || dayStatus.status === 'Late') && 
+                             dayStatus.checkIn && dayStatus.checkIn !== '--:--' && (
+                              <div className="text-gray-600 dark:text-gray-300">
+                                <p>{dayStatus.checkIn} - {dayStatus.checkOut}</p>
+                                <p className="text-xs mt-1">Hours: {calculateHours(dayStatus.checkIn, dayStatus.checkOut)}</p>
+                              </div>
+                            )}
+                            {dayStatus.status && !dayStatus.holiday && (
+                              <StatusBadge status={dayStatus.status} />
+                            )}
                           </div>
                         )}
                       </div>
-                    )
+                    );
                   })}
                 </div>
                 {/* Add spacing to prevent overlap with content below */}
@@ -1117,31 +1191,33 @@ function StaffPageContent() {
             {selectedEmployee.role !== 'Owner' && (
               <div className="space-y-4">
                 {/* Month Selector */}
-                <div className="flex justify-center">
-                  <Select
-                    value={format(selectedMonth, 'yyyy-MM')}
-                    onValueChange={(value: string) => {
-                      const [year, month] = value.split('-').map(Number);
-                      setSelectedMonth(new Date(year, month - 1, 1));
-                    }}
-                  >
-                    <SelectTrigger className="w-[200px]">
-                      <SelectValue>
-                        {format(selectedMonth, 'MMMM yyyy')}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
-                        // Start from July 2025 (month index 6)
-                        const date = new Date(2025, 6 + i, 1);
-                        return (
-                          <SelectItem key={i} value={format(date, 'yyyy-MM')}>
-                            {format(date, 'MMMM yyyy')}
-                          </SelectItem>
-                        );
-                      }).reverse()}
-                    </SelectContent>
-                  </Select>
+                <div className="flex justify-end mb-4">
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={format(selectedMonth, 'yyyy-MM')}
+                      onValueChange={(value: string) => {
+                        const [year, month] = value.split('-').map(Number);
+                        setSelectedMonth(new Date(year, month - 1, 1));
+                      }}
+                    >
+                      <SelectTrigger className="w-[160px]">
+                        <SelectValue>
+                          {format(selectedMonth, 'MMMM yyyy')}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: today.getMonth() - 5 }, (_, i) => {
+                          // Start from July 2025 (month index 6)
+                          const date = new Date(2025, 6 + i, 1);
+                          return (
+                            <SelectItem key={i} value={format(date, 'yyyy-MM')}>
+                              {format(date, 'MMMM yyyy')}
+                            </SelectItem>
+                          );
+                        }).reverse()}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1239,11 +1315,17 @@ function StaffPageContent() {
                     <X className="h-4 w-4" />
                   </button>
                   <h2 className="text-xl font-semibold mb-4">{previewDoc.name}</h2>
-                  <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden bg-muted">
+                  <div className={cn(
+                    "relative w-full rounded-lg overflow-hidden bg-muted",
+                    previewDoc.type === 'profile-picture' ? "aspect-square max-w-xl mx-auto" : "aspect-[3/4]"
+                  )}>
                     <img 
                       src={previewDoc.url} 
                       alt={previewDoc.name} 
-                      className="object-contain w-full h-full"
+                      className={cn(
+                        "w-full h-full",
+                        previewDoc.type === 'profile-picture' ? "object-cover" : "object-contain"
+                      )}
                     />
                   </div>
                 </div>
