@@ -27,8 +27,9 @@
       "hourlyPayRate": 75,
       "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Not Employed",
-      "startDate": "2024-10-08"
+      "status": "Not Marked",
+      "startDate": "2024-10-08",
+      "employmentType": "Full Time"
     },
     {
       "id": "4",
@@ -36,7 +37,7 @@
       "role": "MIS",
       "phone": "+91 98765 43213",
       "gender": "Male",
-      "experience": 8,
+      "experience": 1,
       "avatarUrl": "/images/profile-pictures/dhirendra-chowhan-profile-picture.jpeg?key=1758852054616",
       "birthday": "1988-02-24",
       "employed": true,
@@ -45,7 +46,7 @@
       "ptoDays": 10,
       "status": "Not Marked",
       "employmentType": "Full Time",
-      "startDate": "2025-04-28"
+      "startDate": "2024-06-12"
     },
     {
       "id": "8",
@@ -68,7 +69,7 @@
       "role": "TSE",
       "phone": "+91 98765 43211",
       "gender": "Male",
-      "experience": 3,
+      "experience": 1,
       "avatarUrl": "/images/profile-pictures/raghavendra-ks-profile-picture.jpeg?key=1758852138235",
       "birthday": "1980-09-02",
       "employed": true,
@@ -76,7 +77,8 @@
       "trackAttendance": true,
       "ptoDays": 10,
       "status": "Not Marked",
-      "employmentType": "Full Time"
+      "employmentType": "Full Time",
+      "startDate": "2025-07-25"
     },
     {
       "id": "3",

@@ -56,7 +56,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeft, ChevronLeft, ChevronRight, Cake, Download, ArrowUpDown } from "lucide-react";
+import { Loader2, ArrowLeft, ChevronLeft, ChevronRight, Cake, Download, ArrowUpDown, FileText } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -490,6 +490,156 @@ function StaffPageContent() {
     window.history.pushState({}, '', '/dashboard/staff');
     setPaySummary(null); // Clear pay summary when going back to list
   }
+
+  const generatePayslip = async (employee: Employee) => {
+    try {
+      const { default: jsPDF } = await import('jspdf');
+      const currentDate = format(new Date(), 'dd/MM/yyyy');
+      
+      // Create PDF document
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Helper function to format Indian currency
+      const formatIndianCurrency = (amount: number) => {
+        const parts = amount.toFixed(2).split('.');
+        const whole = parts[0];
+        const decimal = parts[1];
+        
+        // Add commas for lakhs and thousands
+        const lastThree = whole.substring(whole.length - 3);
+        const otherNumbers = whole.substring(0, whole.length - 3);
+        const formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
+        
+        return `${formatted}.${decimal}`;
+      };
+
+      // Add company logo
+      const img = new Image();
+      img.src = '/images/vikings.png';
+      await new Promise((resolve) => {
+        img.onload = resolve;
+      });
+      doc.addImage(img, 'PNG', 15, 15, 25, 25);
+
+      // Add company header
+      doc.setFontSize(24);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Vikings', 45, 30);
+
+      // Add payslip header
+      doc.setFontSize(16);
+      doc.text('PAYSLIP', doc.internal.pageSize.width/2, 50, { align: 'center' });
+      doc.setFontSize(12);
+      doc.text(`For the Month of ${format(selectedMonth, 'MMMM yyyy')}`, doc.internal.pageSize.width/2, 58, { align: 'center' });
+
+      // Add horizontal line
+      doc.setLineWidth(0.5);
+      doc.line(15, 65, doc.internal.pageSize.width - 15, 65);
+
+      // Employee Details Table
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      
+      const startY = 75;
+      const colWidth = (doc.internal.pageSize.width - 30) / 2;
+      
+      // Left column
+      doc.text('Employee Name', 15, startY);
+      doc.text('' + employee.name, 50, startY);
+      doc.text('Employee ID', 15, startY + 8);
+      doc.text('' + employee.id, 50, startY + 8);
+      doc.text('Designation', 15, startY + 16);
+      doc.text('' + employee.role, 50, startY + 16);
+      doc.text('Date of Joining', 15, startY + 24);
+      doc.text('' + (employee.startDate ? format(new Date(employee.startDate), 'dd/MM/yyyy') : '-'), 50, startY + 24);
+
+      // Right column
+      doc.text('Pay Period', colWidth + 15, startY);
+      doc.text('' + format(selectedMonth, 'MMMM yyyy'), colWidth + 50, startY);
+      doc.text('Pay Date', colWidth + 15, startY + 8);
+      doc.text('' + format(endOfMonth(selectedMonth), 'dd/MM/yyyy'), colWidth + 50, startY + 8);
+      doc.text('Working Days', colWidth + 15, startY + 16);
+      doc.text('' + (paySummary?.netPayableDays || 0).toString(), colWidth + 50, startY + 16);
+      doc.text('LOP Days', colWidth + 15, startY + 24);
+      doc.text('' + Math.max(0, (paySummary?.totalAbsentDays || 0) - (paySummary?.ptoDaysLeft || 0)).toString(), colWidth + 50, startY + 24);
+
+      // Add horizontal line
+      doc.line(15, startY + 35, doc.internal.pageSize.width - 15, startY + 35);
+
+      // Earnings Table
+      const earningsStartY = startY + 45;
+      
+      // Table Headers
+      doc.setFont('helvetica', 'bold');
+      doc.text('Earnings', 15, earningsStartY);
+      doc.text('Amount', 90, earningsStartY);
+      doc.text('YTD', 140, earningsStartY);
+
+      // Add line under headers
+      doc.line(15, earningsStartY + 2, doc.internal.pageSize.width - 15, earningsStartY + 2);
+
+      // Calculate earnings
+      const dailyRate = (employee.hourlyPayRate || 0) * 8;
+      const basicPay = dailyRate * (paySummary?.netPayableDays || 0);
+      const ytdEarnings = basicPay * 12; // Simplified YTD calculation
+
+      // Table Content
+      doc.setFont('helvetica', 'normal');
+      doc.text('Basic Pay', 15, earningsStartY + 10);
+      doc.text(formatIndianCurrency(basicPay), 90, earningsStartY + 10);
+      doc.text(formatIndianCurrency(ytdEarnings), 140, earningsStartY + 10);
+
+      // Add line above total
+      const totalY = earningsStartY + 25;
+      doc.line(15, totalY, doc.internal.pageSize.width - 15, totalY);
+
+      // Total
+      doc.setFont('helvetica', 'bold');
+      doc.text('Total Earnings', 15, totalY + 8);
+      doc.text(formatIndianCurrency(basicPay), 90, totalY + 8);
+      doc.text(formatIndianCurrency(ytdEarnings), 140, totalY + 8);
+
+      // Net Pay section
+      const netPayY = totalY + 25;
+      doc.setFontSize(12);
+      doc.text('Net Pay', 15, netPayY);
+      doc.text(formatIndianCurrency(basicPay), doc.internal.pageSize.width - 15, netPayY, { align: 'right' });
+
+      // Add amount in words
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Amount in words:', 15, netPayY + 10);
+      doc.setFont('helvetica', 'bold');
+      // Convert amount to words (simplified)
+      const amountInWords = `Rupees ${Math.floor(basicPay)} and ${Math.round((basicPay % 1) * 100)} paise only`;
+      doc.text(amountInWords, 15, netPayY + 18);
+
+      // Footer
+      const footerY = doc.internal.pageSize.height - 20;
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('This is a computer-generated document. No signature is required.', doc.internal.pageSize.width/2, footerY, { align: 'center' });
+
+      // Save the PDF
+      doc.save(`Payslip_${employee.name.replace(/\s+/g, '_')}_${format(selectedMonth, 'MMMM_yyyy')}.pdf`);
+
+      toast({
+        title: "Payslip Generated",
+        description: "The PDF has been downloaded successfully.",
+      });
+    } catch (error) {
+      console.error('Error generating payslip:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to generate payslip. Please try again.",
+      });
+    }
+  };
 
   const generateExperienceLetter = async (employee: Employee) => {
     try {
@@ -1427,8 +1577,17 @@ function StaffPageContent() {
                 {/* Payroll Summary */}
                 {isAdmin && paySummary && (
                   <Card>
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 flex flex-row items-center justify-between">
                   <CardTitle className="text-base">Gross Pay</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => generatePayslip(editableEmployee)}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4" />
+                    Payslip
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-2">
