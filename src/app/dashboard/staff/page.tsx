@@ -567,8 +567,11 @@ function StaffPageContent() {
       doc.text('Pay Period', colWidth + 15, startY);
       doc.text('' + format(selectedMonth, 'MMMM yyyy'), colWidth + 50, startY);
       doc.text('Pay Date', colWidth + 15, startY + 8);
-      doc.text('' + format(endOfMonth(selectedMonth), 'dd/MM/yyyy'), colWidth + 50, startY + 8);
-      doc.text('Working Days', colWidth + 15, startY + 16);
+      // Pay Date is always 10th of next month
+      const nextMonth = addMonths(selectedMonth, 1);
+      const payDate = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 10);
+      doc.text('' + format(payDate, 'dd/MM/yyyy'), colWidth + 50, startY + 8);
+      doc.text('Net Payable Days', colWidth + 15, startY + 16);
       doc.text('' + (paySummary?.netPayableDays || 0).toString(), colWidth + 50, startY + 16);
       doc.text('LOP Days', colWidth + 15, startY + 24);
       doc.text('' + Math.max(0, (paySummary?.totalAbsentDays || 0) - (paySummary?.ptoDaysLeft || 0)).toString(), colWidth + 50, startY + 24);
@@ -616,13 +619,65 @@ function StaffPageContent() {
       doc.text(formatIndianCurrency(basicPay), doc.internal.pageSize.width - 15, netPayY, { align: 'right' });
 
       // Add amount in words
-      doc.setFontSize(10);
+      
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text('Amount in words:', 15, netPayY + 10);
+      
+      // Convert amount to words
+      const convertToWords = (num: number): string => {
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+        const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        
+        if (num === 0) return 'Zero';
+        if (num < 0) return 'Negative ' + convertToWords(-num);
+        
+        const convertHundreds = (n: number): string => {
+          let result = '';
+          if (n > 99) {
+            result += ones[Math.floor(n / 100)] + ' Hundred';
+            n %= 100;
+            if (n > 0) result += ' ';
+          }
+          if (n > 19) {
+            result += tens[Math.floor(n / 10)];
+            n %= 10;
+            if (n > 0) result += ' ' + ones[n];
+          } else if (n > 9) {
+            result += teens[n - 10];
+          } else if (n > 0) {
+            result += ones[n];
+          }
+          return result;
+        };
+        
+        let result = '';
+        if (num >= 10000000) {
+          result += convertHundreds(Math.floor(num / 10000000)) + ' Crore';
+          num %= 10000000;
+          if (num > 0) result += ' ';
+        }
+        if (num >= 100000) {
+          result += convertHundreds(Math.floor(num / 100000)) + ' Lakh';
+          num %= 100000;
+          if (num > 0) result += ' ';
+        }
+        if (num >= 1000) {
+          result += convertHundreds(Math.floor(num / 1000)) + ' Thousand';
+          num %= 1000;
+          if (num > 0) result += ' ';
+        }
+        if (num > 0) {
+          result += convertHundreds(num);
+        }
+        return result;
+      };
+      
+      const amountInWords = convertToWords(Math.floor(basicPay)) + ' Only';
+      
+      // Display "Amount in words:" and the converted amount on the same line
       doc.setFont('helvetica', 'bold');
-      // Convert amount to words (simplified)
-      const amountInWords = `Rupees ${Math.floor(basicPay)} and ${Math.round((basicPay % 1) * 100)} paise only`;
-      doc.text(amountInWords, 15, netPayY + 18);
+      doc.text('Amount in words: ' + amountInWords, 15, netPayY + 10);
 
       // Footer
       const footerY = doc.internal.pageSize.height - 20;
@@ -1222,6 +1277,20 @@ function StaffPageContent() {
                             </div>
                         )}
 
+                        {/* Daily Pay Rate - only for eligible roles */}
+                        {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <Label className="text-right">Daily Pay Rate (INR)</Label>
+                                <Input 
+                                    type="number"
+                                    value={editableEmployee.hourlyPayRate ? (editableEmployee.hourlyPayRate * 8) : ''}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, hourlyPayRate: (parseFloat(e.target.value) / 8) || undefined})}
+                                    className="col-span-2"
+                                    placeholder="e.g., 2000"
+                                />
+                            </div>
+                        )}
+
                         {/* Divider */}
                         <div className="border-t my-6"></div>
 
@@ -1241,23 +1310,6 @@ function StaffPageContent() {
                     </div>
                 </TabsContent>
 
-                <TabsContent value="payroll" className="space-y-4 pt-4">
-               {isAdmin && (editableEmployee.role === 'TSE' || editableEmployee.role === 'Logistics' || editableEmployee.role === 'MIS') && (
-                        <div className="space-y-4">
-                            
-                 <div className="grid grid-cols-3 items-center gap-4">
-                   <Label className="text-right">Daily Pay Rate (INR)</Label>
-                   <Input 
-                     type="number"
-                     value={editableEmployee.hourlyPayRate ? (editableEmployee.hourlyPayRate * 8) : ''}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditableEmployee({...editableEmployee, hourlyPayRate: (parseFloat(e.target.value) / 8) || undefined})}
-                     className="col-span-2"
-                     placeholder="e.g., 2000"
-                   />
-                 </div>
-        </div>
-                    )}
-                </TabsContent>
 
                 <TabsContent value="documents" className="space-y-4 pt-4">
                     {selectedEmployee.name && (
