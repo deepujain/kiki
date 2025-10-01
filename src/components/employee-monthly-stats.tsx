@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from 'react';
-import { format, parse, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths } from 'date-fns';
+import { format, parse, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths, getDay, eachDayOfInterval } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceRecord, Employee } from '@/lib/types';
@@ -56,7 +56,7 @@ export function EmployeeMonthlyStats({ employee, attendanceRecords }: Props) {
       const absentDays = monthRecords.filter(r => r.status === 'Absent').length;
       const ptosUsed = 0; // TODO: Add PTO tracking
 
-      // Calculate gross pay
+      // Calculate gross pay - treat all days as workdays (including Sundays)
       const totalHours = monthRecords.reduce((sum, record) => {
         if (record.status === 'Absent') return sum;
         if (!record.checkInTime || !record.checkOutTime || 
@@ -68,8 +68,20 @@ export function EmployeeMonthlyStats({ employee, attendanceRecords }: Props) {
         return sum + Math.min(hours, 8); // Cap at 8 hours per day
       }, 0);
 
+      // For Sundays without records, add 8 hours (full day pay)
+      const sundayDays = monthRecords.filter(record => {
+        const recordDate = parse(record.date, 'yyyy-MM-dd', new Date());
+        return getDay(recordDate) === 0;
+      }).length;
+      
+      // Add 8 hours for each Sunday in the month that doesn't have a record
+      const totalSundaysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
+        .filter(day => getDay(day) === 0).length;
+      const sundaysWithoutRecords = totalSundaysInMonth - sundayDays;
+      const additionalHours = sundaysWithoutRecords * 8;
+
       const hourlyRate = employee.hourlyPayRate || 0;
-      const grossPay = totalHours * hourlyRate;
+      const grossPay = (totalHours + additionalHours) * hourlyRate;
 
       return {
         month: monthStr,

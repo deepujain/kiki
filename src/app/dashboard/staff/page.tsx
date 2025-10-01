@@ -93,6 +93,7 @@ interface PaySummary {
   totalPresentDays: number;
   lateDays: number;
   totalAbsentDays: number;
+  sundayDays: number;
   annualPTOAllotted: number;
   ptoUsedSoFar: number;
   ptoUsedThisMonth: number;
@@ -259,7 +260,7 @@ function StaffPageContent() {
       const days = eachDayOfInterval({ start, end });
       return days.filter((day: Date) => {
         const dayStr = format(day, 'yyyy-MM-dd');
-        return getDay(day) !== 0 && !holidays.some((h: { date: string }) => h.date === dayStr) && (isBefore(day, today) || isToday(day));
+        return !holidays.some((h: { date: string }) => h.date === dayStr) && (isBefore(day, today) || isToday(day));
       }).length;
   }
 
@@ -354,7 +355,7 @@ function StaffPageContent() {
 
     // Calculate Pay Summary
     if (employee?.hourlyPayRate && (employee.role === 'TSE' || employee.role === 'Logistics' || employee.role === 'MIS')) {
-      // Calculate total work days in the month (excluding Sundays and holidays)
+      // Calculate total work days in the month (including Sundays, excluding holidays)
       const totalWorkDays = getWorkingDays(startDate, effectiveEndDate);
 
       // Calculate present and late days separately
@@ -401,8 +402,12 @@ function StaffPageContent() {
       const ptoDaysLeft = annualPTOAllotted - ptoUsedSoFar;
       
       // 4. Calculate Net Payable Days
-      // Present days + PTO-covered absences - unpaid absences
-      const netPayableDays = presentDays + ptoUsedThisMonth;
+      // Count Sundays in the month
+      const allDaysInMonth = eachDayOfInterval({ start: startDate, end: effectiveEndDate });
+      const sundayDays = allDaysInMonth.filter(day => getDay(day) === 0).length;
+      
+      // Present days + PTO-covered absences + Sunday days
+      const netPayableDays = presentDays + ptoUsedThisMonth + sundayDays;
       
       const dailyRate = 8 * employee.hourlyPayRate; // 8 hours per day
       const grossPay = netPayableDays * dailyRate;
@@ -411,6 +416,7 @@ function StaffPageContent() {
         totalPresentDays: onlyPresentDays + holidayDays, // Only actual present days + holidays
         lateDays, // Show late days separately
         totalAbsentDays: absentDays,
+        sundayDays, // Add Sunday days count
         annualPTOAllotted,
         ptoUsedSoFar,
         ptoUsedThisMonth,
@@ -582,7 +588,7 @@ function StaffPageContent() {
       // Add line under headers
       doc.line(15, earningsStartY + 2, doc.internal.pageSize.width - 15, earningsStartY + 2);
 
-      // Calculate earnings
+      // Calculate earnings - treat Sundays as workdays
       const dailyRate = (employee.hourlyPayRate || 0) * 8;
       const basicPay = dailyRate * (paySummary?.netPayableDays || 0);
       const ytdEarnings = basicPay * 12; // Simplified YTD calculation
@@ -1594,6 +1600,10 @@ function StaffPageContent() {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Total Present Days:</span>
                       <span className="font-bold text-green-600">{paySummary.totalPresentDays} days</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Total Sundays:</span>
+                      <span className="font-bold text-green-600">{paySummary.sundayDays} days</span>
                     </div>
                     {paySummary.lateDays > 0 && (
                       <div className="flex justify-between">

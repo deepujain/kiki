@@ -59,7 +59,7 @@ export function AttendanceSummaryBar({
             const record = records.find(r => r.date === dateStr);
             const holiday = holidays.find(h => h.date === dateStr);
             const isSunday = getDay(day) === 0;
-            const today = new Date("2025-09-24"); // Fixed current date
+            const today = new Date(); // Use actual current date
             const isFutureDate = day > today;
 
             // Determine the status and color
