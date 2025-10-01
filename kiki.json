@@ -38,13 +38,13 @@
       "phone": "+91 98765 43213",
       "gender": "Male",
       "experience": 1,
-      "avatarUrl": "/images/profile-pictures/dhirendra-chowhan-profile-picture.jpeg?key=1758852054616",
+      "avatarUrl": "/images/profile-pictures/dhirendra-chowhan-profile-picture.jpeg?key=1759288037365",
       "birthday": "1988-02-24",
       "employed": true,
       "hourlyPayRate": 83.3325,
       "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Present",
+      "status": "Not Marked",
       "employmentType": "Full Time",
       "startDate": "2024-06-12"
     },
@@ -70,7 +70,7 @@
       "phone": "+91 98765 43211",
       "gender": "Male",
       "experience": 1,
-      "avatarUrl": "/images/profile-pictures/raghavendra-ks-profile-picture.jpeg?key=1758852138235",
+      "avatarUrl": "/images/profile-pictures/raghavendra-ks-profile-picture.jpeg?key=1759288076606",
       "birthday": "1980-09-02",
       "employed": true,
       "hourlyPayRate": 166.625,
@@ -89,12 +89,14 @@
       "experience": 5,
       "avatarUrl": "/avatars/03.png",
       "birthday": "1990-03-10",
-      "employed": false,
+      "employed": true,
       "hourlyPayRate": 104.25,
-      "trackAttendance": false,
+      "trackAttendance": true,
       "ptoDays": 10,
-      "status": "Late",
-      "employmentType": "Full Time"
+      "status": "Not Employed",
+      "employmentType": "Full Time",
+      "startDate": "2025-07-24",
+      "endDate": "2025-10-04"
     },
     {
       "id": "1",
@@ -3362,6 +3364,14 @@
       "checkOutTime": "--:--"
     },
     {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-27",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
+    },
+    {
       "employeeId": "5",
       "employeeName": "Arjun",
       "date": "2025-09-29",
@@ -3392,6 +3402,14 @@
       "status": "Present",
       "checkInTime": "10:48",
       "checkOutTime": "19:22"
+    },
+    {
+      "employeeId": "1",
+      "employeeName": "Sathish",
+      "date": "2025-09-29",
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
     },
     {
       "employeeId": "5",
@@ -3429,9 +3447,9 @@
       "employeeId": "1",
       "employeeName": "Sathish",
       "date": "2025-09-30",
-      "status": "Late",
-      "checkInTime": "11:52",
-      "checkOutTime": "19:20"
+      "status": "Absent",
+      "checkInTime": "--:--",
+      "checkOutTime": "--:--"
     }
   ],
   "holidays": [
