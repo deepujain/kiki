@@ -591,7 +591,18 @@ function StaffPageContent() {
       // Calculate earnings - treat Sundays as workdays
       const dailyRate = (employee.hourlyPayRate || 0) * 8;
       const basicPay = dailyRate * (paySummary?.netPayableDays || 0);
-      const ytdEarnings = basicPay * 12; // Simplified YTD calculation
+      
+      // Calculate YTD earnings based on employee start date
+      const currentYear = new Date().getFullYear();
+      const yearStart = new Date(currentYear, 0, 1); // January 1st of current year
+      const employeeStartDate = employee.startDate ? new Date(employee.startDate) : new Date();
+      
+      // Use the later of year start or employee start date
+      const ytdStartDate = employeeStartDate > yearStart ? employeeStartDate : yearStart;
+      const now = new Date();
+      const timeDiff = now.getTime() - ytdStartDate.getTime();
+      const monthsFromStart = Math.max(1, Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 30.44))); // Average days per month
+      const ytdEarnings = basicPay * monthsFromStart;
 
       // Table Content
       doc.setFont('helvetica', 'normal');
