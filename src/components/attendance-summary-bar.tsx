@@ -60,7 +60,12 @@ export function AttendanceSummaryBar({
             const holiday = holidays.find(h => h.date === dateStr);
             const isSunday = getDay(day) === 0;
             const today = new Date(); // Use actual current date
-            const isFutureDate = day > today;
+            // Set time to start of day for accurate comparison
+            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+            const isFutureDate = dayStart > todayStart;
+            const isPastDate = dayStart < todayStart;
+            const isToday = dayStart.getTime() === todayStart.getTime();
 
             // Determine the status and color
             let status: string;
@@ -72,9 +77,6 @@ export function AttendanceSummaryBar({
             } else if (isSunday) {
               status = "Sunday";
               bgColor = "bg-gray-200 dark:bg-gray-700";
-            } else if (day <= today && !record && !holiday) {
-              status = "Missing Data";
-              bgColor = "bg-pink-200 dark:bg-pink-900";
             } else if (holiday) {
               status = `Holiday: ${holiday.name}`;
               bgColor = "bg-blue-500 dark:bg-blue-600";
@@ -93,10 +95,14 @@ export function AttendanceSummaryBar({
                 default:
                   bgColor = "bg-gray-200 dark:bg-gray-700";
               }
-            } else {
-              // Missing Data - only for non-Sunday past dates
+            } else if (isPastDate || isToday) {
+              // Missing Data - for past dates and today without records
               status = "Missing Data";
-              bgColor = "bg-pink-200 dark:bg-pink-900";
+              bgColor = "bg-orange-200 dark:bg-orange-900";
+            } else {
+              // Fallback - should not reach here
+              status = "Missing Data";
+              bgColor = "bg-orange-200 dark:bg-orange-900";
             }
 
             return (

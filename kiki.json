@@ -89,11 +89,11 @@
       "experience": 5,
       "avatarUrl": "/avatars/03.png",
       "birthday": "1990-03-10",
-      "employed": true,
+      "employed": false,
       "hourlyPayRate": 104.25,
-      "trackAttendance": true,
+      "trackAttendance": false,
       "ptoDays": 10,
-      "status": "Not Marked",
+      "status": "Late",
       "employmentType": "Full Time"
     },
     {

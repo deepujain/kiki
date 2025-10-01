@@ -398,7 +398,7 @@ export default function AttendancePage() {
       {/* Attendance Summary by Staff */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Summary</CardTitle>
+          <CardTitle>{format(currentMonth, 'MMMM yyyy')}</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
