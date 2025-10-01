@@ -529,15 +529,12 @@ function StaffPageContent() {
       await new Promise((resolve) => {
         img.onload = resolve;
       });
-      doc.addImage(img, 'PNG', 15, 15, 25, 25);
+      doc.addImage(img, 'PNG', 15, 15, 45, 30); // Adjust size and position as needed
 
-      // Add company header
-      doc.setFontSize(24);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Vikings', 45, 30);
 
       // Add payslip header
-      doc.setFontSize(16);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
       doc.text('PAYSLIP', doc.internal.pageSize.width/2, 50, { align: 'center' });
       doc.setFontSize(12);
       doc.text(`For the Month of ${format(selectedMonth, 'MMMM yyyy')}`, doc.internal.pageSize.width/2, 58, { align: 'center' });
@@ -746,12 +743,9 @@ function StaffPageContent() {
       await new Promise((resolve) => {
         img.onload = resolve;
       });
-      doc.addImage(img, 'PNG', 15, 15, 30, 30); // Adjust size and position as needed
+      doc.addImage(img, 'PNG', 15, 15, 45, 30); // Adjust size and position as needed
 
-      // Add company name
-      doc.setFontSize(24);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Vikings', 50, 30);
+
 
       // Add title
       doc.setFontSize(18);
