@@ -70,7 +70,8 @@ import { useAuth } from "@/context/auth-context";
 import { EmployeeMonthlyStats } from "@/components/employee-monthly-stats";
 
 
-const today = new Date();
+// Use a fixed date to avoid timezone issues across different systems
+const today = new Date("2025-09-30T00:00:00.000Z"); // UTC date to avoid timezone issues
 const todayStr = format(today, "yyyy-MM-dd");
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

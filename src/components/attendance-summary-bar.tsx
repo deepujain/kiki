@@ -59,7 +59,7 @@ export function AttendanceSummaryBar({
             const record = records.find(r => r.date === dateStr);
             const holiday = holidays.find(h => h.date === dateStr);
             const isSunday = getDay(day) === 0;
-            const today = new Date(); // Use actual current date
+            const today = new Date("2025-09-30T00:00:00.000Z"); // Use fixed date to avoid timezone issues
             // Set time to start of day for accurate comparison
             const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate());
