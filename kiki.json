@@ -49,6 +49,24 @@
       "startDate": "2024-06-12"
     },
     {
+      "id": "3",
+      "name": "Md. Safee",
+      "role": "TSE",
+      "phone": "+91 98765 43212",
+      "gender": "Male",
+      "experience": 5,
+      "avatarUrl": "/avatars/03.png",
+      "birthday": "2000-09-10",
+      "employed": true,
+      "hourlyPayRate": 104.25,
+      "trackAttendance": true,
+      "ptoDays": 0,
+      "status": "Not Marked",
+      "employmentType": "Full Time",
+      "startDate": "2025-07-24",
+      "endDate": "2025-10-04"
+    },
+    {
       "id": "8",
       "name": "Neetha Jain",
       "role": "Founder & CEO",
@@ -79,24 +97,6 @@
       "status": "Not Marked",
       "employmentType": "Full Time",
       "startDate": "2025-07-25"
-    },
-    {
-      "id": "3",
-      "name": "Safee",
-      "role": "TSE",
-      "phone": "+91 98765 43212",
-      "gender": "Male",
-      "experience": 5,
-      "avatarUrl": "/avatars/03.png",
-      "birthday": "1990-03-10",
-      "employed": true,
-      "hourlyPayRate": 104.25,
-      "trackAttendance": true,
-      "ptoDays": 10,
-      "status": "Not Employed",
-      "employmentType": "Full Time",
-      "startDate": "2025-07-24",
-      "endDate": "2025-10-04"
     },
     {
       "id": "1",
