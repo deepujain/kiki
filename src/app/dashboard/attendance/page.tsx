@@ -67,7 +67,7 @@ const calculateHours = (checkIn: string, checkOut: string): string => {
 
 export default function AttendancePage() {
   const { employees = [], attendanceRecords = new Map(), holidays = [], addHoliday, removeHoliday, updateAttendance, updateMultipleAttendance, isLoading, refreshData } = useData();
-  const [currentMonth, setCurrentMonth] = useState(new Date("2025-09-15"));
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [dailyRecords, setDailyRecords] = useState<Map<string, AttendanceRecord>>(new Map());
   const { toast } = useToast();
@@ -213,7 +213,7 @@ export default function AttendancePage() {
   
   const openDayModal = (day: Date) => {
     // Allow editing for current day, one extra day, and past days within the allowed range
-    const tomorrow = new Date("2025-09-15");
+    const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     if (getDay(day) === 0 || (isFuture(day) && !isToday(day) && format(day, 'yyyy-MM-dd') !== format(tomorrow, 'yyyy-MM-dd')) || isBefore(day, startOfMonth(earliestDate))) return;
     
@@ -318,7 +318,7 @@ export default function AttendancePage() {
   }, [activeEmployees, attendanceRecords, holidays]);
   
   const exportToCsv = (period: ExportPeriod) => {
-    const now = new Date("2025-09-30"); // Use a fixed date for consistent export periods
+    const now = new Date();
     let startDate: Date;
     let endDate: Date = now;
 
@@ -415,7 +415,7 @@ export default function AttendancePage() {
           </DropdownMenu>
         </CardHeader>
         <CardContent className="relative">
-          <div className="space-y-4 pr-20">
+          <div className="space-y-4 pr-40">
             {activeEmployees.map((employee, index) => {
               const employeeRecords = attendanceRecords.get(employee.id) || [];
               return (
@@ -489,7 +489,7 @@ export default function AttendancePage() {
                if(day.getTime() === new Date(0,0,index).getTime()) return <div key={index}></div>;
                const summary = getDaySummary(day);
                const birthdays = getBirthdaysForDay(day);
-               const tomorrow = new Date("2025-09-15");
+               const tomorrow = new Date();
                tomorrow.setDate(tomorrow.getDate() + 1);
                const isDayFuture = isFuture(day) && !isToday(day) && format(day, 'yyyy-MM-dd') !== format(tomorrow, 'yyyy-MM-dd');
                const isDisabledPast = isBefore(day, startOfMonth(earliestDate));

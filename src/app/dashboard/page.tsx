@@ -30,13 +30,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { UserCheck, UserX, Clock, Users, ArrowUpDown } from "lucide-react";
+import { UserCheck, UserX, Clock, Users, ArrowUpDown, AlertCircle, X } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Leaderboard } from "@/components/leaderboard";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const calculateHours = (checkIn: string, checkOut: string): string => {
   if (checkIn === '--:--' || !checkOut || checkOut === '--:--') return '--';
@@ -65,6 +66,7 @@ export default function DashboardPage() {
   const [isDashboardLoaded, setIsDashboardLoaded] = useState(false);
   const [sortColumn, setSortColumn] = useState<keyof Employee | 'status' | 'checkInTime' | 'checkOutTime'>('status');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
 
   // Filter employees for display in dashboard
   const activeEmployees = useMemo(() => {
@@ -81,6 +83,61 @@ export default function DashboardPage() {
       setIsDashboardLoaded(true);
     }
   }, [dataLoading]);
+
+  // Calculate missing attendance days
+  const missingAttendanceDays = useMemo(() => {
+    const today = new Date();
+    const startDate = new Date('2025-10-01'); // Start of October
+    const missingDays: string[] = [];
+
+    // Loop through each day from October 1st to today
+    for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
+      const dateStr = format(d, 'yyyy-MM-dd');
+      const dayOfWeek = getDay(d);
+      
+      // Skip Sundays and future dates
+      if (dayOfWeek === 0 || d > today) continue;
+      
+      // Check if it's a holiday
+      const isHoliday = holidays.some(h => h.date === dateStr);
+      if (isHoliday) continue;
+      
+      // Check if there's any attendance record for tracked employees
+      let hasAnyRecord = false;
+      for (const emp of attendanceTrackedEmployees) {
+        const empRecords = attendanceRecords.get(emp.id) || [];
+        const dayRecord = empRecords.find(r => r.date === dateStr);
+        if (dayRecord) {
+          hasAnyRecord = true;
+          break;
+        }
+      }
+      
+      if (!hasAnyRecord) {
+        missingDays.push(dateStr);
+      }
+    }
+    
+    return missingDays;
+  }, [attendanceRecords, holidays, attendanceTrackedEmployees]);
+
+  // Load banner dismissal state from localStorage - tied to the specific missing days
+  useEffect(() => {
+    const dismissedDays = localStorage.getItem('attendanceBannerDismissedDays');
+    // If the stored dismissed days match the current missing days, keep it dismissed
+    if (dismissedDays === JSON.stringify(missingAttendanceDays) && missingAttendanceDays.length > 0) {
+      setIsBannerDismissed(true);
+    } else {
+      // Otherwise, show the banner (data has changed or been fixed)
+      setIsBannerDismissed(false);
+    }
+  }, [missingAttendanceDays]);
+
+  const handleDismissBanner = () => {
+    setIsBannerDismissed(true);
+    // Store the specific days that were dismissed
+    localStorage.setItem('attendanceBannerDismissedDays', JSON.stringify(missingAttendanceDays));
+  };
 
   
   const triggerStorageEvent = () => {
@@ -305,6 +362,32 @@ export default function DashboardPage() {
       )}
       {!dataLoading && (
         <>
+          {/* Missing Attendance Banner */}
+          {missingAttendanceDays.length > 0 && !isBannerDismissed && (
+            <Alert variant="destructive" className="relative">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Missing Attendance Data</AlertTitle>
+              <AlertDescription>
+                Attendance data is missing for {missingAttendanceDays.length} day{missingAttendanceDays.length > 1 ? 's' : ''}. 
+                Please enter attendance data in the{' '}
+                <button 
+                  onClick={() => router.push('/dashboard/attendance')}
+                  className="underline font-semibold hover:text-foreground"
+                >
+                  Attendance page
+                </button>
+                .
+              </AlertDescription>
+              <button
+                onClick={handleDismissBanner}
+                className="absolute top-4 right-4 p-1 hover:bg-destructive/20 rounded-md transition-colors"
+                aria-label="Dismiss notification"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </Alert>
+          )}
+
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold font-headline">Dashboard</h1>
           </div>
